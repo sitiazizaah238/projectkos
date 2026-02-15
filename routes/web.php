@@ -8,10 +8,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// bawaan breeze
+// GLOBAL DASHBOARD (redirect by role)
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    $user = auth()->user();
+
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'pemilik') {
+        return redirect()->route('pemilik.dashboard');
+    } else {
+        return redirect()->route('penyewa.dashboard');
+    }
+})->middleware('auth')->name('dashboard');
 
 // SEMUA HARUS LOGIN
 Route::middleware('auth')->group(function () {
@@ -21,25 +29,33 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // dashboard by role
-    Route::middleware('role:admin')
-        ->get('/admin/dashboard', fn()=>view('admin.dashboard'));
+    // DASHBOARD BY ROLE
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+    });
 
-    Route::middleware('role:pemilik')
-        ->get('/pemilik/dashboard', fn()=>view('pemilik.dashboard'));
+    Route::middleware('role:pemilik')->group(function () {
+        Route::get('/pemilik/dashboard', function () {
+            return view('pemilik.dashboard');
+        })->name('pemilik.dashboard');
+    });
 
-    Route::middleware('role:penyewa')
-        ->get('/penyewa/dashboard', fn()=>view('penyewa.dashboard'));
+    Route::middleware('role:penyewa')->group(function () {
+        Route::get('/penyewa/dashboard', function () {
+            return view('penyewa.dashboard');
+        })->name('penyewa.dashboard');
+    });
 });
+
+// register khusus
 Route::get('/register-pemilik',[AuthController::class,'regPemilik'])
     ->name('register.pemilik');
-
 Route::post('/register-pemilik',[AuthController::class,'storePemilik']);
 
 Route::get('/register-penyewa',[AuthController::class,'regPenyewa'])
     ->name('register.penyewa');
-
 Route::post('/register-penyewa',[AuthController::class,'storePenyewa']);
-
 
 require __DIR__.'/auth.php';
