@@ -10,6 +10,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
         body {
@@ -160,10 +161,13 @@
             gap: 14px;
             margin-top: 10px;
         }
+        [x-cloak] { display: none !important; }
+
     </style>
 </head>
 
-<body>
+<body x-data="{ openModal: false }">
+
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-custom">
@@ -195,6 +199,37 @@
             </div>
         </div>
     </nav>
+<!-- MODAL REGISTER -->
+<template x-if="openModal">
+    <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+         style="background: rgba(0,0,0,0.5); z-index:9999;">
+
+        <div class="bg-white p-5 rounded shadow position-relative"
+             style="width:400px;">
+
+            <!-- Close -->
+            <button type="button"
+                    @click="openModal = false"
+                    style="position:absolute; top:15px; right:20px; border:none; background:none; font-size:22px; cursor:pointer;">
+                ✕
+            </button>
+
+            <h4 class="text-center mb-4 fw-bold">Daftar Sebagai</h4>
+
+            <div class="d-grid gap-3">
+                <a href="{{ route('register.pemilik') }}" class="btn btn-primary">
+                    Sebagai Pemilik
+                </a>
+
+                <a href="{{ route('register.penyewa') }}" class="btn btn-success">
+                    Sebagai Penyewa
+                </a>
+            </div>
+
+        </div>
+    </div>
+</template>
+
 
     <!-- HERO -->
     <section class="hero">
@@ -215,8 +250,9 @@
                         <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
                     </div>
                     <div class="hero-buttons">
-                        <a href="#" class="btn btn-primary">Cari Kos</a>
-                        <a href="#" class="btn btn-outline-primary">Login</a>
+                       <a href="{{ route('login') }}" class="btn btn-primary">Cari Kos</a>
+<a href="{{ route('login') }}" class="btn btn-outline-primary">Login</a>
+
                     </div>
 
                 </div>
@@ -263,7 +299,10 @@
     <section class="cta-section text-center">
         <div class="container">
             <h4 class="fw-bold">Mulai Cari Kos Sekarang!</h4>
-            <a href="#" class="btn btn-primary mt-3 px-4">Daftar Sekarang</a>
+            <button @click="openModal = true" class="btn btn-primary mt-3 px-4">
+    Daftar Sekarang
+</button>
+
         </div>
     </section>
 

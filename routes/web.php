@@ -31,9 +31,15 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:penyewa')
         ->get('/penyewa/dashboard', fn()=>view('penyewa.dashboard'));
 });
-Route::get('/register-pemilik',[AuthController::class,'regPemilik']);
+Route::get('/register-pemilik',[AuthController::class,'regPemilik'])
+    ->name('register.pemilik');
+
 Route::post('/register-pemilik',[AuthController::class,'storePemilik']);
 
-Route::get('/register-penyewa',[AuthController::class,'regPenyewa']);
+Route::get('/register-penyewa',[AuthController::class,'regPenyewa'])
+    ->name('register.penyewa');
+
 Route::post('/register-penyewa',[AuthController::class,'storePenyewa']);
+
+
 require __DIR__.'/auth.php';
