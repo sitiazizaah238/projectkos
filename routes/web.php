@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Pemilik\ProfilePemilikController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,11 +58,21 @@ Route::middleware('auth')->group(function () {
         })->name('admin.dashboard');
     });
 
-    Route::middleware('role:pemilik')->group(function () {
-        Route::get('/pemilik/dashboard', function () {
-            return view('pemilik.dashboard');
-        })->name('pemilik.dashboard');
-    });
+    // DASHBOARD + PROFILE PEMILIK
+Route::middleware('role:pemilik')->group(function () {
+
+    Route::get('/pemilik/dashboard', function () {
+        return view('pemilik.dashboard');
+    })->name('pemilik.dashboard');
+
+    // PROFILE PEMILIK
+    Route::get('/pemilik/profile', [ProfilePemilikController::class, 'index'])
+        ->name('pemilik.profile');
+
+    Route::post('/pemilik/profile', [ProfilePemilikController::class, 'update'])
+        ->name('pemilik.profile.update');
+});
+
 
     Route::middleware('role:penyewa')->group(function () {
         Route::get('/penyewa/dashboard', function () {

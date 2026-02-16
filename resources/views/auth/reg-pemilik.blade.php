@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
         * {
@@ -16,7 +17,8 @@
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* supaya tidak bisa scroll */
+            overflow: hidden;
+            /* supaya tidak bisa scroll */
         }
 
         .container {
@@ -107,7 +109,7 @@
             border-radius: 8px;
             border: 1px solid #ddd;
             font-family: 'Poppins', sans-serif;
-            font size : 14px;
+            font size: 14px;
         }
 
         button {
@@ -179,23 +181,25 @@
 
                     <div class="form-group" style="position:relative;">
                         <label>Password</label>
+
                         <input type="password" name="password" id="password" placeholder="Masukan password"
                             style="padding-right:45px;">
 
-                        <span onclick="togglePassword('password')"
+                        <span onclick="togglePassword('password', this)"
                             style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
-                            👁
+                            <i class="bi bi-eye"></i>
                         </span>
                     </div>
 
                     <div class="form-group" style="position:relative;">
                         <label>Konfirmasi Password</label>
+
                         <input type="password" name="password_confirmation" id="password_confirmation"
                             placeholder="Ulangi password" style="padding-right:45px;">
 
-                        <span onclick="togglePassword('password_confirmation')"
+                        <span onclick="togglePassword('password_confirmation', this)"
                             style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
-                            👁
+                            <i class="bi bi-eye"></i>
                         </span>
                     </div>
 
@@ -209,11 +213,20 @@
         </div>
     </div>
     <script>
-        function togglePassword(id) {
+        function togglePassword(id, el) {
             const input = document.getElementById(id);
-            input.type = input.type === "password" ? "text" : "password";
+            const icon = el.querySelector("i");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
         }
     </script>
+
 
 </body>
 

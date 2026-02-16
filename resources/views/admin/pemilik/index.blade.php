@@ -81,17 +81,69 @@
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
 
-                                            {{-- HAPUS --}}
-                                            <form action="{{ route('admin.pemilik.destroy', $p->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                    onclick="return confirm('Yakin hapus?')">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </button>
-                                            </form>
+{{-- HAPUS --}}
+<form action="{{ route('admin.pemilik.destroy', $p->id) }}" method="POST" class="d-inline">
+    @csrf
+    @method('DELETE')
+
+    <button type="button"
+        class="btn btn-sm btn-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#deleteModal{{ $p->id }}">
+        <i class="bi bi-trash-fill"></i>
+    </button>
+
+    {{-- MODAL DELETE --}}
+    <div class="modal fade" id="deleteModal{{ $p->id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content text-center p-4" style="border-radius:18px;">
+
+                {{-- tombol X kanan atas --}}
+                <button type="button"
+                    class="btn-close position-absolute top-0 end-0 m-3"
+                    data-bs-dismiss="modal"></button>
+
+                {{-- ICON X MERAH --}}
+                <div class="mb-3">
+                    <div style="
+                        width:70px;
+                        height:70px;
+                        border-radius:50%;
+                        border:3px solid #ff5a5a;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        margin:auto;">
+                        <span style="font-size:30px;color:#ff5a5a;">✕</span>
+                    </div>
+                </div>
+
+                {{-- TEXT --}}
+                <h5 class="fw-bold mb-2">Hapus Akun Ini?</h5>
+                <p class="text-muted small mb-4">
+                   Yakin ingin menghapus? data yang telah di hapus tidak dapat di kembalikan.
+                </p>
+
+                {{-- BUTTON --}}
+                <div class="d-flex gap-2">
+                    <button type="button"
+                        class="btn btn-secondary w-100"
+                        data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                        class="btn w-100 text-white"
+                        style="background:#ff5a5a;">
+                        Delete
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
 
                                         </td>
                                     </tr>
@@ -147,10 +199,9 @@
         </div>
     </div>
     <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-</script>
-
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
 @endsection

@@ -41,20 +41,36 @@ class PemilikController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $pemilik = User::findOrFail($id);
+{
+    $pemilik = User::findOrFail($id);
 
+    // Validasi umum
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'status' => 'required|string',
+    ]);
+
+    $data = [
+        'name' => $request->name,
+        'status' => $request->status,
+    ];
+
+    // Hanya pemilik sendiri yang bisa ubah email & no_hp
+    if(auth()->user()->role === 'pemilik') {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'no_hp' => 'required'
+            'email' => 'required|email|unique:users,email,' . $pemilik->id,
+            'no_hp' => 'required|string|max:20',
         ]);
 
-        $pemilik->update($request->all());
-
-        return redirect()->route('admin.pemilik.index')
-            ->with('success','Data berhasil diupdate');
+        $data['email'] = $request->email;
+        $data['no_hp'] = $request->no_hp;
     }
+
+    $pemilik->update($data);
+
+    return redirect()->route('admin.pemilik.index')
+        ->with('success','Data berhasil diupdate');
+}
 
     public function destroy($id)
     {
