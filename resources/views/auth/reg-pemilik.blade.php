@@ -16,6 +16,7 @@
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
+            overflow: hidden; /* supaya tidak bisa scroll */
         }
 
         .container {
@@ -80,16 +81,16 @@
 
         .card {
             width: 80%;
-            max-width: 420px;
+            max-width: 400px;
         }
 
         .card h2 {
             font-weight: 600;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 11px;
         }
 
         .form-group label {
@@ -102,10 +103,11 @@
 
         .form-group input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #ddd;
             font-family: 'Poppins', sans-serif;
+            font size : 14px;
         }
 
         button {
@@ -169,7 +171,10 @@
                         <input type="text" name="no_hp" placeholder="Masukan no HP" inputmode="numeric" required
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
-
+                    <div class="form-group">
+                        <label>Alamat</label>
+                        <input type="text" name="alamat" placeholder="Masukan alamat lengkap" required>
+                    </div>
 
 
                     <div class="form-group" style="position:relative;">

@@ -32,6 +32,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/profile', function () {
         return view('admin.profile');
     })->name('admin.profile');
+    // DATA PEMILIK
+    Route::get('/admin/pemilik', [App\Http\Controllers\Admin\PemilikController::class, 'index'])
+        ->name('admin.pemilik.index');
+
+    Route::get('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'show'])
+        ->name('admin.pemilik.show');
+
+    Route::get('/admin/pemilik/{id}/edit', [App\Http\Controllers\Admin\PemilikController::class, 'edit'])
+        ->name('admin.pemilik.edit');
+
+    Route::put('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'update'])
+        ->name('admin.pemilik.update');
+
+    Route::delete('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'destroy'])
+        ->name('admin.pemilik.destroy');
 });
 
 

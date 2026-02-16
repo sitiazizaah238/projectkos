@@ -11,17 +11,22 @@
     <ul class="nav flex-column">
         <li class="nav-item">
             <a href="{{ route('admin.dashboard') }}"
-                class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                class="nav-link d-flex align-items-center
+   {{ request()->routeIs('admin.dashboard') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
                 <i class="bi bi-speedometer2 me-2"></i>
                 Dashboard
             </a>
-
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-person"></i> Data Pemilik Kos
+            <a href="{{ route('admin.pemilik.index') }}"
+                class="nav-link d-flex align-items-center
+   {{ request()->routeIs('admin.pemilik.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+
+                <i class="bi bi-people me-2"></i>
+                Data Pemilik Kos
             </a>
         </li>
+
         <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="bi bi-house"></i> Data Kos

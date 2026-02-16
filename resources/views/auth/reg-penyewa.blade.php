@@ -137,7 +137,7 @@
             </div>
 
             <div class="left-content">
-                <img src="{{ asset('images/ilustrasi.png') }}">
+                <img src="{{ asset('images/kos.png') }}">
 
                 <h1>Halo....<br>Selamat Datang</h1>
                 <p>Di Website FindKos di wilayah<br>Lohbener Indramayu</p>
