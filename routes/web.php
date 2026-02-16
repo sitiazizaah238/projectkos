@@ -28,6 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+   Route::middleware(['auth','role:admin'])->group(function () {
+    Route::get('/admin/profile', function () {
+        return view('admin.profile');
+    })->name('admin.profile');
+});
+
 
     // DASHBOARD BY ROLE
     Route::middleware('role:admin')->group(function () {
@@ -50,12 +56,12 @@ Route::middleware('auth')->group(function () {
 });
 
 // register khusus
-Route::get('/register-pemilik',[AuthController::class,'regPemilik'])
+Route::get('/register-pemilik', [AuthController::class, 'regPemilik'])
     ->name('register.pemilik');
-Route::post('/register-pemilik',[AuthController::class,'storePemilik']);
+Route::post('/register-pemilik', [AuthController::class, 'storePemilik']);
 
-Route::get('/register-penyewa',[AuthController::class,'regPenyewa'])
+Route::get('/register-penyewa', [AuthController::class, 'regPenyewa'])
     ->name('register.penyewa');
-Route::post('/register-penyewa',[AuthController::class,'storePenyewa']);
+Route::post('/register-penyewa', [AuthController::class, 'storePenyewa']);
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
