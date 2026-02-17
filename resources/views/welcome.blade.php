@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>FINDKOS</title>
+    <title>FindKos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="/images/logo2.png">
 
@@ -174,7 +174,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo">
-                <span class="ms-1 text-white fw-bold">FINDKOS</span>
+                <span class="ms-1 text-white fw-bold">FindKos</span>
             </a>
 
             <div class="collapse navbar-collapse justify-content-end">
