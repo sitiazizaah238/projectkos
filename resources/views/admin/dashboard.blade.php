@@ -11,7 +11,10 @@
     $disetujui = Kos::where('status', 'disetujui')->count();
     $ditolak = Kos::where('status', 'ditolak')->count();
     $menunggu = Kos::where('status', 'menunggu')->count();
-    $notifKos = Kos::where('status', 'menunggu')->with('user')->latest()->get();
+$notifKos = Kos::where('status', 'menunggu')
+                    ->with('user')
+                    ->latest()
+                    ->get();
 
     $jumlahNotif = $notifKos->count();
 @endphp
@@ -26,52 +29,58 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-3">
+           <div class="topbar d-flex justify-content-end align-items-center px-4 gap-3">
 
-                {{-- 🔔 NOTIF --}}
-                <div class="dropdown position-relative">
+    {{-- 🔔 NOTIF --}}
+    <div class="dropdown position-relative">
 
-                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+        <button class="btn text-white position-relative"
+            data-bs-toggle="dropdown">
 
-                        <i class="bi bi-bell fs-4"></i>
+            <i class="bi bi-bell fs-4"></i>
 
-                        @if ($jumlahNotif > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                style="font-size:10px;">
-                                {{ $jumlahNotif }}
-                            </span>
-                        @endif
+           @if($jumlahNotif > 0)
+    <span
+            class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+        style="top:10px; font-size:10px;">
+        {{ $jumlahNotif }}
+    </span>
+@endif
 
-                    </button>
+        </button>
 
-                    <div class="dropdown-menu dropdown-menu-end p-2" style="width:300px; max-height:300px; overflow-y:auto;">
+        <div class="dropdown-menu dropdown-menu-end p-2"
+            style="width:300px; max-height:300px; overflow-y:auto;">
 
-                        <h6 class="dropdown-header">Pengajuan Kos</h6>
+            <h6 class="dropdown-header">Pengajuan Kos</h6>
 
-                        @forelse($notifKos as $n)
-                            <a href="{{ route('admin.kos.index') }}" class="dropdown-item small py-2">
+            @forelse($notifKos as $n)
+                <a href="{{ route('admin.kos.index') }}"
+                    class="dropdown-item small py-2">
 
-                                <strong>{{ $n->user->name }}</strong><br>
-                                Mengajukan kos <strong>{{ $n->nama_kos }}</strong>
-                            </a>
-                        @empty
-                            <div class="text-center text-muted small p-3">
-                                Tidak ada notifikasi
-                            </div>
-                        @endforelse
-
-                    </div>
+                    <strong>{{ $n->user->name }}</strong><br>
+                    Mengajukan kos <strong>{{ $n->nama_kos }}</strong>
+                </a>
+            @empty
+                <div class="text-center text-muted small p-3">
+                    Tidak ada notifikasi
                 </div>
+            @endforelse
 
-                {{-- PROFILE --}}
-                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#profileModal">
+        </div>
+    </div>
 
-                    <span class="me-2">{{ Auth::user()->name }}</span>
-                    <i class="bi bi-person-circle fs-3"></i>
-                </button>
+    {{-- PROFILE --}}
+    <button type="button"
+        class="btn text-white d-flex align-items-center"
+        data-bs-toggle="modal"
+        data-bs-target="#profileModal">
 
-            </div>
+        <span class="me-2">{{ Auth::user()->name }}</span>
+        <i class="bi bi-person-circle fs-3"></i>
+    </button>
+
+</div>
 
 
 
@@ -204,9 +213,9 @@
                             '#dc3545',
                             '#ffc107'
                         ],
-                        barPercentage: 0.9, // ukuran sedang
-                        categoryPercentage: 0.9,
-                        maxBarThickness: 60
+                         barPercentage: 0.9,          // ukuran sedang
+                categoryPercentage: 0.9,
+                maxBarThickness: 60
                     }]
                 },
                 options: {
