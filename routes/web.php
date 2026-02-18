@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Pemilik\ProfilePemilikController;
+use App\Http\Controllers\Pemilik\PemilikKosController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -64,6 +65,9 @@ Route::middleware('role:pemilik')->group(function () {
     Route::get('/pemilik/dashboard', function () {
         return view('pemilik.dashboard');
     })->name('pemilik.dashboard');
+    Route::resource('/pemilik/kos', PemilikKosController::class)
+    ->names('pemilik.kos');
+
 
     // PROFILE PEMILIK
     Route::get('/pemilik/profile', [ProfilePemilikController::class, 'index'])

@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>FindKos</title>
-<link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
+    <title>FindKos</title>
+    <link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
+
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -36,10 +37,20 @@
             margin-bottom: 8px;
             border-radius: 8px;
             padding: 10px 14px;
+            transition: all 0.2s ease;
         }
 
         .sidebar .nav-link.active {
             background: #0d6efd;
+            color: #fff;
+        }
+
+        .sidebar .nav-link:hover {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .sidebar .nav-link:hover i {
             color: #fff;
         }
 
@@ -68,25 +79,6 @@
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
-        /* Sidebar hover biru solid */
-.sidebar .nav-link {
-    transition: all 0.2s ease;
-}
-
-.sidebar .nav-link:hover {
-    background: #0d6efd;   /* biru solid */
-    color: #fff;
-}
-
-.sidebar .nav-link:hover i {
-    color: #fff;
-}
-
-/* Active tetap */
-.sidebar .nav-link.active {
-    background: #0d6efd;
-    color: #fff;
-}
     </style>
 </head>
 
@@ -113,6 +105,10 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const loader = document.getElementById("pageLoader");
+    const hasSuccess = {{ session()->has('success') ? 'true' : 'false' }};
+
+    // 🚫 Kalau ada SweetAlert sukses → loader MATI total
+    if (hasSuccess) return;
 
     document.querySelectorAll("form").forEach(form => {
         form.addEventListener("submit", () => loader.style.display = "flex");
@@ -129,5 +125,18 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ {{-- SUCCESS MODAL --}}
+@if (session('success'))
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil',
+    text: '{{ session('success') }}',
+    timer: 2000,
+    showConfirmButton: false
+});
+</script>
+@endif
 </body>
 </html>

@@ -24,14 +24,15 @@
 
         {{-- DATA KOS --}}
         <li class="nav-item">
-            <a href="#"
+            <a href="{{ route('pemilik.kos.index') }}"
                 class="nav-link d-flex align-items-center
-                {{ request()->routeIs('pemilik.kos.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+        {{ request()->routeIs('pemilik.kos.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
 
                 <i class="bi bi-building me-2"></i>
                 Data Kos
             </a>
         </li>
+
 
         {{-- DATA KAMAR --}}
         <li class="nav-item">
