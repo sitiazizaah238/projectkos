@@ -8,29 +8,29 @@ use Illuminate\Http\Request;
 
 class PemilikController extends Controller
 {
- public function index(Request $request)
-{
-    $search = $request->search;
+    public function index(Request $request)
+    {
+        $search = $request->search;
 
-    $pemilik = User::where('role', 'pemilik')
-        ->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('no_hp', 'like', "%{$search}%");
-            });
-        })
-        ->orderBy('created_at', 'desc')
-        ->paginate(5)
-        ->withQueryString();
+        $pemilik = User::where('role', 'pemilik')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('no_hp', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(5)
+            ->withQueryString();
 
-    return view('admin.pemilik.index', compact('pemilik'));
-}
-
+        return view('admin.pemilik.index', compact('pemilik'));
+    }
 
     public function show($id)
     {
-        $pemilik = User::findOrFail($id);
+        $pemilik = User::with('kos')->findOrFail($id);
+
         return view('admin.pemilik.show', compact('pemilik'));
     }
 
@@ -41,36 +41,36 @@ class PemilikController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $pemilik = User::findOrFail($id);
+    {
+        $pemilik = User::findOrFail($id);
 
-    // Validasi umum
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'status' => 'required|string',
-    ]);
-
-    $data = [
-        'name' => $request->name,
-        'status' => $request->status,
-    ];
-
-    // Hanya pemilik sendiri yang bisa ubah email & no_hp
-    if(auth()->user()->role === 'pemilik') {
+        // Validasi umum
         $request->validate([
-            'email' => 'required|email|unique:users,email,' . $pemilik->id,
-            'no_hp' => 'required|string|max:20',
+            'name' => 'required|string|max:255',
+            'status' => 'required|string',
         ]);
 
-        $data['email'] = $request->email;
-        $data['no_hp'] = $request->no_hp;
+        $data = [
+            'name' => $request->name,
+            'status' => $request->status,
+        ];
+
+        // Hanya pemilik sendiri yang bisa ubah email & no_hp
+        if (auth()->user()->role === 'pemilik') {
+            $request->validate([
+                'email' => 'required|email|unique:users,email,' . $pemilik->id,
+                'no_hp' => 'required|string|max:20',
+            ]);
+
+            $data['email'] = $request->email;
+            $data['no_hp'] = $request->no_hp;
+        }
+
+        $pemilik->update($data);
+
+        return redirect()->route('admin.pemilik.index')
+            ->with('success', 'Data berhasil diupdate');
     }
-
-    $pemilik->update($data);
-
-    return redirect()->route('admin.pemilik.index')
-        ->with('success','Data berhasil diupdate');
-}
 
     public function destroy($id)
     {
@@ -78,6 +78,6 @@ class PemilikController extends Controller
         $pemilik->delete();
 
         return redirect()->route('admin.pemilik.index')
-            ->with('success','Data berhasil dihapus');
+            ->with('success', 'Data berhasil dihapus');
     }
 }

@@ -10,6 +10,7 @@
 
                 {{-- TOPBAR --}}
                 <div class="topbar d-flex justify-content-end align-items-center px-4">
+                    @include('components.notif-admin')
                     <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                         data-bs-target="#profileModal">
 

@@ -1,4 +1,24 @@
 @extends('layouts.app')
+@php
+    use App\Models\User;
+    use App\Models\Kos;
+    use App\Models\LogAktivitas;
+
+    $totalKos = Kos::count();
+    $totalPemilik = User::where('role', 'pemilik')->count();
+    $totalLog = LogAktivitas::count();
+
+    $disetujui = Kos::where('status', 'disetujui')->count();
+    $ditolak = Kos::where('status', 'ditolak')->count();
+    $menunggu = Kos::where('status', 'menunggu')->count();
+    $notifKos = Kos::where('status', 'menunggu')->get();
+    $jumlahNotif = $notifKos->count();
+
+    // kalau ada notif baru → reset status dibaca
+    if ($jumlahNotif > 0) {
+        session()->forget('notif_dibaca');
+    }
+@endphp
 
 @section('content')
     <div class="d-flex">
@@ -10,13 +30,52 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-3">
+
+                {{-- 🔔 NOTIF --}}
+                <div class="dropdown position-relative">
+
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+
+                        <i class="bi bi-bell fs-4"></i>
+
+                        @if ($jumlahNotif > 0 && !session('notif_dibaca'))
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="font-size:10px;">
+                                {{ $jumlahNotif }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end p-2" style="width:300px; max-height:300px; overflow-y:auto;">
+
+                        <h6 class="dropdown-header">Pengajuan Kos</h6>
+
+                        @forelse($notifKos as $n)
+                            <a href="{{ route('admin.kos.index') }}" class="dropdown-item small py-2">
+
+                                <strong>{{ $n->user->name }}</strong><br>
+                                Mengajukan kos <strong>{{ $n->nama_kos }}</strong>
+                            </a>
+                        @empty
+                            <div class="text-center text-muted small p-3">
+                                Tidak ada notifikasi
+                            </div>
+                        @endforelse
+
+                    </div>
+                </div>
+
+                {{-- PROFILE --}}
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
+
                     <span class="me-2">{{ Auth::user()->name }}</span>
                     <i class="bi bi-person-circle fs-3"></i>
                 </button>
+
             </div>
+
 
 
             {{-- CONTENT --}}
@@ -31,8 +90,12 @@
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <div class="text-muted">Daftar Kos</div>
-                                    <h3 class="fw-bold">3</h3>
-                                    <small class="text-primary">Lihat Semua Kos</small>
+                                    <h3 class="fw-bold">{{ $totalKos }}</h3>
+                                    <small class="text-primary">
+                                        Disetujui: {{ $disetujui }} |
+                                        Ditolak: {{ $ditolak }} |
+                                        Menunggu: {{ $menunggu }}
+                                    </small>
                                 </div>
                                 <div class="icon bg-primary">
                                     <i class="bi bi-house-door-fill"></i>
@@ -42,42 +105,47 @@
                     </div>
 
                     <div class="col-md-4">
-                        <div class="card card-stat p-3 shadow-sm">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <div class="text-muted">Pemilik Kos</div>
-                                    <h3 class="fw-bold">67</h3>
-                                    <small class="text-success">Lihat Semua Data</small>
-                                </div>
-                                <div class="icon bg-success">
-                                    <i class="bi bi-person-fill"></i>
+                        <a href="{{ route('admin.pemilik.index') }}" class="text-decoration-none text-dark">
+                            <div class="card card-stat p-3 shadow-sm hover-card">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted">Pemilik Kos</div>
+                                        <h3 class="fw-bold">{{ $totalPemilik }}</h3>
+                                        <small class="text-success">Lihat Semua Data</small>
+                                    </div>
+                                    <div class="icon bg-success">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
 
+
                     <div class="col-md-4">
-                        <div class="card card-stat p-3 shadow-sm">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <div class="text-muted">Log Aktivitas
+                        <a href="{{ route('admin.log.index') }}" class="text-decoration-none text-dark">
+                            <div class="card card-stat p-3 shadow-sm hover-card">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <div class="text-muted">Log Aktivitas</div>
+                                        <h3 class="fw-bold">{{ $totalLog }}</h3>
+                                        <small class="text-warning">Lihat Semua Data</small>
                                     </div>
-                                    <h3 class="fw-bold">14</h3>
-                                    <small class="text-warning">Lihat Semua Data</small>
-                                </div>
-                                <div class="icon bg-warning">
-                                    <i class="bi bi-journal-text"></i>
+                                    <div class="icon bg-warning">
+                                        <i class="bi bi-journal-text"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
+
                 </div>
                 {{-- GRAFIK --}}
                 <div class="row mt-4">
 
                     <div class="col-md-8">
                         <div class="card p-3 shadow-sm">
-                            <h6 class="fw-bold">Grafik Pemesanan Perbulan</h6>
+                            <h6 class="fw-bold">Monitoring Status Pengajuan Kos</h6>
                             <div style="height:270px;">
                                 <canvas id="lineChart"></canvas>
                             </div>
@@ -124,35 +192,52 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             new Chart(document.getElementById('lineChart'), {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    labels: ['Disetujui', 'Ditolak', 'Menunggu'],
                     datasets: [{
-                        label: 'Pemesanan',
-                        data: [5, 18, 10, 22, 15, 20],
-                        borderColor: '#0d6efd',
-                        tension: 0.4
+                        label: 'Jumlah Kos',
+                        data: [
+                            {{ $disetujui }},
+                            {{ $ditolak }},
+                            {{ $menunggu }}
+                        ],
+                        backgroundColor: [
+                            '#198754',
+                            '#dc3545',
+                            '#ffc107'
+                        ],
+                        barPercentage: 0.9, // ukuran sedang
+                        categoryPercentage: 0.9,
+                        maxBarThickness: 60
                     }]
                 },
                 options: {
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
                 }
             });
+
 
             new Chart(document.getElementById('donutChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pemilik', 'Penyewa'],
+                    labels: ['Pemilik', 'Total Kos'],
                     datasets: [{
-                        data: [75, 25],
+                        data: [{{ $totalPemilik }}, {{ $totalKos }}],
+
                         backgroundColor: ['#198754', '#dc3545']
                     }]
                 },
-options: {
-    maintainAspectRatio: false,
-    cutout: '70%',
-    radius: '85%'
-}
+                options: {
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    radius: '85%'
+                }
             });
         </script>
     @endsection
