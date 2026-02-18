@@ -32,4 +32,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function logAktivitas()
+{
+    return $this->hasMany(LogAktivitas::class);
+}
+
 }

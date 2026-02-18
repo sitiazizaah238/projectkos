@@ -28,14 +28,20 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-house"></i> Data Kos
+            <a href="{{ route('admin.kos.index') }}"
+                class="nav-link d-flex align-items-center
+{{ request()->routeIs('admin.kos.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+                <i class="bi bi-house me-2"></i>
+                Data Kos
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="bi bi-clock-history"></i> Log Aktivitas
+            <a href="{{ route('admin.log.index') }}"
+                class="nav-link {{ request()->routeIs('admin.log.index') ? 'active' : '' }}">
+                <i class="bi bi-clipboard-data"></i>
+                Log Aktivitas
             </a>
         </li>
+
     </ul>
 </div>

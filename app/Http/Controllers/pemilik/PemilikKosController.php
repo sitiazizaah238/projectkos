@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pemilik;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kos;
+use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\Auth;
 
 class PemilikKosController extends Controller
@@ -35,25 +36,33 @@ class PemilikKosController extends Controller
         $foto = null;
 
         if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('kos','public');
+            $foto = $request->file('foto')->store('kos', 'public');
         }
 
-        Kos::create([
+        $kos = Kos::create([
             'user_id' => auth()->id(),
             'nama_kos' => $request->nama_kos,
             'lokasi' => $request->lokasi,
             'tipe_kos' => $request->tipe_kos,
             'deskripsi' => $request->deskripsi,
-            'fasilitas' => $request->fasilitas, // checkbox array
+            'fasilitas' => $request->fasilitas,
             'foto' => $foto,
             'status' => 'menunggu'
         ]);
 
-        // ✅ KHUSUS TAMBAH
-      return redirect()->route('pemilik.kos.index')
-    ->with('success','Kos berhasil diajukan');
+        // ✅ SIMPAN LOG TAMBAH
+        LogAktivitas::create([
+            'user_id' => auth()->id(),
+            'kos_id' => $kos->id,
+            'aktivitas' => 'Menambahkan Kos',
+            'keterangan' => $kos->nama_kos
+        ]);
+
+        return redirect()->route('pemilik.kos.index')
+            ->with('success', 'Kos berhasil diajukan');
     }
-// ================= SHOW (WAJIB ADA) =================
+
+    // ================= SHOW (WAJIB ADA) =================
     public function show($id)
     {
         $kos = Kos::findOrFail($id);
@@ -68,7 +77,7 @@ class PemilikKosController extends Controller
         return view('pemilik.kos.edit', compact('kos'));
     }
 
-public function update(Request $request, $id)
+  public function update(Request $request, $id)
 {
     $kos = Kos::findOrFail($id);
 
@@ -82,6 +91,14 @@ public function update(Request $request, $id)
 
     $kos->update($data);
 
+    // ✅ SIMPAN LOG UPDATE
+    LogAktivitas::create([
+        'user_id' => auth()->id(),
+        'kos_id' => $kos->id,
+        'aktivitas' => 'Update Data Kos',
+        'keterangan' => $kos->nama_kos
+    ]);
+
     return redirect()
         ->route('pemilik.kos.index')
         ->with('success','Data kos berhasil diperbarui');
@@ -92,6 +109,6 @@ public function update(Request $request, $id)
     {
         Kos::destroy($id);
 
-       return back()->with('success','Data berhasil dihapus');
+        return back()->with('success', 'Data berhasil dihapus');
     }
 }

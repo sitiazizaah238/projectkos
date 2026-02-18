@@ -16,6 +16,7 @@ class Kos extends Model
         'deskripsi',
          'fasilitas',
         'foto',
+        'alasan',
         'status'
     ];
 protected $casts = [
@@ -27,4 +28,9 @@ protected $casts = [
     {
         return $this->belongsTo(User::class);
     }
+    public function logAktivitas()
+{
+    return $this->hasMany(LogAktivitas::class);
+}
+
 }

@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
    Route::middleware(['auth','role:admin'])->group(function () {
+
     Route::get('/admin/profile', function () {
         return view('admin.profile');
     })->name('admin.profile');
@@ -49,7 +50,21 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'destroy'])
         ->name('admin.pemilik.destroy');
+        // ================= DATA KOS (ADMIN) =================
+Route::get('/admin/kos', [App\Http\Controllers\Admin\KosController::class, 'index'])
+    ->name('admin.kos.index');
+
+Route::post('/admin/kos/{id}/approve', [App\Http\Controllers\Admin\KosController::class, 'approve'])
+    ->name('admin.kos.approve');
+
+Route::post('/admin/kos/{id}/reject', [App\Http\Controllers\Admin\KosController::class, 'reject'])
+    ->name('admin.kos.reject');
+     // ================= LOG AKTIVITAS =================
+    Route::get('/admin/log-aktivitas',
+        [App\Http\Controllers\Admin\LogAktivitasController::class, 'index']
+    )->name('admin.log.index');
 });
+
 
 
     // DASHBOARD BY ROLE
