@@ -11,13 +11,9 @@
     $disetujui = Kos::where('status', 'disetujui')->count();
     $ditolak = Kos::where('status', 'ditolak')->count();
     $menunggu = Kos::where('status', 'menunggu')->count();
-    $notifKos = Kos::where('status', 'menunggu')->get();
-    $jumlahNotif = $notifKos->count();
+    $notifKos = Kos::where('status', 'menunggu')->with('user')->latest()->get();
 
-    // kalau ada notif baru → reset status dibaca
-    if ($jumlahNotif > 0) {
-        session()->forget('notif_dibaca');
-    }
+    $jumlahNotif = $notifKos->count();
 @endphp
 
 @section('content')
@@ -39,12 +35,13 @@
 
                         <i class="bi bi-bell fs-4"></i>
 
-                        @if ($jumlahNotif > 0 && !session('notif_dibaca'))
+                        @if ($jumlahNotif > 0)
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                                 style="font-size:10px;">
                                 {{ $jumlahNotif }}
                             </span>
                         @endif
+
                     </button>
 
                     <div class="dropdown-menu dropdown-menu-end p-2" style="width:300px; max-height:300px; overflow-y:auto;">
