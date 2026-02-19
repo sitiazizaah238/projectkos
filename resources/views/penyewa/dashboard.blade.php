@@ -2,7 +2,7 @@
 @php
     use App\Models\Kos;
 
-    $kos = Kos::where('status', 'disetujui')->latest()->get();
+    $kos = Kos::with('kamars')->where('status', 'disetujui')->latest()->get();
 @endphp
 
 @section('content')
@@ -185,6 +185,10 @@
                                     @endif
 
                                     <div class="card-body d-flex flex-column">
+                                        @php
+                                            $minHarga = $k->kamars->min('harga');
+                                            $maxHarga = $k->kamars->max('harga');
+                                        @endphp
                                         <h6 class="fw-bold text-truncate">
                                             {{ $k->nama_kos }}
                                         </h6>
@@ -198,7 +202,20 @@
                                             <strong>Tipe:</strong>
                                             {{ $k->tipe_kos }}
                                         </p>
+                                        <p class="small mb-2">
+                                            <strong>Harga:</strong><br>
 
+                                            @if ($minHarga)
+                                                <span class="text-success fw-bold">
+                                                    Rp {{ number_format($minHarga, 0, ',', '.') }}
+                                                    @if ($minHarga != $maxHarga)
+                                                        - Rp {{ number_format($maxHarga, 0, ',', '.') }}
+                                                    @endif
+                                                </span>
+                                            @else
+                                                <span class="text-muted">Belum ada kamar</span>
+                                            @endif
+                                        </p>
                                         <div class="mt-auto">
                                             <a href="{{ route('penyewa.kos.detail', $k->id) }}"
                                                 class="btn btn-sm btn-primary w-100">
