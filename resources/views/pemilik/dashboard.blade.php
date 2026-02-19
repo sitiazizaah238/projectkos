@@ -61,12 +61,12 @@
                     </div>
                 </div>
 
-                {{-- KAMAR KOSONG --}}
+                {{-- KAMAR TERSEDIA --}}
                 <div class="col-md-3">
                     <div class="card p-3 shadow-sm border-start border-4 border-success">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <small class="text-muted">Kamar Kosong</small>
+                                <small class="text-muted">Kamar Tersedia</small>
                                 <h3 class="fw-bold">8</h3>
                                 <small class="text-success">Lihat Semua Data</small>
                             </div>
