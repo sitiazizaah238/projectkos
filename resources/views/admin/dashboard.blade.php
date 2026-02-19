@@ -31,7 +31,7 @@ $notifKos = Kos::where('status', 'menunggu')
             {{-- TOPBAR --}}
            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-3">
 
-    {{-- 🔔 NOTIF --}}
+    {{--  NOTIF --}}
     <div class="dropdown position-relative">
 
         <button class="btn text-white position-relative"
@@ -86,7 +86,7 @@ $notifKos = Kos::where('status', 'menunggu')
 
             {{-- CONTENT --}}
             <div class="p-4">
-                <h3 class="fw-bold">Dashboard Admin</h3>
+              <h3 class="fw-bold" style="font-size: 30px;">Dashboard Admin</h3>
                 <small class="text-muted">Dashboard / Ringkasan</small>
 
                 {{-- CARDS --}}

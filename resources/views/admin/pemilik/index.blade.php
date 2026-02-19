@@ -22,23 +22,37 @@
 
             {{-- CONTENT --}}
             <div class="p-3">
-                <div class="d-flex justify-content-end mb-3">
-                    <form method="GET" action="{{ route('admin.pemilik.index') }}">
-                        <div class="input-group" style="width: 300px;">
-                            <input type="text" name="search" class="form-control"
-                                placeholder="Cari nama, email, no hp..." value="{{ request('search') }}">
-
-                            <button class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </form>
+                {{-- TITLE --}}
+                <div class="mb-3">
+                  <h3 class="fw-bold" style="font-size: 29px;"> Manajemen Akun</h3>
+                    <small class="text-muted">
+                        Manajemen Akun / <span class="text-dark">Daftar Akun</span>
+                    </small>
                 </div>
+
+
                 <div class="card shadow-sm">
-                    <div class="card-header bg-dark text-white d-flex align-items-center">
-                        <i class="bi bi-people-fill fs-5 me-2"></i>
-                        <span class="fw-semibold">Akun Terdaftar</span>
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+
+                        {{-- KIRI: TITLE --}}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-people-fill fs-5 me-2"></i>
+                            <span class="fw-semibold">Akun Terdaftar</span>
+                        </div>
+
+                        {{-- KANAN: SEARCH --}}
+                        <form method="GET" action="{{ route('admin.pemilik.index') }}">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" name="search" class="form-control" placeholder="Cari..."
+                                    value="{{ request('search') }}">
+                            </div>
+                        </form>
+
                     </div>
+
 
 
                     <div class="card-body p-0">
@@ -82,31 +96,32 @@
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
 
-{{-- HAPUS --}}
-<form action="{{ route('admin.pemilik.destroy', $p->id) }}" method="POST" class="d-inline">
-    @csrf
-    @method('DELETE')
+                                            {{-- HAPUS --}}
+                                            <form action="{{ route('admin.pemilik.destroy', $p->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
 
-    <button type="button"
-        class="btn btn-sm btn-danger"
-        data-bs-toggle="modal"
-        data-bs-target="#deleteModal{{ $p->id }}">
-        <i class="bi bi-trash-fill"></i>
-    </button>
+                                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal{{ $p->id }}">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
 
-    {{-- MODAL DELETE --}}
-    <div class="modal fade" id="deleteModal{{ $p->id }}" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content text-center p-4" style="border-radius:18px;">
+                                                {{-- MODAL DELETE --}}
+                                                <div class="modal fade" id="deleteModal{{ $p->id }}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                        <div class="modal-content text-center p-4"
+                                                            style="border-radius:18px;">
 
-                {{-- tombol X kanan atas --}}
-                <button type="button"
-                    class="btn-close position-absolute top-0 end-0 m-3"
-                    data-bs-dismiss="modal"></button>
+                                                            {{-- tombol X kanan atas --}}
+                                                            <button type="button"
+                                                                class="btn-close position-absolute top-0 end-0 m-3"
+                                                                data-bs-dismiss="modal"></button>
 
-                {{-- ICON X MERAH --}}
-                <div class="mb-3">
-                    <div style="
+                                                            {{-- ICON X MERAH --}}
+                                                            <div class="mb-3">
+                                                                <div
+                                                                    style="
                         width:70px;
                         height:70px;
                         border-radius:50%;
@@ -115,36 +130,35 @@
                         align-items:center;
                         justify-content:center;
                         margin:auto;">
-                        <span style="font-size:30px;color:#ff5a5a;">✕</span>
-                    </div>
-                </div>
+                                                                    <span style="font-size:30px;color:#ff5a5a;">✕</span>
+                                                                </div>
+                                                            </div>
 
-                {{-- TEXT --}}
-                <h5 class="fw-bold mb-2">Hapus Akun Ini?</h5>
-                <p class="text-muted small mb-4">
-                   Yakin ingin menghapus? data yang telah di hapus tidak dapat di kembalikan.
-                </p>
+                                                            {{-- TEXT --}}
+                                                            <h5 class="fw-bold mb-2">Hapus Akun Ini?</h5>
+                                                            <p class="text-muted small mb-4">
+                                                                Yakin ingin menghapus? data yang telah di hapus tidak dapat
+                                                                di kembalikan.
+                                                            </p>
 
-                {{-- BUTTON --}}
-                <div class="d-flex gap-2">
-                    <button type="button"
-                        class="btn btn-secondary w-100"
-                        data-bs-dismiss="modal">
-                        Cancel
-                    </button>
+                                                            {{-- BUTTON --}}
+                                                            <div class="d-flex gap-2">
+                                                                <button type="button" class="btn btn-secondary w-100"
+                                                                    data-bs-dismiss="modal">
+                                                                    Cancel
+                                                                </button>
 
-                    <button type="submit"
-                        class="btn w-100 text-white"
-                        style="background:#ff5a5a;">
-                        Delete
-                    </button>
-                </div>
+                                                                <button type="submit" class="btn w-100 text-white"
+                                                                    style="background:#ff5a5a;">
+                                                                    Delete
+                                                                </button>
+                                                            </div>
 
-            </div>
-        </div>
-    </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-</form>
+                                            </form>
 
                                         </td>
                                     </tr>

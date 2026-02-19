@@ -120,8 +120,8 @@
                                     <div class="mb-3">
                                         <label class="form-label">Tipe Harga</label>
                                         <select name="tipe_harga" class="form-select">
-                                            <option value="bulanan">Bulanan</option>
-                                            <option value="tahunan">Tahunan</option>
+                                            <option value="bulanan">Bulan</option>
+                                            <option value="tahunan">Tahun</option>
                                         </select>
                                     </div>
 

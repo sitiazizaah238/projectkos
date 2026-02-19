@@ -25,7 +25,9 @@
         {{-- CARI KOS --}}
         <li class="nav-item">
             <a href="{{ route('penyewa.cari.kos') }}"
-                class="nav-link d-flex align-items-center text-dark">
+                class="nav-link d-flex align-items-center
+    {{ request()->routeIs('penyewa.cari.kos') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+
                 <i class="bi bi-search me-2"></i>
                 Cari Kos
             </a>
@@ -33,8 +35,7 @@
 
         {{-- REKOMENDASI --}}
         <li class="nav-item">
-            <a href="#"
-                class="nav-link d-flex align-items-center text-dark">
+            <a href="#" class="nav-link d-flex align-items-center text-dark">
 
                 <i class="bi bi-star me-2"></i>
                 Rekomendasi Kos
@@ -43,8 +44,7 @@
 
         {{-- PENGAJUAN SEWA --}}
         <li class="nav-item">
-            <a href="#"
-                class="nav-link d-flex align-items-center text-dark">
+            <a href="#" class="nav-link d-flex align-items-center text-dark">
 
                 <i class="bi bi-file-earmark-text me-2"></i>
                 Pengajuan Sewa
@@ -53,8 +53,7 @@
 
         {{-- PEMBAYARAN --}}
         <li class="nav-item">
-            <a href="#"
-                class="nav-link d-flex align-items-center text-dark">
+            <a href="#" class="nav-link d-flex align-items-center text-dark">
 
                 <i class="bi bi-wallet me-2"></i>
                 Pembayaran

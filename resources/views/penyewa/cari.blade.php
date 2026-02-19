@@ -144,7 +144,8 @@
                         <div class="row g-4">
 
                             @forelse($kos as $k)
-                                <div class="col-md-4 col-lg-3">
+                                <div class="col-md-6 col-lg-4">
+
                                     <div class="card shadow-sm border-0 h-100" style="border-radius:12px;">
 
                                         @if ($k->foto)
@@ -155,21 +156,38 @@
                                         <div class="card-body d-flex flex-column">
 
                                             @php
-                                                $minHarga = $k->kamars->min('harga');
+                                                $kamarTermurah = $k->kamars->sortBy('harga')->first();
                                             @endphp
 
-                                            <h6 class="fw-bold text-truncate">
+                                            <h6 class="fw-bold text-truncate mb-1">
                                                 {{ $k->nama_kos }}
                                             </h6>
 
-                                            <small class="text-muted text-truncate">
+                                            <small class="text-muted mb-1">
                                                 {{ $k->lokasi }}
                                             </small>
 
-                                            <div class="mt-2 small">
-                                                @if ($minHarga)
-                                                    <span class="text-success fw-bold">
-                                                        Rp {{ number_format($minHarga, 0, ',', '.') }}
+                                            {{-- TIPE KOS --}}
+                                            <small class="mb-2">
+                                                <span class="badge bg-light text-dark border">
+                                                    {{ ucfirst($k->tipe_kos) }}
+                                                </span>
+                                            </small>
+
+                                            {{-- HARGA + TIPE HARGA --}}
+                                            <div class="mt-1 small text-nowrap">
+
+                                                @if ($kamarTermurah)
+                                                    <span class="text-muted">
+                                                        Mulai Dari :
+                                                    </span>
+
+                                                    <span class="fw-bold text-dark">
+                                                        Rp.{{ number_format($kamarTermurah->harga, 0, ',', '.') }}
+                                                    </span>
+
+                                                    <span class="text-muted">
+                                                        /{{ ucfirst($kamarTermurah->tipe_harga) }}
                                                     </span>
                                                 @else
                                                     <span class="text-muted">

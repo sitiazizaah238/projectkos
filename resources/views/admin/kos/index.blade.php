@@ -19,27 +19,41 @@
                 </button>
             </div>
 
-            <div class="p-4 mt-4">
+          <div class="p-3">
+                {{-- TITLE --}}
+<div class="mb-3">
+   <h3 class="fw-bold" style="font-size: 30px;">Manajemen Kos</h3>
+    <small class="text-muted">
+        Manajemen Kos / <span class="text-dark">Data Kos</span>
+    </small>
+</div>
+
 
                 {{-- SEARCH --}}
-                <div class="d-flex justify-content-end mb-3">
-                    <form method="GET" action="{{ route('admin.kos.index') }}">
-                        <div class="input-group" style="width:300px;">
-                            <input type="text" name="search" class="form-control" placeholder="Cari kos / pemilik..."
-                                value="{{ request('search') }}">
-                            <button class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
 
                 {{-- CARD --}}
                 <div class="card shadow-sm">
-                    <div class="card-header bg-dark text-white d-flex align-items-center">
-                        <i class="bi bi-house-fill fs-5 me-2"></i>
-                        <span class="fw-semibold">Data Kos</span>
-                    </div>
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+
+    {{-- KIRI: TITLE --}}
+    <div class="d-flex align-items-center">
+        <i class="bi bi-house-fill fs-5 me-2"></i>
+        <span class="fw-semibold">Data Kos</span>
+    </div>
+
+    {{-- KANAN: SEARCH --}}
+    <form method="GET" action="{{ route('admin.kos.index') }}">
+        <div class="input-group input-group-sm" style="width: 250px;">
+            <span class="input-group-text bg-white">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="search" class="form-control"
+                placeholder="Cari..." value="{{ request('search') }}">
+        </div>
+    </form>
+
+</div>
+
 
                     <div class="card-body p-0">
                         <table class="table table-bordered mb-0">
