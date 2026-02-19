@@ -31,40 +31,41 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-   Route::middleware(['auth','role:admin'])->group(function () {
+    Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::get('/admin/profile', function () {
-        return view('admin.profile');
-    })->name('admin.profile');
-    // DATA PEMILIK
-    Route::get('/admin/pemilik', [App\Http\Controllers\Admin\PemilikController::class, 'index'])
-        ->name('admin.pemilik.index');
+        Route::get('/admin/profile', function () {
+            return view('admin.profile');
+        })->name('admin.profile');
+        // DATA PEMILIK
+        Route::get('/admin/pemilik', [App\Http\Controllers\Admin\PemilikController::class, 'index'])
+            ->name('admin.pemilik.index');
 
-    Route::get('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'show'])
-        ->name('admin.pemilik.show');
+        Route::get('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'show'])
+            ->name('admin.pemilik.show');
 
-    Route::get('/admin/pemilik/{id}/edit', [App\Http\Controllers\Admin\PemilikController::class, 'edit'])
-        ->name('admin.pemilik.edit');
+        Route::get('/admin/pemilik/{id}/edit', [App\Http\Controllers\Admin\PemilikController::class, 'edit'])
+            ->name('admin.pemilik.edit');
 
-    Route::put('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'update'])
-        ->name('admin.pemilik.update');
+        Route::put('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'update'])
+            ->name('admin.pemilik.update');
 
-    Route::delete('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'destroy'])
-        ->name('admin.pemilik.destroy');
+        Route::delete('/admin/pemilik/{id}', [App\Http\Controllers\Admin\PemilikController::class, 'destroy'])
+            ->name('admin.pemilik.destroy');
         // ================= DATA KOS (ADMIN) =================
-Route::get('/admin/kos', [App\Http\Controllers\Admin\KosController::class, 'index'])
-    ->name('admin.kos.index');
+        Route::get('/admin/kos', [App\Http\Controllers\Admin\KosController::class, 'index'])
+            ->name('admin.kos.index');
 
-Route::post('/admin/kos/{id}/approve', [App\Http\Controllers\Admin\KosController::class, 'approve'])
-    ->name('admin.kos.approve');
+        Route::post('/admin/kos/{id}/approve', [App\Http\Controllers\Admin\KosController::class, 'approve'])
+            ->name('admin.kos.approve');
 
-Route::post('/admin/kos/{id}/reject', [App\Http\Controllers\Admin\KosController::class, 'reject'])
-    ->name('admin.kos.reject');
-     // ================= LOG AKTIVITAS =================
-    Route::get('/admin/log-aktivitas',
-        [App\Http\Controllers\Admin\LogAktivitasController::class, 'index']
-    )->name('admin.log.index');
-});
+        Route::post('/admin/kos/{id}/reject', [App\Http\Controllers\Admin\KosController::class, 'reject'])
+            ->name('admin.kos.reject');
+        // ================= LOG AKTIVITAS =================
+        Route::get(
+            '/admin/log-aktivitas',
+            [App\Http\Controllers\Admin\LogAktivitasController::class, 'index']
+        )->name('admin.log.index');
+    });
 
 
 
@@ -76,34 +77,38 @@ Route::post('/admin/kos/{id}/reject', [App\Http\Controllers\Admin\KosController:
     });
 
     // DASHBOARD + PROFILE PEMILIK
-Route::middleware('role:pemilik')->group(function () {
+    Route::middleware('role:pemilik')->group(function () {
 
-    Route::get('/pemilik/dashboard', function () {
-        return view('pemilik.dashboard');
-    })->name('pemilik.dashboard');
-    Route::resource('/pemilik/kos', PemilikKosController::class)
-    ->names('pemilik.kos');
+        Route::get('/pemilik/dashboard', function () {
+            return view('pemilik.dashboard');
+        })->name('pemilik.dashboard');
+        Route::resource('/pemilik/kos', PemilikKosController::class)
+            ->names('pemilik.kos');
 
 
-    // PROFILE PEMILIK
-    Route::get('/pemilik/profile', [ProfilePemilikController::class, 'index'])
-        ->name('pemilik.profile');
+        // PROFILE PEMILIK
+        Route::get('/pemilik/profile', [ProfilePemilikController::class, 'index'])
+            ->name('pemilik.profile');
 
-    Route::post('/pemilik/profile', [ProfilePemilikController::class, 'update'])
-        ->name('pemilik.profile.update');
+        Route::post('/pemilik/profile', [ProfilePemilikController::class, 'update'])
+            ->name('pemilik.profile.update');
         Route::resource('/pemilik/kamar', PemilikKamarController::class)
-    ->names('pemilik.kamar');
-
-});
+            ->names('pemilik.kamar');
+    });
 
 
     Route::middleware('role:penyewa')->group(function () {
         Route::get('/penyewa/dashboard', function () {
             return view('penyewa.dashboard');
         })->name('penyewa.dashboard');
-        Route::get('/penyewa/kos/{id}',
-    [App\Http\Controllers\Penyewa\KosController::class, 'show']
-)->name('penyewa.kos.detail');
+        Route::get(
+            '/penyewa/kos/{id}',
+            [App\Http\Controllers\Penyewa\KosController::class, 'show']
+        )->name('penyewa.kos.detail');
+        Route::get(
+            '/penyewa/cari-kos',
+            [App\Http\Controllers\Penyewa\KosController::class, 'index']
+        )->name('penyewa.cari.kos');
     });
 });
 

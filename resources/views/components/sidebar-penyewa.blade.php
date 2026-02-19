@@ -24,9 +24,8 @@
 
         {{-- CARI KOS --}}
         <li class="nav-item">
-            <a href="#"
+            <a href="{{ route('penyewa.cari.kos') }}"
                 class="nav-link d-flex align-items-center text-dark">
-
                 <i class="bi bi-search me-2"></i>
                 Cari Kos
             </a>
