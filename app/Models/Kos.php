@@ -32,5 +32,8 @@ protected $casts = [
 {
     return $this->hasMany(LogAktivitas::class);
 }
-
+  public function kamars()
+{
+    return $this->hasMany(Kamar::class);
+}
 }

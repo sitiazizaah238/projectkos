@@ -101,6 +101,9 @@ Route::middleware('role:pemilik')->group(function () {
         Route::get('/penyewa/dashboard', function () {
             return view('penyewa.dashboard');
         })->name('penyewa.dashboard');
+        Route::get('/penyewa/kos/{id}',
+    [App\Http\Controllers\Penyewa\KosController::class, 'show']
+)->name('penyewa.kos.detail');
     });
 });
 

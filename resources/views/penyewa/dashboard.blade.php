@@ -171,55 +171,54 @@
                         <i class="bi bi-star-fill"></i> Rekomendasi Kos Untuk Anda
                     </h6>
 
-<div class="row g-4">
+                    <div class="row g-4">
 
-    @forelse($kos as $k)
-        <div class="col-md-4 d-flex">
-            <div class="card shadow-sm w-100 h-100">
+                        @forelse($kos as $k)
+                            <div class="col-md-4 d-flex">
+                                <div class="card shadow-sm w-100 h-100">
 
-                @if ($k->foto)
-                    <img src="{{ asset('storage/' . $k->foto) }}"
-                        class="card-img-top"
-                        style="height:180px; object-fit:cover;">
-                @else
-                    <img src="https://via.placeholder.com/300x180"
-                        class="card-img-top">
-                @endif
+                                    @if ($k->foto)
+                                        <img src="{{ asset('storage/' . $k->foto) }}" class="card-img-top"
+                                            style="height:180px; object-fit:cover;">
+                                    @else
+                                        <img src="https://via.placeholder.com/300x180" class="card-img-top">
+                                    @endif
 
-                <div class="card-body d-flex flex-column">
-                    <h6 class="fw-bold text-truncate">
-                        {{ $k->nama_kos }}
-                    </h6>
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="fw-bold text-truncate">
+                                            {{ $k->nama_kos }}
+                                        </h6>
 
-                    <p class="small mb-1">
-                        <strong>Lokasi:</strong><br>
-                        <span class="text-muted">{{ $k->lokasi }}</span>
-                    </p>
+                                        <p class="small mb-1">
+                                            <strong>Lokasi:</strong><br>
+                                            <span class="text-muted">{{ $k->lokasi }}</span>
+                                        </p>
 
-                    <p class="small">
-                        <strong>Tipe:</strong>
-                        {{ $k->tipe_kos }}
-                    </p>
+                                        <p class="small">
+                                            <strong>Tipe:</strong>
+                                            {{ $k->tipe_kos }}
+                                        </p>
 
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-sm btn-primary w-100">
-                            Lihat Detail
-                        </a>
+                                        <div class="mt-auto">
+                                            <a href="{{ route('penyewa.kos.detail', $k->id) }}"
+                                                class="btn btn-sm btn-primary w-100">
+                                                Lihat Detail
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        @empty
+                            <div class="col-12 text-center">
+                                <div class="text-muted py-4">
+                                    Belum ada kos yang disetujui
+                                </div>
+                            </div>
+                        @endforelse
+
                     </div>
-                </div>
-
-            </div>
-        </div>
-
-    @empty
-        <div class="col-12 text-center">
-            <div class="text-muted py-4">
-                Belum ada kos yang disetujui
-            </div>
-        </div>
-    @endforelse
-
-</div>
 
                 </div>
 
