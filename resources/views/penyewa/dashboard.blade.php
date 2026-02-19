@@ -32,7 +32,7 @@
             {{-- ================= CONTENT ================= --}}
             <div class="p-4" style="background:#f5f7fb;min-height:100vh;">
 
-                <h3 class="fw-bold">Dashboard Penyewa</h3>
+                 <h3 class="fw-bold" style="font-size: 30px;">Dashboard Penyewa</h3>
                 <small class="text-muted">Halo! Selamat Datang {{ Auth::user()->name }}</small>
 
                 {{-- ================= CARD STATISTIK ================= --}}
