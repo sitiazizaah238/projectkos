@@ -36,7 +36,7 @@
 
         {{-- DATA KAMAR --}}
         <li class="nav-item">
-            <a href="#"
+            <a href="{{ route('pemilik.kamar.index') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('pemilik.kamar.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
 

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Pemilik\ProfilePemilikController;
 use App\Http\Controllers\Pemilik\PemilikKosController;
+use App\Http\Controllers\Pemilik\PemilikKamarController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -90,6 +91,9 @@ Route::middleware('role:pemilik')->group(function () {
 
     Route::post('/pemilik/profile', [ProfilePemilikController::class, 'update'])
         ->name('pemilik.profile.update');
+        Route::resource('/pemilik/kamar', PemilikKamarController::class)
+    ->names('pemilik.kamar');
+
 });
 
 
