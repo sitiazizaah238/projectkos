@@ -2,7 +2,11 @@
 @php
     use App\Models\Kos;
 
-    $kos = Kos::with('kamars')->where('status', 'disetujui')->latest()->get();
+    $kos = Kos::with('kamars')
+        ->where('status', 'disetujui')
+        ->latest()
+        ->take(3) // ⬅️ BATASI 3 DATA
+        ->get();
 @endphp
 
 @section('content')
