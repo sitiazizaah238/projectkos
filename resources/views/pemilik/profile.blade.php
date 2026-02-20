@@ -7,13 +7,29 @@
         @include('components.sidebar-pemilik')
 
         <div class="flex-grow-1">
-            {{-- TOPBAR --}}
+           {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
-                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
+                <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
-                    <span class="me-2">{{ Auth::user()->name }}</span>
-                    <i class="bi bi-person-circle fs-3"></i>
+                    <span class="fw-semibold text-white small">
+                        {{ Auth::user()->name }}
+                    </span>
+
+                    @if (Auth::user()->photo)
+                        <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                            style="
+                    width:35px;
+                    height:35px;
+                    min-width:35px;
+                    min-height:35px;
+                    border-radius:50%;
+                    object-fit:cover;
+                ">
+                    @else
+                        <i class="bi bi-person-circle fs-3"></i>
+                    @endif
+
                 </button>
             </div>
 
@@ -36,8 +52,8 @@
                         Edit Profile Pemilik
                     </h6>
 
-                    <form action="{{ route('pemilik.profile.update') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                 <form action="{{ route('pemilik.profile.update') }}" method="POST" enctype="multipart/form-data">
+    @csrf
 
                         {{-- FOTO --}}
                         <div class="mb-3">
