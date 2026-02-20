@@ -38,12 +38,7 @@
                 <h3 class="fw-bold">Profile Pemilik</h3>
                 <small class="text-muted">Manajemen Akun / Profile Pemilik</small>
 
-                {{-- SUCCESS MESSAGE --}}
-                @if (session('success'))
-                    <div class="alert alert-success mt-3">
-                        {{ session('success') }}
-                    </div>
-                @endif
+
 
                 <div class="card mt-4 shadow-sm p-4" style="border-radius:12px">
 
@@ -166,4 +161,12 @@
         </div>
     </div>
 </div>
+ <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#0d6efd'
+            });
+        </script>
 @endsection

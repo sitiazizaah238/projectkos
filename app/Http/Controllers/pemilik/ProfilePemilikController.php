@@ -53,7 +53,7 @@ class ProfilePemilikController extends Controller
     }
 
     $user->save();
-     return redirect()->route('pemilik.dashboard')
-        ->with('success', 'Profile berhasil diperbarui');
+return redirect()->route('pemilik.profile')
+    ->with('success', 'Profile berhasil diperbarui');
 }
 }
