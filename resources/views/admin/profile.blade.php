@@ -10,13 +10,35 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
-                <div class="text-white">
-                    {{ Auth::user()->email }}
-                    <i class="bi bi-person-circle ms-2 fs-4"></i>
-                </div>
-            </div>
+            <div class="topbar d-flex justify-content-between align-items-center px-4 w-100">
 
+                {{-- KIRI (BIAR STABIL, WALAU KOSONG) --}}
+                <div></div>
+
+                {{-- KANAN (PROFILE) --}}
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn text-white d-flex align-items-center gap-3">
+
+                        <span class="fw-semibold small">
+                            {{ Auth::user()->name }}
+                        </span>
+
+                        @if (Auth::user()->photo)
+                            <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                                style="
+                        width:35px;
+                        height:35px;
+                        border-radius:50%;
+                        object-fit:cover;
+                    ">
+                        @else
+                            <i class="bi bi-person-circle fs-3"></i>
+                        @endif
+
+                    </button>
+                </div>
+
+            </div>
             {{-- CONTENT --}}
             <div class="p-4">
 
@@ -142,18 +164,29 @@
         }
     </style>
     <script>
-function togglePassword(id, el) {
-    let input = document.getElementById(id);
-    let icon = el.querySelector("i");
+        function togglePassword(id, el) {
+            let input = document.getElementById(id);
+            let icon = el.querySelector("i");
 
-    if (input.type === "password") {
-        input.type = "text";
-        icon.classList.replace("bi-eye", "bi-eye-slash");
-    } else {
-        input.type = "password";
-        icon.classList.replace("bi-eye-slash", "bi-eye");
-    }
-}
-</script>
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#0d6efd'
+            });
+        </script>
+    @endif
 @endsection

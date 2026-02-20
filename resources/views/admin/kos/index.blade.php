@@ -8,25 +8,47 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
-                @include('components.notif-admin')
+            <div class="topbar d-flex justify-content-between align-items-center px-4 w-100">
 
-                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#profileModal">
+                {{-- KIRI (BIAR STABIL, WALAU KOSONG) --}}
+                <div></div>
 
-                    <span class="me-2">{{ Auth::user()->name }}</span>
-                    <i class="bi bi-person-circle fs-3"></i>
-                </button>
+                {{-- KANAN (PROFILE) --}}
+                <div class="d-flex align-items-center">
+                    @include('components.notif-admin')
+                    <button type="button" class="btn text-white d-flex align-items-center gap-3" data-bs-toggle="modal"
+                        data-bs-target="#profileModal">
+
+                        <span class="fw-semibold small">
+                            {{ Auth::user()->name }}
+                        </span>
+
+                        @if (Auth::user()->photo)
+                            <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                                style="
+                width:35px;
+                height:35px;
+                border-radius:50%;
+                object-fit:cover;
+            ">
+                        @else
+                            <i class="bi bi-person-circle fs-3"></i>
+                        @endif
+
+                    </button>
+                </div>
+
+
             </div>
 
-          <div class="p-3">
+            <div class="p-3">
                 {{-- TITLE --}}
-<div class="mb-3">
-   <h3 class="fw-bold" style="font-size: 30px;">Manajemen Kos</h3>
-    <small class="text-muted">
-        Manajemen Kos / <span class="text-dark">Data Kos</span>
-    </small>
-</div>
+                <div class="mb-3">
+                    <h3 class="fw-bold" style="font-size: 30px;">Manajemen Kos</h3>
+                    <small class="text-muted">
+                        Manajemen Kos / <span class="text-dark">Data Kos</span>
+                    </small>
+                </div>
 
 
                 {{-- SEARCH --}}
@@ -35,24 +57,24 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
 
-    {{-- KIRI: TITLE --}}
-    <div class="d-flex align-items-center">
-        <i class="bi bi-house-fill fs-5 me-2"></i>
-        <span class="fw-semibold">Data Kos</span>
-    </div>
+                        {{-- KIRI: TITLE --}}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-house-fill fs-5 me-2"></i>
+                            <span class="fw-semibold">Data Kos</span>
+                        </div>
 
-    {{-- KANAN: SEARCH --}}
-    <form method="GET" action="{{ route('admin.kos.index') }}">
-        <div class="input-group input-group-sm" style="width: 250px;">
-            <span class="input-group-text bg-white">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" name="search" class="form-control"
-                placeholder="Cari..." value="{{ request('search') }}">
-        </div>
-    </form>
+                        {{-- KANAN: SEARCH --}}
+                        <form method="GET" action="{{ route('admin.kos.index') }}">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" name="search" class="form-control" placeholder="Cari..."
+                                    value="{{ request('search') }}">
+                            </div>
+                        </form>
 
-</div>
+                    </div>
 
 
                     <div class="card-body p-0">
@@ -193,28 +215,27 @@
         });
     </script>
     {{-- MODAL PROFILE --}}
-<div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content p-3 text-center" style="border-radius:20px;">
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
 
-            <div class="mb-3">
-                <div class="fw-bold">{{ Auth::user()->name }}</div>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('admin.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
+
             </div>
-
-            <a href="{{ route('admin.profile') }}" class="btn btn-primary w-100 mb-2">
-                Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Logout
-                </button>
-            </form>
-
         </div>
     </div>
-</div>
-
 @endsection

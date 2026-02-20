@@ -9,14 +9,36 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
-                @include('components.notif-admin')
-                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#profileModal">
+            <div class="topbar d-flex justify-content-between align-items-center px-4 w-100">
 
-                    <span class="me-2">{{ Auth::user()->name }}</span>
-                    <i class="bi bi-person-circle fs-3"></i>
-                </button>
+                {{-- KIRI (BIAR STABIL, WALAU KOSONG) --}}
+                <div></div>
+
+                {{-- KANAN (PROFILE) --}}
+                <div class="d-flex align-items-center">
+                    @include('components.notif-admin')
+                    <button type="button" class="btn text-white d-flex align-items-center gap-3" data-bs-toggle="modal"
+                        data-bs-target="#profileModal">
+
+                        <span class="fw-semibold small">
+                            {{ Auth::user()->name }}
+                        </span>
+
+                        @if (Auth::user()->photo)
+                            <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                                style="
+                width:35px;
+                height:35px;
+                border-radius:50%;
+                object-fit:cover;
+            ">
+                        @else
+                            <i class="bi bi-person-circle fs-3"></i>
+                        @endif
+
+                    </button>
+                </div>
+
             </div>
 
 
@@ -24,7 +46,7 @@
             <div class="p-3">
                 {{-- TITLE --}}
                 <div class="mb-3">
-                  <h3 class="fw-bold" style="font-size: 29px;"> Manajemen Akun</h3>
+                    <h3 class="fw-bold" style="font-size: 29px;"> Manajemen Akun</h3>
                     <small class="text-muted">
                         Manajemen Akun / <span class="text-dark">Daftar Akun</span>
                     </small>

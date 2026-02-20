@@ -71,14 +71,26 @@ $notifKos = Kos::where('status', 'menunggu')
     </div>
 
     {{-- PROFILE --}}
-    <button type="button"
-        class="btn text-white d-flex align-items-center"
-        data-bs-toggle="modal"
-        data-bs-target="#profileModal">
+   <button type="button"
+    class="btn text-white d-flex align-items-center gap-2"
+    data-bs-toggle="modal"
+    data-bs-target="#profileModal">
 
-        <span class="me-2">{{ Auth::user()->name }}</span>
+    <span>{{ Auth::user()->name }}</span>
+
+    @if (Auth::user()->photo)
+        <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+            style="
+                width:35px;
+                height:35px;
+                border-radius:50%;
+                object-fit:cover;
+            ">
+    @else
         <i class="bi bi-person-circle fs-3"></i>
-    </button>
+    @endif
+
+</button>
 
 </div>
 
