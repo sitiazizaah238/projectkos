@@ -15,7 +15,20 @@
                     data-bs-target="#profileModal">
 
                     <span class="me-2">{{ Auth::user()->name }}</span>
-                    <i class="bi bi-person-circle fs-3"></i>
+
+                    @if (Auth::user()->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->photo) }}"
+                            style="
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid white;
+         ">
+                    @else
+                        <i class="bi bi-person-circle fs-3"></i>
+                    @endif
+
                 </button>
 
             </div>
@@ -233,7 +246,7 @@
                     <small class="text-muted">{{ Auth::user()->email }}</small>
                 </div>
 
-                <a href="#" class="btn btn-primary w-100 mb-2">
+                <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">
                     Profil
                 </a>
 

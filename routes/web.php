@@ -109,6 +109,12 @@ Route::middleware('auth')->group(function () {
             '/penyewa/cari-kos',
             [App\Http\Controllers\Penyewa\KosController::class, 'index']
         )->name('penyewa.cari.kos');
+        // PROFILE PENYEWA
+Route::get('/penyewa/profile', [App\Http\Controllers\Penyewa\ProfilePenyewaController::class, 'index'])
+    ->name('penyewa.profile');
+
+Route::post('/penyewa/profile', [App\Http\Controllers\Penyewa\ProfilePenyewaController::class, 'update'])
+    ->name('penyewa.profile.update');
     });
 });
 
