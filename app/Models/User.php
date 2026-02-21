@@ -45,4 +45,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserPreference::class);
     }
+    public function metodePembayaran()
+{
+    return $this->hasMany(MetodePembayaran::class);
+}
 }

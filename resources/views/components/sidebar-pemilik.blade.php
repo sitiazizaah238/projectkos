@@ -47,18 +47,17 @@
 
         {{-- DATA PENYEWA --}}
         <li class="nav-item">
-            <a href="#"
+            <a href="{{ route('pemilik.pengajuan.index') }}"
                 class="nav-link d-flex align-items-center
-                {{ request()->routeIs('pemilik.penyewa.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-
+    {{ request()->routeIs('pemilik.pengajuan.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
                 <i class="bi bi-people me-2"></i>
-                Data Penyewa
+                Data Pengajuan
             </a>
         </li>
 
         {{-- PEMBAYARAN --}}
         <li class="nav-item">
-            <a href="#"
+            <a href= "{{ route('pemilik.pembayaran.index') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('pemilik.pembayaran.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
 
@@ -68,7 +67,7 @@
         </li>
         {{-- VERIFIKASI PEMBAYARAN --}}
         <li class="nav-item">
-            <a href="#"
+            <a href="{{ route('pemilik.verifikasi.index') }}"
                 class="nav-link d-flex align-items-center
         {{ request()->routeIs('pemilik.pembayaran.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
 

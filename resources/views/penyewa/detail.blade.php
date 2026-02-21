@@ -163,9 +163,10 @@
                                         </td>
 
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-primary rounded-pill">
+                                            <button class="btn btn-primary rounded-pill btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#ajukanModal{{ $kamar->id }}">
                                                 Ajukan Sewa >
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                 @empty
@@ -180,7 +181,73 @@
                     </div>
 
                 </div>
+<!-- Modal Ajukan -->
+<div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 p-4">
 
+            <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
+
+            <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
+                @csrf
+
+                <input type="hidden" name="kos_id" value="{{ $kos->id }}">
+                <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="fw-semibold">Nama Penyewa</label>
+                        <input type="text" class="form-control"
+                            value="{{ Auth::user()->name }}" readonly>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="fw-semibold">Email</label>
+                        <input type="text" class="form-control"
+                            value="{{ Auth::user()->email }}" readonly>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-semibold">Nama Kos</label>
+                    <input type="text" class="form-control"
+                        value="{{ $kos->nama_kos }}" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-semibold">Nama Kamar</label>
+                    <input type="text" class="form-control"
+                        value="{{ $kamar->nama_kamar }}" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-semibold">Tanggal Mulai</label>
+                    <input type="date" name="tanggal_mulai"
+                        class="form-control" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="fw-semibold">Durasi Sewa</label>
+                    <select name="durasi" class="form-select" required>
+                        <option value="1">1 Bulan</option>
+                        <option value="2">2 Bulan</option>
+                        <option value="3">3 Bulan</option>
+                        <option value="6">6 Bulan</option>
+                        <option value="12">12 Bulan</option>
+                    </select>
+                </div>
+
+                <div class="text-end">
+                    <button class="btn btn-primary rounded-pill px-4">
+                        Ajukan Penyewaan
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
                 {{-- ================= BUTTON KEMBALI ================= --}}
                 <div class="text-end mt-4">
                     <a href="{{ route('penyewa.cari.kos') }}" class="btn btn-primary rounded-pill px-4">

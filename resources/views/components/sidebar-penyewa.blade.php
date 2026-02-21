@@ -46,7 +46,9 @@
 
         {{-- PENGAJUAN SEWA --}}
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center text-dark">
+            <a href="{{ route('penyewa.pengajuan.index') }}"
+                class="nav-link d-flex align-items-center
+        {{ request()->routeIs('penyewa.pengajuan.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
 
                 <i class="bi bi-file-earmark-text me-2"></i>
                 Pengajuan Sewa

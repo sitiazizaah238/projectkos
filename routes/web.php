@@ -10,6 +10,7 @@ use App\Http\Controllers\Pemilik\PemilikKamarController;
 use App\Http\Controllers\Penyewa\ProfilePenyewaController;
 use App\Http\Controllers\Penyewa\RecommendationController;
 use App\Http\Controllers\Penyewa\KosController as PenyewaKosController;
+use App\Http\Controllers\Penyewa\PembayaranController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -88,8 +89,6 @@ Route::middleware('auth')->group(function () {
         })->name('pemilik.dashboard');
         Route::resource('/pemilik/kos', PemilikKosController::class)
             ->names('pemilik.kos');
-
-
         // PROFILE PEMILIK
         Route::get('/pemilik/profile', [ProfilePemilikController::class, 'index'])
             ->name('pemilik.profile');
@@ -98,9 +97,70 @@ Route::middleware('auth')->group(function () {
             ->name('pemilik.profile.update');
         Route::resource('/pemilik/kamar', PemilikKamarController::class)
             ->names('pemilik.kamar');
+        Route::get(
+            '/pemilik/pengajuan',
+            [App\Http\Controllers\Pemilik\PengajuanController::class, 'index']
+        )->name('pemilik.pengajuan.index');
+        Route::get(
+            '/pemilik/pengajuan/{id}',
+            [App\Http\Controllers\Pemilik\PengajuanController::class, 'show']
+        )->name('pemilik.pengajuan.show');
+
+        Route::post(
+            '/pemilik/pengajuan/{id}/approve',
+            [App\Http\Controllers\Pemilik\PengajuanController::class, 'approve']
+        )->name('pemilik.pengajuan.approve');
+
+        Route::post(
+            '/pemilik/pengajuan/{id}/reject',
+            [App\Http\Controllers\Pemilik\PengajuanController::class, 'reject']
+        )->name('pemilik.pengajuan.reject');
+        Route::get(
+            '/pemilik/pembayaran',
+            [App\Http\Controllers\Pemilik\MetodePembayaranController::class, 'index']
+        )->name('pemilik.pembayaran.index');
+
+        Route::get(
+            '/pemilik/pembayaran/create',
+            [App\Http\Controllers\Pemilik\MetodePembayaranController::class, 'create']
+        )->name('pemilik.pembayaran.create');
+
+        Route::post(
+            '/pemilik/pembayaran/store',
+            [App\Http\Controllers\Pemilik\MetodePembayaranController::class, 'store']
+        )->name('pemilik.pembayaran.store');
+
+        Route::delete(
+            '/pemilik/pembayaran/{id}',
+            [App\Http\Controllers\Pemilik\MetodePembayaranController::class, 'destroy']
+        )->name('pemilik.pembayaran.destroy');
+        Route::get(
+            '/pemilik/pembayaran/{id}/edit',
+            [App\Http\Controllers\Pemilik\MetodePembayaranController::class, 'edit']
+        )->name('pemilik.pembayaran.edit');
+
+        Route::put(
+            '/pemilik/pembayaran/{id}',
+            [App\Http\Controllers\Pemilik\MetodePembayaranController::class, 'update']
+        )->name('pemilik.pembayaran.update');
+        // ================= VERIFIKASI PEMBAYARAN =================
+        Route::get(
+            '/pemilik/verifikasi',
+            [App\Http\Controllers\Pemilik\VerifikasiPembayaranController::class, 'index']
+        )->name('pemilik.verifikasi.index');
+
+        Route::post(
+            '/pemilik/verifikasi/{id}/konfirmasi',
+            [App\Http\Controllers\Pemilik\VerifikasiPembayaranController::class, 'konfirmasi']
+        )->name('pemilik.verifikasi.konfirmasi');
+
+        Route::post(
+            '/pemilik/verifikasi/{id}/tolak',
+            [App\Http\Controllers\Pemilik\VerifikasiPembayaranController::class, 'tolak']
+        )->name('pemilik.verifikasi.tolak');
     });
 
-
+    // punya penyewa
     Route::middleware('role:penyewa')->group(function () {
         Route::get(
             '/penyewa/dashboard',
@@ -119,6 +179,22 @@ Route::middleware('auth')->group(function () {
             '/penyewa/cari-kos',
             [PenyewaKosController::class, 'search']
         )->name('penyewa.cari.kos');
+        Route::post(
+            '/penyewa/pengajuan',
+            [App\Http\Controllers\Penyewa\PengajuanController::class, 'store']
+        )->name('penyewa.pengajuan.store');
+        Route::get(
+            '/penyewa/pengajuan',
+            [App\Http\Controllers\Penyewa\PengajuanController::class, 'index']
+        )->name('penyewa.pengajuan.index');
+        Route::post(
+            '/penyewa/bayar/{id}',
+            [App\Http\Controllers\Penyewa\PembayaranController::class, 'store']
+        )->name('penyewa.bayar');
+        Route::post(
+            '/penyewa/bayar/{id}',
+            [PembayaranController::class, 'store']
+        )->name('penyewa.bayar');
         // PROFILE PENYEWA
         Route::get('/penyewa/profile', [ProfilePenyewaController::class, 'index'])
             ->name('penyewa.profile');

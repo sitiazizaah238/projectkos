@@ -36,4 +36,5 @@ protected $casts = [
 {
     return $this->hasMany(Kamar::class);
 }
+
 }
