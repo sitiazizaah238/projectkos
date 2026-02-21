@@ -1,13 +1,4 @@
 @extends('layouts.app')
-@php
-    use App\Models\Kos;
-
-    $kos = Kos::with('kamars')
-        ->where('status', 'disetujui')
-        ->latest()
-        ->take(3) // ⬅️ BATASI 3 DATA
-        ->get();
-@endphp
 
 @section('content')
     <div class="d-flex">
@@ -190,49 +181,29 @@
 
                     <div class="row g-4">
 
-                        @forelse($kos as $k)
+                        {{-- Bagian Card Rekomendasi --}}
+                        @forelse($rekomendasi as $k)
                             <div class="col-md-4 d-flex">
-                                <div class="card shadow-sm w-100 h-100">
+                                <div class="card shadow-sm w-100 h-100 position-relative">
+
+                                    {{-- LABEL HASIL AI [cite: 80, 86, 87] --}}
+                                    @if (isset($k->score))
+                                        <div class="position-absolute p-2" style="z-index: 10;">
+                                            <span class="badge bg-success shadow-sm">
+                                                {{ round($k->score) }}% - {{ $k->label }}
+                                            </span>
+                                        </div>
+                                    @endif
 
                                     @if ($k->foto)
                                         <img src="{{ asset('storage/' . $k->foto) }}" class="card-img-top"
                                             style="height:180px; object-fit:cover;">
-                                    @else
-                                        <img src="https://via.placeholder.com/300x180" class="card-img-top">
                                     @endif
 
                                     <div class="card-body d-flex flex-column">
-                                        @php
-                                            $minHarga = $k->kamars->min('harga');
-                                            $maxHarga = $k->kamars->max('harga');
-                                        @endphp
-                                        <h6 class="fw-bold text-truncate">
-                                            {{ $k->nama_kos }}
-                                        </h6>
+                                        <h6 class="fw-bold text-truncate">{{ $k->nama_kos }}</h6>
+                                        <p class="small mb-1 text-muted">{{ $k->lokasi }}</p>
 
-                                        <p class="small mb-1">
-                                            <strong>Lokasi:</strong><br>
-                                            <span class="text-muted">{{ $k->lokasi }}</span>
-                                        </p>
-
-                                        <p class="small">
-                                            <strong>Tipe:</strong>
-                                            {{ $k->tipe_kos }}
-                                        </p>
-                                        <p class="small mb-2">
-                                            <strong>Harga:</strong><br>
-
-                                            @if ($minHarga)
-                                                <span class="text-success fw-bold">
-                                                    Rp {{ number_format($minHarga, 0, ',', '.') }}
-                                                    @if ($minHarga != $maxHarga)
-                                                        - Rp {{ number_format($maxHarga, 0, ',', '.') }}
-                                                    @endif
-                                                </span>
-                                            @else
-                                                <span class="text-muted">Belum ada kamar</span>
-                                            @endif
-                                        </p>
                                         <div class="mt-auto">
                                             <a href="{{ route('penyewa.kos.detail', $k->id) }}"
                                                 class="btn btn-sm btn-primary w-100">
@@ -240,14 +211,23 @@
                                             </a>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
-
                         @empty
-                            <div class="col-12 text-center">
-                                <div class="text-muted py-4">
-                                    Belum ada kos yang disetujui
+                            <div class="col-12 text-center py-5">
+                                <div class="card border-0 shadow-sm p-5" style="border-radius: 20px;">
+                                    <i class="bi bi-search fs-1 text-primary mb-3"></i>
+                                    <h5 class="fw-bold">Belum Ada Rekomendasi</h5>
+                                    <p class="text-muted">
+                                        Kami belum mengenal seleramu. Silakan gunakan fitur
+                                        <strong>"Cari Kos"</strong> dan gunakan filter untuk membantu AI kami bekerja.
+                                    </p>
+                                    <div class="mt-2">
+                                        <a href="{{ route('penyewa.cari.kos') }}"
+                                            class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                                            <i class="bi bi-search me-1"></i> Mulai Mencari Sekarang
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         @endforelse

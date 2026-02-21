@@ -28,7 +28,7 @@ class AuthController extends Controller
         'alamat' => $r->alamat,
         'password' => bcrypt($r->password),
         'role'   => 'pemilik',
-        'status'   => 'aktif'
+        // 'status'   => 'aktif'
     ]);
 
     return redirect('/login')->with('success', 'Registrasi berhasil');

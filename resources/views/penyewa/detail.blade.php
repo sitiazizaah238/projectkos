@@ -183,7 +183,7 @@
 
                 {{-- ================= BUTTON KEMBALI ================= --}}
                 <div class="text-end mt-4">
-                    <a href="{{ route('penyewa.dashboard') }}" class="btn btn-primary rounded-pill px-4">
+                    <a href="{{ route('penyewa.cari.kos') }}" class="btn btn-primary rounded-pill px-4">
                         ← Kembali
                     </a>
                 </div>

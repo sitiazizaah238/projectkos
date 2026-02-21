@@ -33,13 +33,16 @@ class User extends Authenticatable
         ];
     }
     public function logAktivitas()
-{
-    return $this->hasMany(LogAktivitas::class);
-}
-public function kos()
-{
-    return $this->hasMany(\App\Models\Kos::class);
-}
+    {
+        return $this->hasMany(LogAktivitas::class);
+    }
+    public function kos()
+    {
+        return $this->hasMany(\App\Models\Kos::class);
+    }
 
-
+    public function preference()
+    {
+        return $this->hasOne(UserPreference::class);
+    }
 }

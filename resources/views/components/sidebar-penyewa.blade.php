@@ -35,7 +35,9 @@
 
         {{-- REKOMENDASI --}}
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center text-dark">
+            <a href="{{ route('penyewa.rekomendasi') }}"
+                class="nav-link d-flex align-items-center
+             {{ request()->routeIs('penyewa.rekomendasi') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
 
                 <i class="bi bi-star me-2"></i>
                 Rekomendasi Kos
