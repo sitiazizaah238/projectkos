@@ -1,5 +1,13 @@
 @extends('layouts.app')
-
+@php
+    $fasilitasIcon = [
+        'Parkir' => 'bi-p-circle',
+        'Wifi' => 'bi-wifi',
+        'CCTV' => 'bi-camera-video',
+        'Dapur' => 'bi-cup-hot',
+        'Musola' => 'bi-moon',
+    ];
+@endphp
 @section('content')
     <div class="d-flex">
         @include('components.sidebar-penyewa')
@@ -15,36 +23,110 @@
                 <p class="text-muted">Berdasarkan preferensi pencarian dan riwayat Anda.</p>
 
                 <div class="row g-4 mt-2">
+
                     @forelse($rekomendasi as $k)
+                        @php
+                            $tipeIcon = match ($k->tipe_kos) {
+                                'putra' => 'bi-gender-male',
+                                'putri' => 'bi-gender-female',
+                                'campur' => 'bi-gender-ambiguous',
+                                default => 'bi-house',
+                            };
+                            $fasKos = is_array($k->fasilitas) ? $k->fasilitas : [];
+                            $kamarTermurah = $k->kamars->sortBy('harga')->first();
+                            $kamarTermahal = $k->kamars->sortBy('harga')->last();
+                        @endphp
                         <div class="col-md-4">
                             <div class="card shadow-sm border-0 h-100" style="border-radius:16px; overflow:hidden;">
-                                {{-- Label Persentase AI [cite: 80, 86] --}}
-                                <div class="position-absolute p-2">
+
+                                {{-- Badge Skor AI --}}
+                                <div class="position-absolute p-2" style="z-index:1;">
                                     <span
                                         class="badge {{ $k->similarity_score >= 80 ? 'bg-success' : 'bg-primary' }} shadow">
                                         {{ round($k->similarity_score) }}% - {{ $k->label }}
                                     </span>
                                 </div>
 
-                                <img src="{{ asset('storage/' . $k->foto) }}" class="card-img-top"
-                                    style="height:200px; object-fit:cover;">
+                                {{-- Foto --}}
+                                @if ($k->foto)
+                                    <img src="{{ asset('storage/' . $k->foto) }}" class="card-img-top"
+                                        style="height:180px; object-fit:cover;">
+                                @else
+                                    <div style="height:180px; background:#dee2e6;"
+                                        class="d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-house fs-1 text-muted"></i>
+                                    </div>
+                                @endif
 
-                                <div class="card-body">
-                                    <h5 class="fw-bold mb-1">{{ $k->nama_kos }}</h5>
-                                    <small class="text-muted d-block mb-2"><i class="bi bi-geo-alt"></i>
-                                        {{ $k->lokasi }}</small>
+                                <div class="card-body d-flex flex-column">
 
-                                    <div class="d-flex gap-1 mb-3">
-                                        <span class="badge bg-light text-dark border">{{ ucfirst($k->tipe_kos) }}</span>
-                                        @if ($k->fasilitas)
-                                            <span class="badge bg-light text-dark border">{{ count($k->fasilitas) }}
-                                                Fasilitas</span>
-                                        @endif
+                                    <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                                        <h6 class="fw-bold mb-0" style="min-width:0;">{{ $k->nama_kos }}</h6>
+                                        <span class="badge bg-primary flex-shrink-0">
+                                            <i class="bi {{ $tipeIcon }} me-1"></i>{{ ucfirst($k->tipe_kos) }}
+                                        </span>
                                     </div>
 
-                                    <a href="{{ route('penyewa.kos.detail', $k->id) }}" class="btn btn-primary w-100">
-                                        Lihat Detail
-                                    </a>
+                                    {{-- 2. Alamat --}}
+                                    <small class="text-muted mb-2 d-block">
+                                        <i class="bi bi-geo-alt"></i> {{ $k->lokasi }}
+                                    </small>
+
+                                    {{-- 3. Fasilitas Kos --}}
+                                    @php
+                                        $fasKos = is_array($k->fasilitas) ? $k->fasilitas : [];
+                                    @endphp
+                                    @if (count($fasKos) > 0)
+                                        <div class="mb-2">
+                                            <small class="text-muted fw-semibold">
+                                                <i class="bi bi-building me-1 text-primary"></i>Fasilitas:
+                                            </small>
+                                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                                @foreach ($fasKos as $fas)
+                                                    <span class="badge text-dark d-flex align-items-center gap-1"
+                                                        style="background: linear-gradient(135deg, #e8f4fd, #d1ecf1); border: 1px solid #bee5eb; font-weight:500;">
+                                                        <i
+                                                            class="bi {{ $fasilitasIcon[$fas] ?? 'bi-check-circle' }} text-primary"></i>
+                                                        {{ $fas }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    {{-- 4. Harga --}}
+                                    @php
+                                        $kamarTermurah = $k->kamars->sortBy('harga')->first();
+                                        $kamarTermahal = $k->kamars->sortBy('harga')->last();
+                                    @endphp
+                                    <div class="mb-3">
+                                        @if ($kamarTermurah)
+                                            <small class="text-muted fw-semibold">
+                                                <i class="bi bi-tag me-1 text-primary"></i>Harga mulai dari:
+                                            </small>
+                                            <div>
+                                                <span class="fw-bold text-dark">
+                                                    Rp{{ number_format($kamarTermurah->harga, 0, ',', '.') }}
+                                                </span>
+                                                @if ($kamarTermahal && $kamarTermahal->harga != $kamarTermurah->harga)
+                                                    <span class="text-muted"> – </span>
+                                                    <span class="fw-bold text-dark">
+                                                        Rp{{ number_format($kamarTermahal->harga, 0, ',', '.') }}
+                                                    </span>
+                                                @endif
+                                                <span class="text-muted">/{{ ucfirst($kamarTermurah->tipe_harga) }}</span>
+                                            </div>
+                                        @else
+                                            <small class="text-muted">Belum ada kamar tersedia</small>
+                                        @endif
+                                    </div>
+                                        {{-- 5. Tombol Detail --}}
+                                        <div class="mt-auto">
+                                            <a href="{{ route('penyewa.kos.detail', $k->id) }}"
+                                                class="btn btn-primary w-100">
+                                                Lihat Detail
+                                            </a>
+                                        </div>
                                 </div>
                             </div>
                         </div>
