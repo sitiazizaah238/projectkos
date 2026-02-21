@@ -54,7 +54,8 @@
                                     <th>Nama Kamar</th>
                                     <th>Tanggal Mulai</th>
                                     <th>Durasi Sewa</th>
-                                    <th>Status</th>
+                                    <th>Status Pengajuan</th>
+                                    <th>Status Kamar</th>
                                     <th>Alasan</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -79,14 +80,26 @@
                                             <td>
                                                 @if ($item->status == 'menunggu')
                                                     <span class="badge bg-warning">Menunggu</span>
+                                                @elseif($item->status == 'disetujui')
+                                                    <span class="badge bg-primary">Disetujui</span>
                                                 @elseif($item->status == 'aktif')
-                                                    <span class="badge bg-success">Disetujui</span>
+                                                    <span class="badge bg-success">Aktif</span>
                                                 @elseif($item->status == 'ditolak')
                                                     <span class="badge bg-danger">Ditolak</span>
                                                 @else
                                                     <span class="badge bg-secondary">-</span>
                                                 @endif
                                             </td>
+                                            {{-- STATUS KAMAR --}}
+<td>
+    @if ($item->kamar->status == 'tersedia')
+        <span class="badge bg-success">Tersedia</span>
+    @elseif($item->kamar->status == 'terisi')
+        <span class="badge bg-danger">Terisi</span>
+    @else
+        <span class="badge bg-secondary">-</span>
+    @endif
+</td>
 
                                             {{-- ALASAN --}}
                                             <td>
@@ -98,134 +111,131 @@
                                             </td>
 
                                             {{-- AKSI --}}
-                                            {{-- AKSI --}}
                                             <td>
-                                                @if ($item->status == 'aktif' && !$item->bukti_bayar)
+                                                @if ($item->status == 'disetujui')
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalBayar{{ $item->id }}">
                                                         Bayar Sekarang
                                                     </button>
-                                                @elseif($item->status == 'aktif' && $item->bukti_bayar)
-                                                    <span class="badge bg-info">Sudah Bayar</span>
+                                                @elseif($item->status == 'aktif')
+                                                    <span class="badge bg-success">Sudah Dibayar</span>
                                                 @else
                                                     -
                                                 @endif
                                             </td>
+
                                         </tr>
                                         {{-- ================= MODAL PEMBAYARAN ================= --}}
-                                        @if ($item->status == 'aktif' && !$item->bukti_bayar)
-                                            <div class="modal fade" id="modalBayar{{ $item->id }}" tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content rounded-4 p-4">
+                                        <div class="modal fade" id="modalBayar{{ $item->id }}" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content rounded-4 p-4">
 
-                                                        <h5 class="fw-bold mb-3">Pembayaran Sewa Kamar</h5>
+                                                    <h5 class="fw-bold mb-3">Pembayaran Sewa Kamar</h5>
 
-                                                        {{-- Informasi Sewa --}}
-                                                        <div class="border rounded-4 p-3 mb-3">
-                                                            <div class="fw-semibold mb-2">Informasi Sewa</div>
+                                                    {{-- Informasi Sewa --}}
+                                                    <div class="border rounded-4 p-3 mb-3">
+                                                        <div class="fw-semibold mb-2">Informasi Sewa</div>
 
-                                                            <div class="row text-center">
-                                                                <div class="col">
-                                                                    <small>Nama Kos</small>
-                                                                    <div>{{ $item->kos->nama_kos }}</div>
-                                                                </div>
+                                                        <div class="row text-center">
+                                                            <div class="col">
+                                                                <small>Nama Kos</small>
+                                                                <div>{{ $item->kos->nama_kos }}</div>
+                                                            </div>
 
-                                                                <div class="col">
-                                                                    <small>Durasi Sewa</small>
-                                                                    <div>{{ $item->durasi }} Bulan</div>
-                                                                </div>
+                                                            <div class="col">
+                                                                <small>Durasi Sewa</small>
+                                                                <div>{{ $item->durasi }} Bulan</div>
+                                                            </div>
 
-                                                                <div class="col">
-                                                                    <small>Nama Kamar</small>
-                                                                    <div>{{ $item->kamar->nama_kamar }}</div>
-                                                                </div>
+                                                            <div class="col">
+                                                                <small>Nama Kamar</small>
+                                                                <div>{{ $item->kamar->nama_kamar }}</div>
+                                                            </div>
 
-                                                                <div class="col">
-                                                                    <small>Total Bayar</small>
-                                                                    <div class="fw-bold text-success">
-                                                                        Rp
-                                                                        {{ number_format($item->total_bayar, 0, ',', '.') }}
-                                                                    </div>
+                                                            <div class="col">
+                                                                <small>Total Bayar</small>
+                                                                <div class="fw-bold text-success">
+                                                               Rp {{ number_format($item->kamar->harga * $item->durasi, 0, ',', '.') }}
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        {{-- Form Pembayaran --}}
-                                                        <form action="{{ route('penyewa.bayar', $item->id) }}"
-                                                            method="POST" enctype="multipart/form-data">
-                                                            @csrf
+                                                    {{-- Form Pembayaran --}}
+                                                    <form action="{{ route('penyewa.bayar', $item->id) }}" method="POST"
+                                                        enctype="multipart/form-data">
+                                                        @csrf
 
-                                                            {{-- Pilih Metode --}}
+                                                        {{-- Pilih Metode --}}
+                                                        <div class="mb-3">
+                                                            <label class="fw-semibold mb-2">Pilih Metode Pembayaran</label>
+
+                                                            @forelse($item->kos->user->metodePembayaran ?? [] as $metode)
+                                                                <div
+                                                                    class="border rounded-3 p-2 mb-2 d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <input type="radio" name="metode_id"
+                                                                            value="{{ $metode->id }}" required>
+                                                                        {{ $metode->nama_metode }}
+                                                                        <br>
+                                                                        <small>{{ $metode->no_rekening }}</small>
+                                                                    </div>
+
+                                                                    @if ($metode->gambar)
+                                                                        <img src="{{ asset('storage/' . $metode->gambar) }}"
+                                                                            width="70">
+                                                                    @endif
+                                                                </div>
+                                                            @empty
+                                                                <div class="text-muted small">
+                                                                    Metode pembayaran belum tersedia
+                                                                </div>
+                                                            @endforelse
+                                                            {{-- Upload Bukti --}}
                                                             <div class="mb-3">
-                                                                <label class="fw-semibold mb-2">Pilih Metode
-                                                                    Pembayaran</label>
+                                                                <label class="fw-semibold">Upload Bukti Transfer</label>
+                                                                <input type="file" name="bukti" class="form-control"
+                                                                    required>
+                                                            </div>
 
-                                                                @forelse($item->kos->user->metodePembayaran ?? [] as $metode)
-                                                                    <div
-                                                                        class="border rounded-3 p-2 mb-2 d-flex justify-content-between align-items-center">
-                                                                        <div>
-                                                                            <input type="radio" name="metode_id"
-                                                                                value="{{ $metode->id }}" required>
-                                                                            {{ $metode->nama_metode }}
-                                                                            <br>
-                                                                            <small>{{ $metode->no_rekening }}</small>
-                                                                        </div>
+                                                            <div class="d-flex justify-content-end gap-2">
+                                                                <button type="button" class="btn btn-danger"
+                                                                    data-bs-dismiss="modal">
+                                                                    Batal
+                                                                </button>
 
-                                                                        @if ($metode->gambar)
-                                                                            <img src="{{ asset('storage/' . $metode->gambar) }}"
-                                                                                width="70">
-                                                                        @endif
-                                                                    </div>
-                                                                @empty
-                                                                    <div class="text-muted small">
-                                                                        Metode pembayaran belum tersedia
-                                                                    </div>
-                                                                @endforelse
-                                                                {{-- Upload Bukti --}}
-                                                                <div class="mb-3">
-                                                                    <label class="fw-semibold">Upload Bukti Transfer</label>
-                                                                    <input type="file" name="bukti"
-                                                                        class="form-control" required>
-                                                                </div>
+                                                                <button class="btn btn-primary">
+                                                                    Bayar
+                                                                </button>
+                                                            </div>
 
-                                                                <div class="d-flex justify-content-end gap-2">
-                                                                    <button type="button" class="btn btn-danger"
-                                                                        data-bs-dismiss="modal">
-                                                                        Batal
-                                                                    </button>
+                                                    </form>
 
-                                                                    <button class="btn btn-primary">
-                                                                        Bayar
-                                                                    </button>
-                                                                </div>
-                                        @endif
-                                        </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5">
+                                            <div class="d-flex flex-column align-items-center text-muted">
+                                                <i class="bi bi-info-circle fs-1 mb-2"></i>
+                                                <span class="fw-semibold">
+                                                    Silakan mengajukan kos terlebih dahulu
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
 
+                            </tbody>
+
+                        </table>
                     </div>
                 </div>
+
             </div>
-            @endforeach
-        @else
-            <tr>
-                <td colspan="8" class="text-center py-5">
-                    <div class="d-flex flex-column align-items-center text-muted">
-                        <i class="bi bi-info-circle fs-1 mb-2"></i>
-                        <span class="fw-semibold">
-                            Silakan mengajukan kos terlebih dahulu
-                        </span>
-                    </div>
-                </td>
-            </tr>
-            @endif
-
-            </tbody>
-
-            </table>
         </div>
-    </div>
-
-    </div>
-    </div>
     </div>
     {{-- ================= PROFILE MODAL ================= --}}
     <div class="modal fade" id="profileModal" tabindex="-1">

@@ -8,26 +8,19 @@
 
         <div class="flex-grow-1">
 
-            {{-- ================= TOPBAR (SAMA KAYA DASHBOARD) ================= --}}
+            {{-- ================= TOPBAR ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
-                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#profileModal">
+                <button type="button" class="btn text-white d-flex align-items-center"
+                    data-bs-toggle="modal" data-bs-target="#profileModal">
 
                     <span class="me-2">{{ Auth::user()->name }}</span>
 
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/' . Auth::user()->photo) }}"
-                            style="
-            width:40px;
-            height:40px;
-            border-radius:50%;
-            object-fit:cover;
-            border:2px solid white;
-         ">
+                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid white;">
                     @else
                         <i class="bi bi-person-circle fs-3"></i>
                     @endif
-
                 </button>
             </div>
 
@@ -57,7 +50,8 @@
                     {{-- FOTO --}}
                     <div class="col-md-7">
                         @if ($kos->foto)
-                            <img src="{{ asset('storage/' . $kos->foto) }}" class="img-fluid rounded-4 shadow-sm"
+                            <img src="{{ asset('storage/' . $kos->foto) }}"
+                                class="img-fluid rounded-4 shadow-sm"
                                 style="height:280px; object-fit:cover; width:100%;">
                         @endif
                     </div>
@@ -157,18 +151,102 @@
                                         </td>
 
                                         <td>
-                                            <span class="badge bg-success">
-                                                {{ $kamar->status }}
-                                            </span>
+                                            @if($kamar->status == 'tersedia')
+                                                <span class="badge bg-success">
+                                                    {{ $kamar->status }}
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger">
+                                                    {{ $kamar->status }}
+                                                </span>
+                                            @endif
                                         </td>
 
                                         <td>
-                                            <button class="btn btn-primary rounded-pill btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#ajukanModal{{ $kamar->id }}">
-                                                Ajukan Sewa >
-                                            </button>
+                                            @if($kamar->status == 'tersedia')
+                                                <button class="btn btn-primary rounded-pill btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ajukanModal{{ $kamar->id }}">
+                                                    Ajukan Sewa >
+                                                </button>
+                                            @else
+                                                <button class="btn btn-secondary rounded-pill btn-sm" disabled>
+                                                    Tidak Tersedia
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
+
+                                    {{-- ================= MODAL DI DALAM LOOP ================= --}}
+                                    @if($kamar->status == 'tersedia')
+                                    <div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content rounded-4 p-4">
+
+                                                <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
+
+                                                <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
+                                                    @csrf
+
+                                                    <input type="hidden" name="kos_id" value="{{ $kos->id }}">
+                                                    <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label class="fw-semibold">Nama Penyewa</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ Auth::user()->name }}" readonly>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label class="fw-semibold">Email</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ Auth::user()->email }}" readonly>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Nama Kos</label>
+                                                        <input type="text" class="form-control"
+                                                            value="{{ $kos->nama_kos }}" readonly>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Nama Kamar</label>
+                                                        <input type="text" class="form-control"
+                                                            value="{{ $kamar->nama_kamar }}" readonly>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Tanggal Mulai</label>
+                                                        <input type="date" name="tanggal_mulai"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label class="fw-semibold">Durasi Sewa</label>
+                                                        <select name="durasi" class="form-select" required>
+                                                            <option value="1">1 Bulan</option>
+                                                            <option value="2">2 Bulan</option>
+                                                            <option value="3">3 Bulan</option>
+                                                            <option value="6">6 Bulan</option>
+                                                            <option value="12">12 Bulan</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="text-end">
+                                                        <button class="btn btn-primary rounded-pill px-4">
+                                                            Ajukan Penyewaan
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+
                                 @empty
                                     <tr>
                                         <td colspan="6" class="text-center py-3 text-muted">
@@ -181,73 +259,7 @@
                     </div>
 
                 </div>
-<!-- Modal Ajukan -->
-<div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-4 p-4">
 
-            <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
-
-            <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
-                @csrf
-
-                <input type="hidden" name="kos_id" value="{{ $kos->id }}">
-                <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="fw-semibold">Nama Penyewa</label>
-                        <input type="text" class="form-control"
-                            value="{{ Auth::user()->name }}" readonly>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="fw-semibold">Email</label>
-                        <input type="text" class="form-control"
-                            value="{{ Auth::user()->email }}" readonly>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="fw-semibold">Nama Kos</label>
-                    <input type="text" class="form-control"
-                        value="{{ $kos->nama_kos }}" readonly>
-                </div>
-
-                <div class="mb-3">
-                    <label class="fw-semibold">Nama Kamar</label>
-                    <input type="text" class="form-control"
-                        value="{{ $kamar->nama_kamar }}" readonly>
-                </div>
-
-                <div class="mb-3">
-                    <label class="fw-semibold">Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai"
-                        class="form-control" required>
-                </div>
-
-                <div class="mb-4">
-                    <label class="fw-semibold">Durasi Sewa</label>
-                    <select name="durasi" class="form-select" required>
-                        <option value="1">1 Bulan</option>
-                        <option value="2">2 Bulan</option>
-                        <option value="3">3 Bulan</option>
-                        <option value="6">6 Bulan</option>
-                        <option value="12">12 Bulan</option>
-                    </select>
-                </div>
-
-                <div class="text-end">
-                    <button class="btn btn-primary rounded-pill px-4">
-                        Ajukan Penyewaan
-                    </button>
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-</div>
                 {{-- ================= BUTTON KEMBALI ================= --}}
                 <div class="text-end mt-4">
                     <a href="{{ route('penyewa.cari.kos') }}" class="btn btn-primary rounded-pill px-4">
@@ -259,28 +271,4 @@
         </div>
     </div>
 
-    {{-- ================= PROFILE MODAL ================= --}}
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content p-3 text-center" style="border-radius:20px;">
-
-                <div class="mb-3">
-                    <div class="fw-bold">{{ Auth::user()->name }}</div>
-                    <small class="text-muted">{{ Auth::user()->email }}</small>
-                </div>
-
-                <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">
-                    Profil
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="btn btn-danger w-100">
-                        Logout
-                    </button>
-                </form>
-
-            </div>
-        </div>
-    </div>
 @endsection

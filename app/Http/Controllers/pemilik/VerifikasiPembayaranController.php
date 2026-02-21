@@ -25,34 +25,48 @@ class VerifikasiPembayaranController extends Controller
         return view('pemilik.verifikasi.index', compact('pembayaran'));
     }
 
-   public function konfirmasi($id)
+  public function konfirmasi($id)
 {
-    $data = \App\Models\PengajuanSewa::with('kamar')->findOrFail($id);
+    $pembayaran = Pembayaran::with('pengajuan.kamar')
+                    ->findOrFail($id);
 
-    if ($data->status_pembayaran !== 'menunggu') {
+    if ($pembayaran->status !== 'menunggu') {
         return back()->with('error','Pembayaran sudah diproses');
     }
 
-    $data->update([
-        'status_pembayaran' => 'dikonfirmasi',
-        'status' => 'disetujui'
+    // 1️⃣ Update status pembayaran
+    $pembayaran->update([
+        'status' => 'dikonfirmasi'
     ]);
 
-    if ($data->kamar && $data->kamar->status === 'tersedia') {
-        $data->kamar->update([
+    // 2️⃣ Update status pengajuan
+   $pembayaran->pengajuan->update([
+    'status' => 'aktif',
+    'status_pembayaran' => 'dikonfirmasi'
+]);
+
+    // 3️⃣ Update status kamar
+    if ($pembayaran->pengajuan->kamar) {
+        $pembayaran->pengajuan->kamar->update([
             'status' => 'terisi'
         ]);
     }
 
     return back()->with('success','Pembayaran dikonfirmasi & kamar terisi');
 }
+  public function tolak($id)
+{
+    $pembayaran = Pembayaran::with('pengajuan')
+                    ->findOrFail($id);
 
-    public function tolak($id)
-    {
-        $data = Pembayaran::findOrFail($id);
-        $data->status = 'ditolak';
-        $data->save();
+    $pembayaran->update([
+        'status' => 'ditolak'
+    ]);
 
-        return back()->with('success','Pembayaran ditolak');
-    }
+    $pembayaran->pengajuan->update([
+        'status_pembayaran' => 'ditolak'
+    ]);
+
+    return back()->with('success','Pembayaran ditolak');
+}
 }

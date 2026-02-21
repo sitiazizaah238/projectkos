@@ -13,6 +13,7 @@ class PengajuanSewa extends Model
         'tanggal_mulai',
         'durasi',
         'status',
+        'total_bayar',
         'alasan'
     ];
 

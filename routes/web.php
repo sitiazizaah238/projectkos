@@ -11,7 +11,7 @@ use App\Http\Controllers\Penyewa\ProfilePenyewaController;
 use App\Http\Controllers\Penyewa\RecommendationController;
 use App\Http\Controllers\Penyewa\KosController as PenyewaKosController;
 use App\Http\Controllers\Penyewa\PembayaranController;
-
+use App\Http\Controllers\Pemilik\PengajuanController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -158,6 +158,10 @@ Route::middleware('auth')->group(function () {
             '/pemilik/verifikasi/{id}/tolak',
             [App\Http\Controllers\Pemilik\VerifikasiPembayaranController::class, 'tolak']
         )->name('pemilik.verifikasi.tolak');
+        Route::post(
+            '/pemilik/pengajuan/{id}/konfirmasi',
+            [PengajuanController::class, 'konfirmasiPembayaran']
+        )->name('pemilik.pengajuan.konfirmasi');
     });
 
     // punya penyewa

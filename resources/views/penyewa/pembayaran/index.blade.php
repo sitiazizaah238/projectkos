@@ -5,6 +5,24 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
+            {{-- ================= TOPBAR ================= --}}
+            <div class="topbar d-flex justify-content-end align-items-center px-4">
+
+                <button type="button" class="btn text-white d-flex align-items-center"
+                    data-bs-toggle="modal" data-bs-target="#profileModal">
+
+                    <span class="me-2">{{ Auth::user()->name }}</span>
+
+                    @if (Auth::user()->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->photo) }}"
+                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid white;">
+                    @else
+                        <i class="bi bi-person-circle fs-3"></i>
+                    @endif
+
+                </button>
+            </div>
+
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
                 <h3 class="fw-bold mb-4">Riwayat Pembayaran</h3>
@@ -20,7 +38,7 @@
                         <table class="table table-bordered text-center mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
+                                    <th>No</th>
                                     <th>Nama Kos</th>
                                     <th>Nama Kamar</th>
                                     <th>Total Bayar</th>
@@ -29,8 +47,9 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                @foreach ($pembayaran as $item)
+                                @forelse ($pembayaran as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->pengajuan->kos->nama_kos }}</td>
@@ -52,7 +71,8 @@
                                         {{-- AKSI --}}
                                         <td>
                                             @if ($item->status == 'ditolak')
-                                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                <button class="btn btn-sm btn-warning"
+                                                    data-bs-toggle="modal"
                                                     data-bs-target="#modalUlang{{ $item->id }}">
                                                     Ajukan Ulang
                                                 </button>
@@ -83,8 +103,8 @@
 
                                                         <div class="mb-3">
                                                             <label class="fw-semibold">Upload Bukti Baru</label>
-                                                            <input type="file" name="bukti" class="form-control"
-                                                                required>
+                                                            <input type="file" name="bukti"
+                                                                class="form-control" required>
                                                         </div>
 
                                                         <div class="d-flex justify-content-end gap-2">
@@ -102,12 +122,45 @@
                                             </div>
                                         </div>
                                     @endif
-                                @endforeach
+
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4 text-muted">
+                                            Tidak ada riwayat pembayaran
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
+
                         </table>
                     </div>
 
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= PROFILE MODAL ================= --}}
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
+
             </div>
         </div>
     </div>
