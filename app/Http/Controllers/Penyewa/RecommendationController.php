@@ -21,7 +21,14 @@ class RecommendationController extends Controller
             return view('penyewa.rekomendasi', compact('rekomendasi'));
         }
 
-        $semuaKos = Kos::with('kamars')->where('status', 'disetujui')->get();
+        $semuaKos = Kos::with(['kamars' => function ($q) {
+            $q->where('status', 'tersedia');
+        }])
+            ->where('status', 'disetujui')
+            ->whereHas('kamars', function ($q) {
+                $q->where('status', 'tersedia');
+            })
+            ->get();
 
         $rekomendasi = $semuaKos->map(function ($kos) use ($pref) {
             $score = $this->calculateSimilarity($pref, $kos);
@@ -41,7 +48,7 @@ class RecommendationController extends Controller
         $wFasilitas = 0.25;
         $wTipeHarga = 0.15;
 
-        $kamar = $kos->kamars->sortBy('harga')->first();
+       $kamar = $kos->kamars->where('status','tersedia')->sortBy('harga')->first();
 
         # filter harga: jika harga kamar <= preferensi harga, nilai 1 (cocok sempurna), jika di atas, hitung rasio (pref / harga)
         $cHarga = 0;

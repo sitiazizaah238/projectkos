@@ -157,7 +157,10 @@
                                     <div class="card-body d-flex flex-column">
 
                                         @php
-                                            $kamarTermurah = $k->kamars->sortBy('harga')->first();
+                                            $kamarTermurah = $k->kamars
+                                                ->where('status', 'tersedia')
+                                                ->sortBy('harga')
+                                                ->first();
                                         @endphp
 
                                         <h6 class="fw-bold text-truncate mb-1">
@@ -178,10 +181,13 @@
                                         {{-- HARGA + TIPE HARGA --}}
                                         <div class="mt-1 small text-nowrap">
 
+                                            @php
+                                                $kamarTersedia = $k->kamars->where('status', 'tersedia');
+                                                $kamarTermurah = $kamarTersedia->sortBy('harga')->first();
+                                            @endphp
+
                                             @if ($kamarTermurah)
-                                                <span class="text-muted">
-                                                    Mulai Dari :
-                                                </span>
+                                                <span class="text-muted">Mulai Dari :</span>
 
                                                 <span class="fw-bold text-dark">
                                                     Rp.{{ number_format($kamarTermurah->harga, 0, ',', '.') }}
@@ -191,9 +197,15 @@
                                                     /{{ ucfirst($kamarTermurah->tipe_harga) }}
                                                 </span>
                                             @else
-                                                <span class="text-muted">
-                                                    Belum ada kamar
-                                                </span>
+                                                @if ($k->kamars->count() > 0)
+                                                    <span class="badge bg-danger">
+                                                        Kamar Penuh
+                                                    </span>
+                                                @else
+                                                    <span class="text-muted">
+                                                        Belum ada kamar
+                                                    </span>
+                                                @endif
                                             @endif
                                         </div>
 
