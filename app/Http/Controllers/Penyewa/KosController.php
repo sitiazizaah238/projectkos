@@ -12,20 +12,30 @@ class KosController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $pref = UserPreference::where('user_id', $user->id)->first();
 
-        // Jika belum ada preferensi, kirim koleksi kosong agar muncul pesan "Harus Search"
+        // Jika belum punya histori, jangan kasih rekomendasi
         if (!$pref) {
             $rekomendasi = collect([]);
-        } else {
-            $kosQuery = Kos::with('kamars')->where('status', 'disetujui')->get();
-            $rekomendasi = $kosQuery->map(function ($k) use ($pref) {
-                $k->score = $this->calculateSimilarity($pref, $k) * 100;
-                $k->label = $this->getLabel($k->score);
-                return $k;
-            })->sortByDesc('score')->take(3);
+            return view('penyewa.rekomendasi', compact('rekomendasi'));
         }
+
+        $semuaKos = Kos::with(['kamars' => function ($q) {
+            $q->where('status', 'tersedia');
+        }])
+            ->where('status', 'disetujui')
+            ->whereHas('kamars', function ($q) {
+                $q->where('status', 'tersedia');
+            })
+            ->get();
+
+        $rekomendasi = $semuaKos->map(function ($kos) use ($pref) {
+            $score = $this->calculateSimilarity($pref, $kos);
+            $kos->similarity_score = $score * 100;
+            $kos->label = $this->getLabel($kos->similarity_score);
+            return $kos;
+        })->sortByDesc('similarity_score')->take(limit: 3);
 
         return view('penyewa.dashboard', compact('rekomendasi'));
     }
@@ -48,8 +58,18 @@ class KosController extends Controller
             // Filter Search (Nama & Lokasi)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('nama_kos', 'like', "%$search%")
-                        ->orWhere('lokasi', 'like', "%$search%");
+                    // Pecah keyword jadi array kata
+                    $keywords = array_filter(explode(' ', $search));
+
+                    foreach ($keywords as $word) {
+                        $q->orWhere('nama_kos', 'like', "%$word%")
+                            ->orWhere('lokasi', 'like', "%$word%");
+                    }
+
+                    // Coba juga tanpa spasi
+                    $noSpace = str_replace(' ', '', $search);
+                    $q->orWhereRaw("REPLACE(nama_kos, ' ', '') LIKE ?", ["%$noSpace%"])
+                        ->orWhereRaw("REPLACE(lokasi, ' ', '') LIKE ?", ["%$noSpace%"]);
                 });
             })
             // Filter Search (Nama & Lokasi)
@@ -170,7 +190,7 @@ class KosController extends Controller
         $wFasilitas = 0.25;
         $wTipeHarga = 0.15;
 
-        $kamar = $kos->kamars->sortBy('harga')->first();
+        $kamar = $kos->kamars->where('status', 'tersedia')->sortBy('harga')->first();
 
         # filter harga: jika harga kamar <= preferensi harga, nilai 1 (cocok sempurna), jika di atas, hitung rasio (pref / harga)
         $cHarga = 0;
@@ -198,6 +218,7 @@ class KosController extends Controller
 
         # filter fasilitas: hitung rasio kecocokan antara fasilitas kamar dan preferensi fasilitas user
         $userFas = is_array($pref->pref_fasilitas) ? $pref->pref_fasilitas : [];
+        // Ambil array JSON dari tabel kamars
         $kamarFas = $kamar && is_array($kamar->fasilitas) ? $kamar->fasilitas : [];
 
         $cFasilitas = 0;
@@ -232,7 +253,7 @@ class KosController extends Controller
         if ($score >= 90) return 'Sangat Cocok';
         if ($score >= 80) return 'Sesuai Preferensi';
         if ($score >= 70) return 'Cocok';
-        if ($score >= 60) return 'Mungkin Cocok';
+        if ($score >= 50) return 'Mungkin Cocok';
         return 'Kurang Sesuai';
     }
 }

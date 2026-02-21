@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,6 +31,9 @@
             min-height: 100vh;
             background: #ffffff;
             border-right: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            position: relative;
         }
 
         .sidebar .nav-link {
@@ -77,66 +81,183 @@
         }
 
         @keyframes spin {
-            100% { transform: rotate(360deg); }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Desktop: collapsed = width 0 */
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 998;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 999;
+                width: 260px;
+                transform: translateX(-100%);
+                /* Default TERSEMBUNYI di mobile */
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+                /* Terbuka saat klik toggle */
+            }
+
+            /* Di mobile tidak perlu collapsed class */
+            .sidebar.collapsed {
+                width: 260px;
+                padding: 1.5rem !important;
+                overflow: visible;
+            }
         }
     </style>
 </head>
 
 <body>
 
-{{-- LOADER --}}
-<div id="pageLoader"
-    style="position: fixed; inset: 0; background: white; display: none;
+    {{-- LOADER --}}
+    <div id="pageLoader"
+        style="position: fixed; inset: 0; background: white; display: none;
     justify-content: center; align-items: center; z-index: 9999;">
-    <div style="
+        <div
+            style="
         width: 60px;
         height: 60px;
         border: 6px solid #e5e7eb;
         border-top: 6px solid #0d8bff;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
-    "></div>
-</div>
+    ">
+        </div>
+    </div>
 
-<main>
-    @yield('content')
-</main>
+    <main>
+        @yield('content')
+    </main>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const loader = document.getElementById("pageLoader");
-    const hasSuccess = {{ session()->has('success') ? 'true' : 'false' }};
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loader = document.getElementById("pageLoader");
+            const hasSuccess = {{ session()->has('success') ? 'true' : 'false' }};
 
-    // 🚫 Kalau ada SweetAlert sukses → loader MATI total
-    if (hasSuccess) return;
+            // 🚫 Kalau ada SweetAlert sukses → loader MATI total
+            if (hasSuccess) return;
 
-    document.querySelectorAll("form").forEach(form => {
-        form.addEventListener("submit", () => loader.style.display = "flex");
-    });
+            document.querySelectorAll("form").forEach(form => {
+                form.addEventListener("submit", () => loader.style.display = "flex");
+            });
 
-    document.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-            if (!link.hasAttribute("data-no-loader")) {
-                loader.style.display = "flex";
-            }
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", () => {
+                    if (!link.hasAttribute("data-no-loader")) {
+                        loader.style.display = "flex";
+                    }
+                });
+            });
         });
-    });
-});
-</script>
+    </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- {{-- SUCCESS MODAL --}}
-@if (session('success'))
-<script>
-Swal.fire({
-    icon: 'success',
-    title: 'Berhasil',
-    text: '{{ session('success') }}',
-    timer: 2000,
-    showConfirmButton: false
-});
-</script>
-@endif
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- SUCCESS MODAL --}}
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+
+    {{-- Tombol toggle, taruh di dalam topbar masing-masing halaman --}}
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list" id="toggleIcon"></i>
+    </button>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const icon = document.getElementById('toggleIcon');
+
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                // Mobile: toggle class 'open'
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+                icon.className = sidebar.classList.contains('open') ?
+                    'bi bi-x-lg' :
+                    'bi bi-list';
+            } else {
+                // Desktop: toggle class 'collapsed'
+                sidebar.classList.toggle('collapsed');
+                icon.className = sidebar.classList.contains('collapsed') ?
+                    'bi bi-list' :
+                    'bi bi-x-lg';
+            }
+        }
+
+        // Tutup sidebar kalau klik overlay
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('show');
+                    document.getElementById('toggleIcon').className = 'bi bi-list';
+                });
+            }
+
+            // Reset saat resize ke desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    if (sidebar) sidebar.classList.remove('open');
+                    if (overlay) overlay.classList.remove('show');
+                    document.getElementById('toggleIcon').className = 'bi bi-list';
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
