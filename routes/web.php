@@ -191,10 +191,17 @@ Route::middleware('auth')->group(function () {
             '/penyewa/bayar/{id}',
             [App\Http\Controllers\Penyewa\PembayaranController::class, 'store']
         )->name('penyewa.bayar');
+        // ================= RIWAYAT PEMBAYARAN =================
+        Route::get(
+            '/penyewa/pembayaran',
+            [PembayaranController::class, 'index']
+        )->name('penyewa.pembayaran.index');
+
+        // AJUKAN ULANG
         Route::post(
-            '/penyewa/bayar/{id}',
-            [PembayaranController::class, 'store']
-        )->name('penyewa.bayar');
+            '/penyewa/pembayaran/{id}/ajukan-ulang',
+            [PembayaranController::class, 'ajukanUlang']
+        )->name('penyewa.pembayaran.ajukan-ulang');
         // PROFILE PENYEWA
         Route::get('/penyewa/profile', [ProfilePenyewaController::class, 'index'])
             ->name('penyewa.profile');

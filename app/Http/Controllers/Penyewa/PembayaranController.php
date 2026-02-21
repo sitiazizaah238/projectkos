@@ -9,6 +9,34 @@ use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
 {
+    public function index()
+{
+    $pembayaran = Pembayaran::whereHas('pengajuan', function($q){
+        $q->where('user_id', auth()->id());
+    })->with('pengajuan.kos','pengajuan.kamar')
+      ->latest()
+      ->get();
+
+    return view('penyewa.pembayaran.index', compact('pembayaran'));
+}
+public function ajukanUlang(Request $request, $id)
+{
+    $request->validate([
+        'bukti' => 'required|image|max:2048'
+    ]);
+
+    $pembayaran = Pembayaran::findOrFail($id);
+
+    $path = $request->file('bukti')->store('bukti','public');
+
+    $pembayaran->update([
+        'bukti' => $path,
+        'status' => 'menunggu_verifikasi',
+        'alasan' => null
+    ]);
+
+    return back()->with('success','Pembayaran berhasil diajukan ulang.');
+}
     public function store(Request $request, $id)
     {
         $request->validate([

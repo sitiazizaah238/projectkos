@@ -10,7 +10,8 @@ class Pembayaran extends Model
         'pengajuan_sewa_id',
         'metode_id',
         'bukti',
-        'status'
+        'status',
+        'alasan'
     ];
 
     public function pengajuan()

@@ -57,7 +57,9 @@
 
         {{-- PEMBAYARAN --}}
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center text-dark">
+            <a href="{{ route('penyewa.pembayaran.index') }}"
+                class="nav-link d-flex align-items-center
+       {{ request()->routeIs('penyewa.pembayaran.*') ? 'active bg-primary text-white rounded-3' : 'text-dark' }}">
 
                 <i class="bi bi-wallet me-2"></i>
                 Pembayaran
