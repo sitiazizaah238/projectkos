@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\Admin\KosController as AdminKosController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Pemilik\ProfilePemilikController;
 use App\Http\Controllers\Pemilik\PemilikKosController;
 use App\Http\Controllers\Pemilik\PemilikKamarController;
+use App\Http\Controllers\Penyewa\ProfilePenyewaController;
+use App\Http\Controllers\Penyewa\RecommendationController;
+use App\Http\Controllers\Penyewa\KosController as PenyewaKosController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -98,23 +102,29 @@ Route::middleware('auth')->group(function () {
 
 
     Route::middleware('role:penyewa')->group(function () {
-        Route::get('/penyewa/dashboard', function () {
-            return view('penyewa.dashboard');
-        })->name('penyewa.dashboard');
+        Route::get(
+            '/penyewa/dashboard',
+            [
+                PenyewaKosController::class,
+                'index'
+            ]
+        )->name('penyewa.dashboard');;
         Route::get(
             '/penyewa/kos/{id}',
-            [App\Http\Controllers\Penyewa\KosController::class, 'show']
+            [PenyewaKosController::class, 'show']
         )->name('penyewa.kos.detail');
+        Route::get('/penyewa/rekomendasi', [RecommendationController::class, 'index'])
+            ->name('penyewa.rekomendasi');
         Route::get(
             '/penyewa/cari-kos',
-            [App\Http\Controllers\Penyewa\KosController::class, 'index']
+            [PenyewaKosController::class, 'search']
         )->name('penyewa.cari.kos');
         // PROFILE PENYEWA
-Route::get('/penyewa/profile', [App\Http\Controllers\Penyewa\ProfilePenyewaController::class, 'index'])
-    ->name('penyewa.profile');
+        Route::get('/penyewa/profile', [ProfilePenyewaController::class, 'index'])
+            ->name('penyewa.profile');
 
-Route::post('/penyewa/profile', [App\Http\Controllers\Penyewa\ProfilePenyewaController::class, 'update'])
-    ->name('penyewa.profile.update');
+        Route::post('/penyewa/profile', [ProfilePenyewaController::class, 'update'])
+            ->name('penyewa.profile.update');
     });
 });
 
