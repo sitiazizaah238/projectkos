@@ -14,7 +14,8 @@ class PengajuanSewa extends Model
         'durasi',
         'status',
         'total_bayar',
-        'alasan'
+        'alasan',
+        'is_read',
     ];
 
     public function penyewa()

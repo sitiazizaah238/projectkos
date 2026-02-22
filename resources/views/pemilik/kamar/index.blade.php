@@ -39,14 +39,14 @@
             <div class="p-4">
 
                 {{-- PAGE TITLE --}}
-                <div class="mb-4">
+                <div class="mb-2">
                    <h3 class="fw-bold" style="font-size:25px;">
                     Manajemen Kamar</h3>
                     <small class="text-muted">Manajemen Kos / Data Kamar Kos</small>
                 </div>
 
                 {{-- TOMBOL TAMBAH --}}
-                <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-end mb-2">
                     <a href="{{ route('pemilik.kamar.create') }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle me-1"></i> Tambah Kamar
                     </a>

@@ -17,7 +17,8 @@ class Kos extends Model
          'fasilitas',
         'foto',
         'alasan',
-        'status'
+        'status',
+        'is_read'
     ];
 protected $casts = [
     'fasilitas' => 'array'

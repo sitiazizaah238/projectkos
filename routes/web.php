@@ -162,6 +162,19 @@ Route::middleware('auth')->group(function () {
             '/pemilik/pengajuan/{id}/konfirmasi',
             [PengajuanController::class, 'konfirmasiPembayaran']
         )->name('pemilik.pengajuan.konfirmasi');
+        Route::get('/notif/kos/{id}', function ($id) {
+    $kos = \App\Models\Kos::findOrFail($id);
+    $kos->update(['is_read' => 1]);
+
+    return redirect()->route('pemilik.kos.index');
+});
+
+Route::get('/notif/pengajuan/{id}', function ($id) {
+    $p = \App\Models\PengajuanSewa::findOrFail($id);
+    $p->update(['is_read' => 1]);
+
+    return redirect()->route('pemilik.pengajuan.index');
+});
     });
 
     // punya penyewa

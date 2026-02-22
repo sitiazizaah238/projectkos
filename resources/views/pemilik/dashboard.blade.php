@@ -1,5 +1,30 @@
 @extends('layouts.app')
 
+@php
+    use App\Models\Kos;
+    use App\Models\Kamar;
+    use App\Models\PengajuanSewa;
+    use Illuminate\Support\Facades\Auth;
+    use Carbon\Carbon;
+
+    $userId = Auth::id();
+
+    $kosIds = Kos::where('user_id', $userId)->pluck('id');
+
+    $totalKos = Kos::where('user_id', $userId)->count();
+    $totalKamar = Kamar::whereIn('kos_id', $kosIds)->count();
+    $kamarTersedia = Kamar::whereIn('kos_id', $kosIds)->where('status', 'tersedia')->count();
+    $totalPenyewa = PengajuanSewa::whereIn('kos_id', $kosIds)->where('status', 'aktif')->count();
+
+    // =====================
+    // 🔔 NOTIF SECTION
+    // =====================
+
+    $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', 0)->latest()->get();
+
+    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', 0)->latest()->get();
+    $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
+@endphp
 @section('content')
     <div class="d-flex">
 
@@ -8,9 +33,52 @@
 
         <div class="flex-grow-1">
 
-      
+
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                <div class="dropdown position-relative">
+
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+
+                        <i class="bi bi-bell fs-4"></i>
+
+                        @if ($jumlahNotif > 0)
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+                                style="top:10px; font-size:10px;">
+                                {{ $jumlahNotif }}
+                            </span>
+                        @endif
+
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end p-2" style="width:320px; max-height:300px; overflow-y:auto;">
+
+                        <h6 class="dropdown-header">Notifikasi</h6>
+
+                        {{-- NOTIF KOS DISETUJUI --}}
+                        @foreach ($notifKos as $n)
+                            <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
+                                <strong>Kos Disetujui</strong><br>
+                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui admin
+                            </a>
+                        @endforeach
+
+                        {{-- NOTIF PENGAJUAN --}}
+                        @foreach ($notifPengajuan as $p)
+                            <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
+                                <strong>{{ $p->nama_penyewa }}</strong><br>
+                                Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
+                            </a>
+                        @endforeach
+
+                        @if ($jumlahNotif == 0)
+                            <div class="text-center text-muted small p-3">
+                                Tidak ada notifikasi
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -37,7 +105,9 @@
             {{-- CONTENT --}}
             <div class="p-4">
 
-                <h3 class="fw-bold">Dashboard! Selamat Datang {{ Auth::user()->name }}</h3>
+                <h3 class="fw-bold mb-1 d-flex align-items-center" style="font-size: 30px;">
+                    Selamat Datang {{ Auth::user()->name }}!
+                </h3>
                 <small class="text-muted">Dashboard / Ringkasan</small>
 
                 {{-- ====== CARD STATISTIK ====== --}}
@@ -49,8 +119,11 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted">Total Kos</small>
-                                    <h3 class="fw-bold">3</h3>
-                                    <small class="text-primary">Lihat Semua Kos</small>
+                                    <h3 class="fw-bold">{{ $totalKos }}</h3>
+                                    <a href="{{ route('pemilik.kos.index') }}"
+                                        class="small text-primary text-decoration-none fw-semibold">
+                                        Lihat Semua Kos
+                                    </a>
                                 </div>
                                 <div class="bg-primary text-white p-3 rounded">
                                     <i class="bi bi-house-door-fill fs-4"></i>
@@ -65,8 +138,11 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted">Total Kamar</small>
-                                    <h3 class="fw-bold">25</h3>
-                                    <small class="text-danger">Lihat Semua Kamar</small>
+                                    <h3 class="fw-bold">{{ $totalKamar }}</h3>
+                                    <a href="{{ route('pemilik.kamar.index') }}"
+                                        class="small text-danger text-decoration-none fw-semibold">
+                                        Lihat Semua Kamar
+                                    </a>
                                 </div>
                                 <div class="bg-danger text-white p-3 rounded">
                                     <i class="bi bi-door-open-fill fs-4"></i>
@@ -81,8 +157,11 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted">Kamar Tersedia</small>
-                                    <h3 class="fw-bold">8</h3>
-                                    <small class="text-success">Lihat Semua Data</small>
+                                    <h3 class="fw-bold">{{ $kamarTersedia }}</h3>
+                                    <a href="{{ route('pemilik.kamar.index') }}"
+                                        class="small text-success text-decoration-none fw-semibold">
+                                        Lihat Semua Data
+                                    </a>
                                 </div>
                                 <div class="bg-success text-white p-3 rounded">
                                     <i class="bi bi-door-closed-fill fs-4"></i>
@@ -97,8 +176,11 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted">Total Penyewa</small>
-                                    <h3 class="fw-bold">37</h3>
-                                    <small class="text-info">Lihat Semua Data</small>
+                                    <h3 class="fw-bold">{{ $totalPenyewa }}</h3>
+                                    <a href="{{ route('pemilik.pengajuan.index') }}"
+                                        class="small text-info text-decoration-none fw-semibold">
+                                        Lihat Semua Data
+                                    </a>
                                 </div>
                                 <div class="bg-info text-white p-3 rounded">
                                     <i class="bi bi-person-fill fs-4"></i>
