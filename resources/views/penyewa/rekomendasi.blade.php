@@ -38,9 +38,9 @@
 
             </div>
 
-        
+
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
-                <h3 class="fw-bold">Rekomendasi Untuk Anda</h3>
+               <h3 class="fw-bold" style="font-size: 30px;">Rekomendasi Untuk Anda</h3>
                 <p class="text-muted">Berdasarkan preferensi pencarian dan riwayat Anda.</p>
 
                 <div class="row g-4 mt-2">

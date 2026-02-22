@@ -8,8 +8,8 @@
             {{-- ================= TOPBAR ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
 
-                <button type="button" class="btn text-white d-flex align-items-center"
-                    data-bs-toggle="modal" data-bs-target="#profileModal">
+                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#profileModal">
 
                     <span class="me-2">{{ Auth::user()->name }}</span>
 
@@ -25,7 +25,13 @@
 
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
-                <h3 class="fw-bold mb-4">Riwayat Pembayaran</h3>
+                <h3 class="fw-bold mb-1" style="font-size: 30px;">
+                    Riwayat Pembayaran
+                </h3>
+
+                <small class="text-muted d-block mb-4">
+                    Pembayaran Kos / Riwayat Kos
+                </small>
 
                 <div class="card shadow-sm rounded-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between">
@@ -71,8 +77,7 @@
                                         {{-- AKSI --}}
                                         <td>
                                             @if ($item->status == 'ditolak')
-                                                <button class="btn btn-sm btn-warning"
-                                                    data-bs-toggle="modal"
+                                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                     data-bs-target="#modalUlang{{ $item->id }}">
                                                     Ajukan Ulang
                                                 </button>
@@ -97,14 +102,15 @@
                                                         </div>
                                                     </div>
 
-                                                    <form action="{{ route('penyewa.pembayaran.ajukan-ulang', $item->id) }}"
+                                                    <form
+                                                        action="{{ route('penyewa.pembayaran.ajukan-ulang', $item->id) }}"
                                                         method="POST" enctype="multipart/form-data">
                                                         @csrf
 
                                                         <div class="mb-3">
                                                             <label class="fw-semibold">Upload Bukti Baru</label>
-                                                            <input type="file" name="bukti"
-                                                                class="form-control" required>
+                                                            <input type="file" name="bukti" class="form-control"
+                                                                required>
                                                         </div>
 
                                                         <div class="d-flex justify-content-end gap-2">

@@ -34,10 +34,12 @@
 
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
-                <h3 class="fw-bold mb-4">Data Pengajuan</h3>
+                <h3 class="fw-bold mb-1" style="font-size: 30px;">Data Pengajuan</h3>
+                <small class="text-muted d-block mb-4">
+                    Pengajuan Kos / Data Pengajuan
+                </small>
 
                 <div class="card shadow-sm rounded-4">
-
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <span>
                             <i class="bi bi-clipboard-data"></i> Data Pengajuan
@@ -91,15 +93,15 @@
                                                 @endif
                                             </td>
                                             {{-- STATUS KAMAR --}}
-<td>
-    @if ($item->kamar->status == 'tersedia')
-        <span class="badge bg-success">Tersedia</span>
-    @elseif($item->kamar->status == 'terisi')
-        <span class="badge bg-danger">Terisi</span>
-    @else
-        <span class="badge bg-secondary">-</span>
-    @endif
-</td>
+                                            <td>
+                                                @if ($item->kamar->status == 'tersedia')
+                                                    <span class="badge bg-success">Tersedia</span>
+                                                @elseif($item->kamar->status == 'terisi')
+                                                    <span class="badge bg-danger">Terisi</span>
+                                                @else
+                                                    <span class="badge bg-secondary">-</span>
+                                                @endif
+                                            </td>
 
                                             {{-- ALASAN --}}
                                             <td>
@@ -155,7 +157,8 @@
                                                             <div class="col">
                                                                 <small>Total Bayar</small>
                                                                 <div class="fw-bold text-success">
-                                                               Rp {{ number_format($item->kamar->harga * $item->durasi, 0, ',', '.') }}
+                                                                    Rp
+                                                                    {{ number_format($item->kamar->harga * $item->durasi, 0, ',', '.') }}
                                                                 </div>
                                                             </div>
                                                         </div>
