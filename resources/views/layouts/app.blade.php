@@ -94,6 +94,8 @@
         }
 
         .sidebar-toggle {
+            display: none;
+            /* default disembunyikan */
             position: fixed;
             top: 14px;
             left: 14px;
@@ -104,6 +106,13 @@
             font-size: 1.5rem;
             cursor: pointer;
             line-height: 1;
+        }
+
+        /* Hanya muncul di mobile */
+        @media (max-width: 768px) {
+            .sidebar-toggle {
+                display: block;
+            }
         }
 
         .sidebar-overlay {
@@ -173,7 +182,6 @@
             const loader = document.getElementById("pageLoader");
             const hasSuccess = {{ session()->has('success') ? 'true' : 'false' }};
 
-            // 🚫 Kalau ada SweetAlert sukses → loader MATI total
             if (hasSuccess) return;
 
             document.querySelectorAll("form").forEach(form => {

@@ -37,12 +37,14 @@
             {{-- CONTENT --}}
             <div class="p-4">
 
-                <h3 class="fw-bold">Tambah Kos</h3>
-                <small class="text-muted"> Data Kos / Tambah</small>
+               <h3 class="fw-bold" style="font-size:25px;">
+                    Tambah Data Kos</h3>
+                <small class="text-muted">Manajemen Kos/Data Kos</small>
 
                 <div class="card shadow-sm mt-4">
 
                     <div class="card-header bg-dark text-white">
+                        <i class="bi bi-house-door-fill me-2"></i>
                         Form Tambah Kos
                     </div>
 
