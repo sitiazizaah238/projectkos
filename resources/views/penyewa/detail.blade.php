@@ -113,6 +113,139 @@
                     </div>
                 @endif
 
+                {{-- ================= DAFTAR KAMAR ================= --}}
+                <div class="card mt-4 shadow-sm rounded-4 p-4 border-0">
+
+                    <h5 class="fw-bold mb-4">
+                        <i class="bi bi-door-open"></i> Daftar Kamar yang tersedia
+                    </h5>
+                    <hr class="my-4">
+                    <div class="row g-4">
+
+                        @forelse($kos->kamars as $kamar)
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column">
+
+                                    {{-- FOTO --}}
+                                    @php
+                                        $fotoKamar = is_array($kamar->foto) ? $kamar->foto : [];
+                                        $fotoUtama = count($fotoKamar) > 0 ? $fotoKamar[0] : null;
+                                    @endphp
+
+                                    @if ($fotoUtama)
+                                        <img src="{{ asset('storage/' . $fotoUtama) }}"
+                                            style="height:200px; object-fit:cover; width:100%;">
+                                    @else
+                                        <div class="bg-light d-flex justify-content-center align-items-center"
+                                            style="height:200px;">
+                                            <i class="bi bi-image fs-1 text-muted"></i>
+                                        </div>
+                                    @endif
+
+                                    <div class="card-body d-flex flex-column">
+
+                                        <div class="mb-2">
+                                            <h5 class="fw-bold mb-1">
+                                                {{ $kamar->nama_kamar }}
+                                            </h5>
+
+                                            <div class="text-primary fw-bold">
+                                                Rp {{ number_format($kamar->harga, 0, ',', '.') }}
+                                                <span class="text-muted fw-normal">/ bulan</span>
+                                            </div>
+                                        </div>
+
+                                        {{-- Fasilitas --}}
+                                        <div class="small text-muted mb-3" style="min-height:48px;">
+                                            @if ($kamar->fasilitas)
+                                                {{ implode(', ', $kamar->fasilitas) }}
+                                            @endif
+                                        </div>
+
+                                        {{-- Status --}}
+                                        <div class="mb-3">
+                                            @if ($kamar->status == 'tersedia')
+                                                <span class="badge bg-success px-3 py-2">
+                                                    Tersedia
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger px-3 py-2">
+                                                    Terisi
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        {{-- Tombol selalu di bawah --}}
+                                        <div class="mt-auto">
+                                            @if ($kamar->status == 'tersedia')
+                                                <button class="btn btn-primary rounded-pill w-100 py-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ajukanModal{{ $kamar->id }}">
+                                                    Ajukan Sewa
+                                                </button>
+                                            @else
+                                                <button class="btn btn-secondary rounded-pill w-100 py-2" disabled>
+                                                    Tidak Tersedia
+                                                </button>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- MODAL DI DALAM LOOP (WAJIB DI SINI) --}}
+                            @if ($kamar->status == 'tersedia')
+                                <div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content rounded-4 p-4">
+
+                                            <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
+
+                                            <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
+                                                @csrf
+
+                                                <input type="hidden" name="kos_id" value="{{ $kos->id }}">
+                                                <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
+
+                                                <div class="mb-3">
+                                                    <label class="fw-semibold">Tanggal Mulai</label>
+                                                    <input type="date" name="tanggal_mulai" class="form-control"
+                                                        required>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label class="fw-semibold">Durasi Sewa</label>
+                                                    <select name="durasi" class="form-select" required>
+                                                        <option value="1">1 Bulan</option>
+                                                        <option value="2">2 Bulan</option>
+                                                        <option value="3">3 Bulan</option>
+                                                        <option value="6">6 Bulan</option>
+                                                        <option value="12">12 Bulan</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="text-end">
+                                                    <button class="btn btn-primary rounded-pill px-4">
+                                                        Ajukan Penyewaan
+                                                    </button>
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                        @empty
+                            <div class="col-12">
+                                <div class="text-center text-muted py-5">
+                                    Tidak ada kamar tersedia
+                                </div>
+                            </div>
+                        @endforelse
+
                 {{-- ================= TABEL KAMAR ================= --}}
                 <div class="card mt-4 shadow-sm rounded-4 overflow-hidden">
 
@@ -257,7 +390,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
 
                 {{-- ================= BUTTON KEMBALI ================= --}}

@@ -111,7 +111,7 @@ class RecommendationController extends Controller
         if ($score >= 90) return 'Sangat Cocok';
         if ($score >= 80) return 'Sesuai Preferensi';
         if ($score >= 70) return 'Cocok';
-        if ($score >= 60) return 'Mungkin Cocok';
+        if ($score >= 50) return 'Mungkin Cocok';
         return 'Kurang Sesuai';
     }
 }
