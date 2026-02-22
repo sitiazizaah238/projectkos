@@ -13,11 +13,32 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
+             {{-- ================= TOPBAR (SAMA KAYA DASHBOARD) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
-                <span class="text-white me-2">{{ Auth::user()->name }}</span>
-                <i class="bi bi-person-circle fs-3 text-white"></i>
+
+                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#profileModal">
+
+                    <span class="me-2">{{ Auth::user()->name }}</span>
+
+                    @if (Auth::user()->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->photo) }}"
+                            style="
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid white;
+         ">
+                    @else
+                        <i class="bi bi-person-circle fs-3"></i>
+                    @endif
+
+                </button>
+
             </div>
 
+        
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
                 <h3 class="fw-bold">Rekomendasi Untuk Anda</h3>
                 <p class="text-muted">Berdasarkan preferensi pencarian dan riwayat Anda.</p>
@@ -152,4 +173,24 @@
             </div>
         </div>
     </div>
+    {{-- PROFILE MODAL --}}
+            <div class="modal fade" id="profileModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                        <div class="mb-3">
+                            <div class="fw-bold">{{ Auth::user()->name }}</div>
+                            <small class="text-muted">{{ Auth::user()->email }}</small>
+                        </div>
+                        <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">Profil</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="btn btn-danger w-100">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 @endsection
