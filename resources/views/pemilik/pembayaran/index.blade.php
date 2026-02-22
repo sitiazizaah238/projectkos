@@ -6,7 +6,7 @@
         @include('components.sidebar-pemilik')
 
         <div class="flex-grow-1">
-  {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -25,16 +25,27 @@
             </div>
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
-                <h3 class="fw-bold mb-4">Metode Pembayaran</h3>
+                <!-- TITLE -->
+                <h3 class="fw-bold mb-1" style="font-size: 30px;">
+                    Metode Pembayaran
+                </h3>
+                <small class="text-muted">
+                    Pembayaran / Metode Bayar
+                </small>
 
-                <a href="{{ route('pemilik.pembayaran.create') }}" class="btn btn-primary mb-3">
-                    + Tambah Metode Baru
-                </a>
+                <!-- BUTTON RIGHT & TURUN SEDIKIT -->
+                <div class="d-flex justify-content-end" style="margin-top: 35px;">
+                    <a href="{{ route('pemilik.pembayaran.create') }}" class="btn btn-primary px-4">
+                        + Tambah Metode Baru
+                    </a>
+                </div>
 
-                <div class="card shadow-sm rounded-4">
+                <!-- CARD -->
+                <div class="card shadow-sm rounded-4 mt-3">
 
-                    <div class="card-header bg-dark text-white">
-                        Metode Pembayaran
+                    <div class="card-header bg-dark text-white d-flex align-items-center">
+                        <i class="bi bi-credit-card me-2"></i>
+                        <span class="fw-semibold">Metode Pembayaran</span>
                     </div>
 
                     <div class="table-responsive">
@@ -42,7 +53,7 @@
 
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
+                                    <th>No</th>
                                     <th>Nama Metode</th>
                                     <th>Atas Nama</th>
                                     <th>No Rekening</th>
@@ -85,14 +96,13 @@
                                             </a>
 
                                             <form action="{{ route('pemilik.pembayaran.destroy', $item->id) }}"
-      method="POST"
-      class="form-delete">
-    @csrf
-    @method('DELETE')
-    <button type="button" class="btn btn-sm btn-danger btn-delete">
-        <i class="bi bi-trash"></i>
-    </button>
-</form>
+                                                method="POST" class="form-delete">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-sm btn-danger btn-delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
 
                                         </td>
                                     </tr>
@@ -110,7 +120,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- PROFILE MODAL --}}
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -134,33 +144,33 @@
         </div>
     </div>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
-    const deleteButtons = document.querySelectorAll('.btn-delete');
+            const deleteButtons = document.querySelectorAll('.btn-delete');
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
 
-            let form = this.closest('.form-delete');
+                    let form = this.closest('.form-delete');
 
-            Swal.fire({
-                title: 'Yakin hapus?',
-                text: "Data metode pembayaran akan dihapus permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                    Swal.fire({
+                        title: 'Yakin hapus?',
+                        text: "Data metode pembayaran akan dihapus permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+
+                });
             });
 
         });
-    });
-
-});
-</script>
+    </script>
 @endsection

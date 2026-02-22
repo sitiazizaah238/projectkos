@@ -58,12 +58,20 @@
                         });
                     </script>
                 @endif
-                <h3 class="fw-bold mb-4">Verifikasi Pembayaran</h3>
+                <h3 class="fw-bold mb-1 d-flex align-items-center" style="font-size: 30px;">
+                    Verifikasi Pembayaran
+                </h3>
+
+                <small class="text-muted d-block mb-4">
+                    Pembayaran / Metode Bayar
+                </small>
+
 
                 <div class="card shadow-sm rounded-4">
 
-                    <div class="card-header bg-dark text-white">
-                        Data Pembayaran
+                    <div class="card-header bg-dark text-white d-flex align-items-center">
+                        <i class="bi bi-receipt me-2"></i>
+                        <span class="fw-semibold">Data Pembayaran</span>
                     </div>
 
                     <div class="table-responsive">
@@ -71,7 +79,7 @@
 
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
+                                    <th>No</th>
                                     <th>Nama Penyewa</th>
                                     <th>Nama Kamar</th>
                                     <th>Total Bayar</th>
