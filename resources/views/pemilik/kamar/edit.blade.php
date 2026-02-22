@@ -32,11 +32,18 @@
                 </button>
             </div>
 
-            <div class="p-4 mt-4">
+            <div class="p-4">
 
-                <h3 class="fw-bold mb-4" style="font-size:25px;">
-                    Edit Data Kamar
-                </h3>
+                <h3 class="fw-bold" style="font-size:25px;">
+                    Edit Data Kamar</h3>
+                <small class="text-muted">Manajemen Kamar/Data Kamar</small>
+
+                <div class="card shadow-sm mt-4">
+
+                    <div class="card-header bg-dark text-white">
+                        <i class="bi bi-door-open-fill me-2"></i>
+                        Edit Kamar
+                    </div>
 
                 <div class="card shadow-lg border-0" style="border-radius:20px;">
                     <div class="card-body p-4">

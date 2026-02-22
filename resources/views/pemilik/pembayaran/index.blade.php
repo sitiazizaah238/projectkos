@@ -34,7 +34,7 @@
                 </small>
 
                 <!-- BUTTON RIGHT & TURUN SEDIKIT -->
-                <div class="d-flex justify-content-end" style="margin-top: 35px;">
+               <div class="d-flex justify-content-end" style="margin-top: 10px;">
                     <a href="{{ route('pemilik.pembayaran.create') }}" class="btn btn-primary px-4">
                         + Tambah Metode Baru
                     </a>

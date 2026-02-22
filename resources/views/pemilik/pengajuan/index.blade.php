@@ -30,7 +30,7 @@
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
                 <h3 class="fw-bold mb-1 d-flex align-items-center" style="font-size: 30px;">
-                   Pengajuan Penyewa
+                    Pengajuan Penyewa
                 </h3>
 
                 <small class="text-muted d-block mb-4">
@@ -85,6 +85,14 @@
                         </table>
                     </div>
 
+                    @if ($pengajuan->isEmpty())
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox fs-3 d-block mb-2 text-secondary"></i>
+                            <span class="text-muted fw-semibold">
+                                Belum ada pengajuan kos
+                            </span>
+                        </div>
+                    @endif
                 </div>
 
             </div>
