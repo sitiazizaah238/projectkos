@@ -10,8 +10,8 @@
 
             {{-- ================= TOPBAR ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
-                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#profileModal">
+                <button type="button" class="btn text-white d-flex align-items-center"
+                    data-bs-toggle="modal" data-bs-target="#profileModal">
 
                     <span class="me-2">{{ Auth::user()->name }}</span>
 
@@ -50,7 +50,8 @@
                     {{-- FOTO --}}
                     <div class="col-md-7">
                         @if ($kos->foto)
-                            <img src="{{ asset('storage/' . $kos->foto) }}" class="img-fluid rounded-4 shadow-sm"
+                            <img src="{{ asset('storage/' . $kos->foto) }}"
+                                class="img-fluid rounded-4 shadow-sm"
                                 style="height:280px; object-fit:cover; width:100%;">
                         @endif
                     </div>
@@ -245,6 +246,149 @@
                             </div>
                         @endforelse
 
+                {{-- ================= TABEL KAMAR ================= --}}
+                <div class="card mt-4 shadow-sm rounded-4 overflow-hidden">
+
+                    <div class="bg-dark text-white p-3 fw-semibold">
+                        <i class="bi bi-door-open"></i>
+                        Daftar Kamar Yang Tersedia
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Kamar</th>
+                                    <th>Harga</th>
+                                    <th>Fasilitas Kamar</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @forelse($kos->kamars as $index => $kamar)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $kamar->nama_kamar }}</td>
+
+                                        <td>
+                                            Rp {{ number_format($kamar->harga, 0, ',', '.') }}
+                                        </td>
+
+                                        <td>
+                                            @if ($kamar->fasilitas)
+                                                {{ implode(', ', $kamar->fasilitas) }}
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if($kamar->status == 'tersedia')
+                                                <span class="badge bg-success">
+                                                    {{ $kamar->status }}
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger">
+                                                    {{ $kamar->status }}
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if($kamar->status == 'tersedia')
+                                                <button class="btn btn-primary rounded-pill btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#ajukanModal{{ $kamar->id }}">
+                                                    Ajukan Sewa >
+                                                </button>
+                                            @else
+                                                <button class="btn btn-secondary rounded-pill btn-sm" disabled>
+                                                    Tidak Tersedia
+                                                </button>
+                                            @endif
+                                        </td>
+                                    </tr>
+
+                                    {{-- ================= MODAL DI DALAM LOOP ================= --}}
+                                    @if($kamar->status == 'tersedia')
+                                    <div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content rounded-4 p-4">
+
+                                                <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
+
+                                                <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
+                                                    @csrf
+
+                                                    <input type="hidden" name="kos_id" value="{{ $kos->id }}">
+                                                    <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label class="fw-semibold">Nama Penyewa</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ Auth::user()->name }}" readonly>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label class="fw-semibold">Email</label>
+                                                            <input type="text" class="form-control"
+                                                                value="{{ Auth::user()->email }}" readonly>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Nama Kos</label>
+                                                        <input type="text" class="form-control"
+                                                            value="{{ $kos->nama_kos }}" readonly>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Nama Kamar</label>
+                                                        <input type="text" class="form-control"
+                                                            value="{{ $kamar->nama_kamar }}" readonly>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Tanggal Mulai</label>
+                                                        <input type="date" name="tanggal_mulai"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label class="fw-semibold">Durasi Sewa</label>
+                                                        <select name="durasi" class="form-select" required>
+                                                            <option value="1">1 Bulan</option>
+                                                            <option value="2">2 Bulan</option>
+                                                            <option value="3">3 Bulan</option>
+                                                            <option value="6">6 Bulan</option>
+                                                            <option value="12">12 Bulan</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="text-end">
+                                                        <button class="btn btn-primary rounded-pill px-4">
+                                                            Ajukan Penyewaan
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center py-3 text-muted">
+                                            Tidak ada kamar tersedia
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
