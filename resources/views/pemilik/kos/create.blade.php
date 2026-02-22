@@ -1,5 +1,39 @@
 @extends('layouts.app')
 
+@php
+    use App\Models\Kos;
+    use App\Models\Kamar;
+    use App\Models\PengajuanSewa;
+    use Illuminate\Support\Facades\Auth;
+    use Carbon\Carbon;
+
+    $userId = Auth::id();
+
+    $kosIds = Kos::where('user_id', $userId)->pluck('id');
+
+    $totalKos = Kos::where('user_id', $userId)->count();
+    $totalKamar = Kamar::whereIn('kos_id', $kosIds)->count();
+    $kamarTersedia = Kamar::whereIn('kos_id', $kosIds)->where('status', 'tersedia')->count();
+    $totalPenyewa = PengajuanSewa::whereIn('kos_id', $kosIds)->where('status', 'aktif')->count();
+
+    // =====================
+    // 🔔 NOTIF SECTION
+    // =====================
+
+    $notifKos = Kos::where('user_id', $userId)
+                ->where('status', 'disetujui')
+                ->where('is_read', false)
+                ->latest()
+                ->get();
+
+    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)
+                        ->where('is_read', false)
+                        ->latest()
+                        ->get();
+
+    $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
+@endphp
+
 @section('content')
     <div class="d-flex">
 
@@ -8,8 +42,51 @@
 
         <div class="flex-grow-1">
 
-           {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            {{-- TOPBAR --}}
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                <div class="dropdown position-relative">
+
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+
+                        <i class="bi bi-bell fs-4"></i>
+
+                        @if ($jumlahNotif > 0)
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+                                style="top:10px; font-size:10px;">
+                                {{ $jumlahNotif }}
+                            </span>
+                        @endif
+
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end p-2" style="width:320px; max-height:300px; overflow-y:auto;">
+
+                        <h6 class="dropdown-header">Notifikasi</h6>
+
+                        {{-- NOTIF KOS DISETUJUI --}}
+                        @foreach ($notifKos as $n)
+                            <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
+                                <strong>Kos Disetujui</strong><br>
+                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui admin
+                            </a>
+                        @endforeach
+
+                        {{-- NOTIF PENGAJUAN --}}
+                        @foreach ($notifPengajuan as $p)
+                            <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
+                                <strong>{{ $p->nama_penyewa }}</strong><br>
+                                Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
+                            </a>
+                        @endforeach
+
+                        @if ($jumlahNotif == 0)
+                            <div class="text-center text-muted small p-3">
+                                Tidak ada notifikasi
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -33,7 +110,6 @@
 
                 </button>
             </div>
-
             {{-- CONTENT --}}
             <div class="p-4">
 
