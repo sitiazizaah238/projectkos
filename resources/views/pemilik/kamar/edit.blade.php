@@ -6,7 +6,7 @@
 
         <div class="flex-grow-1">
 
-           {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -34,7 +34,7 @@
 
             <div class="p-4 mt-4">
 
-               <h3 class="fw-bold mb-4" style="font-size:25px;">
+                <h3 class="fw-bold mb-4" style="font-size:25px;">
                     Edit Data Kamar
                 </h3>
 
@@ -106,8 +106,8 @@
                                     <div class="mb-3">
                                         <label class="form-label">Foto Lama</label>
                                         <div class="row">
-                                            @if ($kamar->foto)
-                                                @foreach (json_decode($kamar->foto) as $foto)
+                                            @if ($kamar->foto && count($kamar->foto) > 0)
+                                                @foreach ($kamar->foto as $foto)
                                                     <div class="col-4 mb-3">
                                                         <img src="{{ asset('storage/' . $foto) }}"
                                                             class="img-fluid rounded shadow-sm"
@@ -144,7 +144,8 @@
                                     <div class="mb-3">
                                         <label class="form-label">Harga</label>
                                         <input type="text" name="harga"
-                                            value="Rp {{ number_format($kamar->harga, 0, ',', '.') }}" class="form-control">
+                                            value="Rp {{ number_format($kamar->harga, 0, ',', '.') }}"
+                                            class="form-control">
                                     </div>
 
                                     {{-- Tipe Harga --}}
