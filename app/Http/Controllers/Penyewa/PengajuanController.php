@@ -47,6 +47,7 @@ class PengajuanController extends Controller
         'status' => 'menunggu'
     ]);
 
-    return back()->with('success', 'Pengajuan berhasil dikirim!');
+   return redirect()->route('penyewa.pengajuan.index')
+    ->with('success', 'Pengajuan berhasil dikirim!');
 }
 }

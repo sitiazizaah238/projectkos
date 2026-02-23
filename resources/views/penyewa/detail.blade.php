@@ -10,8 +10,8 @@
 
             {{-- ================= TOPBAR ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
-                <button type="button" class="btn text-white d-flex align-items-center"
-                    data-bs-toggle="modal" data-bs-target="#profileModal">
+                <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#profileModal">
 
                     <span class="me-2">{{ Auth::user()->name }}</span>
 
@@ -50,8 +50,7 @@
                     {{-- FOTO --}}
                     <div class="col-md-7">
                         @if ($kos->foto)
-                            <img src="{{ asset('storage/' . $kos->foto) }}"
-                                class="img-fluid rounded-4 shadow-sm"
+                            <img src="{{ asset('storage/' . $kos->foto) }}" class="img-fluid rounded-4 shadow-sm"
                                 style="height:280px; object-fit:cover; width:100%;">
                         @endif
                     </div>
@@ -194,84 +193,87 @@
                                 </div>
                             </div>
 
-  {{-- ================= MODAL DI DALAM LOOP ================= --}}
-                                    @if($kamar->status == 'tersedia')
-                                    <div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                                            <div class="modal-content rounded-4 p-4">
+                            {{-- ================= MODAL DI DALAM LOOP ================= --}}
+                            @if ($kamar->status == 'tersedia')
+                                <div class="modal fade" id="ajukanModal{{ $kamar->id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content rounded-4 p-4">
 
-                                                <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
+                                            <h4 class="fw-bold mb-3">Form Pengajuan Sewa</h4>
 
-                                                <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
-                                                    @csrf
+                                            <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
+                                                @csrf
 
-                                                    <input type="hidden" name="kos_id" value="{{ $kos->id }}">
-                                                    <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
+                                                <input type="hidden" name="kos_id" value="{{ $kos->id }}">
+                                                <input type="hidden" name="kamar_id" value="{{ $kamar->id }}">
 
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <label class="fw-semibold">Nama Penyewa</label>
-                                                            <input type="text" class="form-control"
-                                                                value="{{ Auth::user()->name }}" readonly>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <label class="fw-semibold">Email</label>
-                                                            <input type="text" class="form-control"
-                                                                value="{{ Auth::user()->email }}" readonly>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="fw-semibold">Nama Kos</label>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="fw-semibold">Nama Penyewa</label>
                                                         <input type="text" class="form-control"
-                                                            value="{{ $kos->nama_kos }}" readonly>
+                                                            value="{{ Auth::user()->name }}" readonly>
                                                     </div>
 
-                                                    <div class="mb-3">
-                                                        <label class="fw-semibold">Nama Kamar</label>
+                                                    <div class="col-md-6">
+                                                        <label class="fw-semibold">Email</label>
                                                         <input type="text" class="form-control"
-                                                            value="{{ $kamar->nama_kamar }}" readonly>
+                                                            value="{{ Auth::user()->email }}" readonly>
                                                     </div>
+                                                </div>
 
-                                                    <div class="mb-3">
-                                                        <label class="fw-semibold">Tanggal Mulai</label>
-                                                        <input type="date" name="tanggal_mulai"
-                                                            class="form-control" required>
-                                                    </div>
+                                                <div class="mb-3">
+                                                    <label class="fw-semibold">Nama Kos</label>
+                                                    <input type="text" class="form-control" value="{{ $kos->nama_kos }}"
+                                                        readonly>
+                                                </div>
 
-                                                    <div class="mb-4">
-                                                        <label class="fw-semibold">Durasi Sewa</label>
-                                                        <select name="durasi" class="form-select" required>
-                                                            <option value="1">1 Bulan</option>
-                                                            <option value="2">2 Bulan</option>
-                                                            <option value="3">3 Bulan</option>
-                                                            <option value="6">6 Bulan</option>
-                                                            <option value="12">12 Bulan</option>
-                                                        </select>
-                                                    </div>
+                                                <div class="mb-3">
+                                                    <label class="fw-semibold">Nama Kamar</label>
+                                                    <input type="text" class="form-control"
+                                                        value="{{ $kamar->nama_kamar }}" readonly>
+                                                </div>
 
-                                                    <div class="text-end">
-                                                        <button class="btn btn-primary rounded-pill px-4">
+                                                <div class="mb-3">
+                                                    <label class="fw-semibold">Tanggal Mulai</label>
+                                                    <input type="date" name="tanggal_mulai" class="form-control"
+                                                        required>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <label class="fw-semibold">Durasi Sewa</label>
+                                                    <select name="durasi" class="form-select" required>
+                                                        <option value="1">1 Bulan</option>
+                                                        <option value="2">2 Bulan</option>
+                                                        <option value="3">3 Bulan</option>
+                                                        <option value="6">6 Bulan</option>
+                                                        <option value="12">12 Bulan</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="text-end">
+                                                    <form action="{{ route('penyewa.pengajuan.store') }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-primary rounded-pill px-4">
                                                             Ajukan Penyewaan
                                                         </button>
-                                                    </div>
+                                                    </form>
+                                                </div>
 
-                                                </form>
+                                            </form>
 
-                                            </div>
                                         </div>
                                     </div>
-                                    @endif
+                                </div>
+                            @endif
 
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-3 text-muted">
-                                            Tidak ada kamar tersedia
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-3 text-muted">
+                                    Tidak ada kamar tersedia
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
                         </table>
                     </div>
 
