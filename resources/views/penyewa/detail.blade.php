@@ -69,7 +69,12 @@
                                     {{ $kos->nama_kos }}
                                 </div>
                             </div>
-
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Pemilik Kos</div>
+                                <div class="col-6 fw-semibold text-end">
+                                    {{ $kos->user->name ?? '-' }}
+                                </div>
+                            </div>
                             <div class="row mb-2">
                                 <div class="col-6 text-muted">Lokasi Kos</div>
                                 <div class="col-6 fw-semibold text-end">
@@ -115,12 +120,15 @@
                 {{-- ================= DAFTAR KAMAR ================= --}}
                 <div class="card mt-4 shadow-sm rounded-4 p-4 border-0">
 
-                    <h5 class="fw-bold mb-4">
+                    <h5 class="fw-bold mb-2">
                         <i class="bi bi-door-open"></i> Daftar Kamar yang tersedia
                     </h5>
-                    <hr class="my-4">
-                    <div class="row g-4">
 
+                    <hr class="my-2">
+                    <div class="row g-4">
+                        @php
+                            $pengajuanUser = \App\Models\PengajuanSewa::where('user_id', Auth::id())->get();
+                        @endphp
                         @forelse($kos->kamars as $kamar)
                             <div class="col-md-4">
                                 <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column">
@@ -176,19 +184,31 @@
 
                                         {{-- Tombol selalu di bawah --}}
                                         <div class="mt-auto">
-                                            @if ($kamar->status == 'tersedia')
+
+                                            @php
+                                                $sudahAjukan = $pengajuanUser
+                                                    ->where('kamar_id', $kamar->id)
+                                                    ->whereIn('status', ['menunggu', 'disetujui'])
+                                                    ->first();
+                                            @endphp
+
+                                            @if ($kamar->status == 'tersedia' && !$sudahAjukan)
                                                 <button class="btn btn-primary rounded-pill w-100 py-2"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#ajukanModal{{ $kamar->id }}">
                                                     Ajukan Sewa
+                                                </button>
+                                            @elseif($sudahAjukan)
+                                                <button class="btn btn-warning rounded-pill w-100 py-2" disabled>
+                                                    Sudah Diajukan
                                                 </button>
                                             @else
                                                 <button class="btn btn-secondary rounded-pill w-100 py-2" disabled>
                                                     Tidak Tersedia
                                                 </button>
                                             @endif
-                                        </div>
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -223,8 +243,8 @@
 
                                                 <div class="mb-3">
                                                     <label class="fw-semibold">Nama Kos</label>
-                                                    <input type="text" class="form-control" value="{{ $kos->nama_kos }}"
-                                                        readonly>
+                                                    <input type="text" class="form-control"
+                                                        value="{{ $kos->nama_kos }}" readonly>
                                                 </div>
 
                                                 <div class="mb-3">

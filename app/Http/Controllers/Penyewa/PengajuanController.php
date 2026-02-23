@@ -31,7 +31,17 @@ class PengajuanController extends Controller
         'durasi' => 'required|integer'
     ]);
 
-    // 🔥 Ambil kamar berdasarkan id
+    // 🔥 CEK DUPLIKAT
+    $cek = PengajuanSewa::where('user_id', Auth::id())
+        ->where('kamar_id', $request->kamar_id)
+        ->whereIn('status', ['menunggu', 'disetujui'])
+        ->first();
+
+    if ($cek) {
+        return back()->with('error', 'Kamu sudah mengajukan kamar ini!');
+    }
+
+    // 🔥 Ambil kamar
     $kamar = Kamar::findOrFail($request->kamar_id);
 
     // 🔥 Hitung total bayar
@@ -43,11 +53,11 @@ class PengajuanController extends Controller
         'kamar_id' => $request->kamar_id,
         'tanggal_mulai' => $request->tanggal_mulai,
         'durasi' => $request->durasi,
-        'total_bayar' => $totalBayar, // ✅ sekarang sudah ada
+        'total_bayar' => $totalBayar,
         'status' => 'menunggu'
     ]);
 
-   return redirect()->route('penyewa.pengajuan.index')
-    ->with('success', 'Pengajuan berhasil dikirim!');
+    return redirect()->route('penyewa.pengajuan.index')
+        ->with('success', 'Pengajuan berhasil dikirim!');
 }
 }
