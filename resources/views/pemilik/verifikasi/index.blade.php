@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@extends('layouts.app')
+
 
 @php
     use App\Models\Kos;
@@ -150,7 +150,6 @@
                 <small class="text-muted d-block mb-4">
                     Pembayaran / Metode Bayar
                 </small>
-
 
                 <div class="card shadow-sm rounded-4">
 
