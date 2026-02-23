@@ -58,18 +58,32 @@ class KosController extends Controller
             // Filter Search (Nama & Lokasi)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
-                    // Pecah keyword jadi array kata
-                    $keywords = array_filter(explode(' ', $search));
 
-                    foreach ($keywords as $word) {
-                        $q->orWhere('nama_kos', 'like', "%$word%")
-                            ->orWhere('lokasi', 'like', "%$word%");
+                    // 1. Full phrase selalu dicoba (prioritas utama)
+                    $q->where('nama_kos', 'like', "%$search%")
+                        ->orWhere('lokasi', 'like', "%$search%");
+
+                    // 2. Strip kata umum kos/kost/kostel, ambil sisa kata bermakna
+                    $stopWords = ['kos', 'kost', 'kostel', 'kontrakan'];
+                    $keywords = array_filter(explode(' ', trim(strtolower($search))));
+                    $meaningful = array_filter($keywords, function ($word) use ($stopWords) {
+                        return strlen($word) >= 3 && !in_array($word, $stopWords);
+                    });
+
+                    // 3. Fallback per-kata HANYA dari kata bermakna
+                    if (count($meaningful) > 0) {
+                        foreach ($meaningful as $word) {
+                            $q->orWhere('nama_kos', 'like', "%$word%")
+                                ->orWhere('lokasi', 'like', "%$word%");
+                        }
                     }
 
-                    // Coba juga tanpa spasi
+                    // 4. Tanpa spasi (untuk typo spasi)
                     $noSpace = str_replace(' ', '', $search);
-                    $q->orWhereRaw("REPLACE(nama_kos, ' ', '') LIKE ?", ["%$noSpace%"])
-                        ->orWhereRaw("REPLACE(lokasi, ' ', '') LIKE ?", ["%$noSpace%"]);
+                    if (strlen($noSpace) >= 3) {
+                        $q->orWhereRaw("REPLACE(nama_kos, ' ', '') LIKE ?", ["%$noSpace%"])
+                            ->orWhereRaw("REPLACE(lokasi, ' ', '') LIKE ?", ["%$noSpace%"]);
+                    }
                 });
             })
             // Filter Search (Nama & Lokasi)
