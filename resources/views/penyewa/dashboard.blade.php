@@ -51,18 +51,30 @@
                     use App\Models\Pembayaran;
 
                     $userId = Auth::id();
+                    // Ambil sewa aktif terbaru
+                    $sewaAktifData = PengajuanSewa::with(['kos', 'kamar'])
+                        ->where('user_id', $userId)
+                        ->where('status', 'aktif')
+                        ->latest()
+                        ->first();
 
+                    // Ambil pembayaran terakhir dari sewa aktif
+                    $pembayaran = null;
+                    if ($sewaAktifData) {
+                        $pembayaran = Pembayaran::where('pengajuan_sewa_id', $sewaAktifData->id)->latest()->first();
+                    }
                     // Total Kos yang pernah diajukan / disewa
                     $totalKos = PengajuanSewa::where('user_id', $userId)->count();
 
                     // Sewa Aktif (status disetujui / aktif)
-                    $sewaAktif = PengajuanSewa::where('user_id', $userId)->where('status', 'disetujui')->count();
+                    $sewaAktif = PengajuanSewa::where('user_id', $userId)->where('status', 'aktif')->count();
 
                     // Menunggu Persetujuan
                     $menunggu = PengajuanSewa::where('user_id', $userId)->where('status', 'menunggu')->count();
 
                     // Riwayat (selesai)
                     $riwayat = PengajuanSewa::where('user_id', $userId)->where('status', 'selesai')->count();
+
                 @endphp
                 {{-- ================= CARD STATISTIK ================= --}}
                 <div class="row mt-4 g-3 align-items-stretch">
@@ -73,7 +85,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Total Kos Di Sewa</small>
-                                 <h3 class="fw-bold mb-0">{{ $totalKos }}</h3>
+                                    <h3 class="fw-bold mb-0">{{ $totalKos }}</h3>
                                     <small class="text-primary">Lihat Semua Kos →</small>
                                 </div>
 
@@ -109,7 +121,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Menunggu Persetujuan</small>
-                                   <h3 class="fw-bold mb-0">{{ $menunggu }}</h3>
+                                    <h3 class="fw-bold mb-0">{{ $menunggu }}</h3>
                                     <small class="text-primary">Lihat data persetujuan →</small>
                                 </div>
 
@@ -144,7 +156,6 @@
                 {{-- ================= KOS SAAT INI + STATUS ================= --}}
                 <div class="row mt-4 g-3 align-items-stretch">
 
-
                     {{-- KOS SAAT INI --}}
                     <div class="col-md-6 d-flex">
                         <div class="card p-3 shadow-sm w-100 h-100">
@@ -152,45 +163,113 @@
                                 <i class="bi bi-info-circle me-1"></i> Kos Saat Ini
                             </h6>
 
-                            <div class="row">
-                                <div class="col-6">
-                                    <p class="mb-1"><b>Kos Ungu</b></p>
-                                    <small>Kamar : A01</small><br>
-                                    <small>Durasi Sewa : 3 Bulan</small><br>
-                                    <small>Status : Aktif</small>
-                                </div>
+                            @if ($sewaAktifData)
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1"><b>{{ $sewaAktifData->kos->nama_kos }}</b></p>
 
-                                <div class="col-6">
-                                    <small>Tanggal Pengajuan</small>
-                                    <p>01-01-2026</p>
+                                        <small>Kamar : {{ $sewaAktifData->kamar->nama_kamar }}</small><br>
 
-                                    <small>Tanggal Selesai</small>
-                                    <p>01-03-2026</p>
+                                        @php
+                                            $durasi = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use (
+                                                $sewaAktifData,
+                                            ) {
+                                                $q->where('kamar_id', $sewaAktifData->kamar_id)->where(
+                                                    'user_id',
+                                                    auth()->id(),
+                                                );
+                                            })
+                                                ->where('status', 'dikonfirmasi')
+                                                ->latest()
+                                                ->first();
+
+                                            $jumlahBulan = $durasi ? $durasi->pengajuan->durasi : 1;
+                                        @endphp
+
+                                        <small>
+                                            Durasi Sewa : {{ $jumlahBulan }} Bulan
+                                        </small>
+                                        <br>
+                                        <small>
+                                            Status :
+                                            <span class="badge bg-success">Aktif</span>
+                                        </small>
+                                    </div>
+                                    <div class="col-6">
+                                        @php
+                                            $tanggalMulai = \Carbon\Carbon::parse($sewaAktifData->created_at);
+
+                                            // Ambil dari pembayaran yang dikonfirmasi
+                                            $pembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function (
+                                                $q,
+                                            ) use ($sewaAktifData) {
+                                                $q->where('kamar_id', $sewaAktifData->kamar_id)->where(
+                                                    'user_id',
+                                                    auth()->id(),
+                                                );
+                                            })
+                                                ->where('status', 'dikonfirmasi')
+                                                ->latest()
+                                                ->first();
+
+                                            $jumlahBulan = $pembayaran ? (int) $pembayaran->pengajuan->durasi : 1;
+
+                                            $tanggalSelesai = $tanggalMulai->copy()->addMonths($jumlahBulan);
+                                        @endphp
+
+                                        <small>Tanggal Pengajuan</small>
+                                        <p>{{ $tanggalMulai->format('d-m-Y') }}</p>
+
+                                        <small>Tanggal Selesai</small>
+                                        <p>{{ $tanggalSelesai->format('d-m-Y') }}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            @else
+                                <div class="text-center text-muted">
+                                    Belum ada kos aktif
+                                </div>
+                            @endif
                         </div>
                     </div>
 
-                    {{-- STATUS PEMBAYARAN --}}
-                    <div class="col-md-6">
-                        <div class="card p-3 shadow-sm">
+                    {{-- STATUS PEMBAYARAN (PINDAH KE SINI ✅) --}}
+                    <div class="col-md-6 d-flex">
+                        <div class="card p-3 shadow-sm w-100 h-100">
                             <h6 class="fw-bold mb-3">
                                 <i class="bi bi-info-circle me-1"></i> Status Pembayaran
                             </h6>
 
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td>Status</td>
-                                    <td>Lunas</td>
-                                </tr>
-                                <tr>
-                                    <td>Metode Pembayaran</td>
-                                    <td>QRIS</td>
-                                </tr>
-                                <tr>
-                                    <td>Terakhir Bayar</td>
-                                    <td>01-01-2026</td>
-                                </tr>
+                            <table class="table table-borderless mb-0">
+                                @if ($pembayaran)
+                                    <tr>
+                                        <td>Status</td>
+                                        <td>
+                                            <span class="badge bg-success">Lunas</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Metode</td>
+                                        <td>
+                                            @php
+                                                $metode = is_string($pembayaran->metode)
+                                                    ? json_decode($pembayaran->metode)
+                                                    : $pembayaran->metode;
+                                            @endphp
+
+                                            {{ $metode->nama_metode ?? '-' }} - {{ $metode->no_rekening ?? '' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Terakhir Bayar</td>
+                                        <td>{{ \Carbon\Carbon::parse($pembayaran->created_at)->format('d-m-Y') }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">
+                                            Belum ada pembayaran
+                                        </td>
+                                    </tr>
+                                @endif
                             </table>
                         </div>
                     </div>
