@@ -46,7 +46,24 @@
 
                 <h3 class="fw-bold" style="font-size: 30px;">Dashboard Penyewa</h3>
                 <small class="text-muted">Halo! Selamat Datang {{ Auth::user()->name }}</small>
+                @php
+                    use App\Models\PengajuanSewa;
+                    use App\Models\Pembayaran;
 
+                    $userId = Auth::id();
+
+                    // Total Kos yang pernah diajukan / disewa
+                    $totalKos = PengajuanSewa::where('user_id', $userId)->count();
+
+                    // Sewa Aktif (status disetujui / aktif)
+                    $sewaAktif = PengajuanSewa::where('user_id', $userId)->where('status', 'disetujui')->count();
+
+                    // Menunggu Persetujuan
+                    $menunggu = PengajuanSewa::where('user_id', $userId)->where('status', 'menunggu')->count();
+
+                    // Riwayat (selesai)
+                    $riwayat = PengajuanSewa::where('user_id', $userId)->where('status', 'selesai')->count();
+                @endphp
                 {{-- ================= CARD STATISTIK ================= --}}
                 <div class="row mt-4 g-3 align-items-stretch">
 
@@ -56,7 +73,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Total Kos Di Sewa</small>
-                                    <h3 class="fw-bold mb-0">0</h3>
+                                 <h3 class="fw-bold mb-0">{{ $totalKos }}</h3>
                                     <small class="text-primary">Lihat Semua Kos →</small>
                                 </div>
 
@@ -74,7 +91,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Sewa Aktif</small>
-                                    <h3 class="fw-bold mb-0">0</h3>
+                                    <h3 class="fw-bold mb-0">{{ $sewaAktif }}</h3>
                                     <small class="text-primary">Lihat Semua Sewa →</small>
                                 </div>
 
@@ -92,7 +109,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Menunggu Persetujuan</small>
-                                    <h3 class="fw-bold mb-0">0</h3>
+                                   <h3 class="fw-bold mb-0">{{ $menunggu }}</h3>
                                     <small class="text-primary">Lihat data persetujuan →</small>
                                 </div>
 
@@ -110,7 +127,7 @@
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Riwayat Sewa</small>
-                                    <h3 class="fw-bold mb-0">0</h3>
+                                    <h3 class="fw-bold mb-0">{{ $riwayat }}</h3>
                                     <small class="text-primary">Lihaat Semua riwayat →</small>
                                 </div>
 
