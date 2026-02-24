@@ -370,7 +370,7 @@
         <div class="container">
 
             <h2 class="fw-bold mb-3">
-                🔎 Temukan Kos Impianmu Sekarang!
+                Temukan Kos Impianmu Sekarang!
             </h2>
 
             <p class="mb-4">
