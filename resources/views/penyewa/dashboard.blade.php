@@ -9,6 +9,59 @@
     ];
 @endphp
 @section('content')
+    <style>
+        .dashboard-card-modern {
+            border: none;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title-modern {
+            font-weight: 600;
+            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .info-value {
+            font-weight: 500;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .badge-soft-success {
+            background: #e6f4ea;
+            color: #198754;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .table-modern td {
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+        .table-modern td:first-child {
+            color: #6c757d;
+            width: 40%;
+        }
+    </style>
     <div class="d-flex">
 
         {{-- SIDEBAR --}}
@@ -155,11 +208,12 @@
 
                         {{-- KOS SAAT INI --}}
                         <div class="col-md-6 d-flex">
-                            <div class="card p-3 shadow-sm w-100 h-100">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-info-circle me-1"></i> Kos Saat Ini
+                            <div class="card dashboard-card-modern p-3 w-100 h-100">
+                                <h6 class="card-title-modern">
+                                    <i class="bi bi-house-door-fill text-primary"></i>
+                                    Kos Saat Ini
                                 </h6>
-
+                                <hr class="my-2">
                                 @if ($sewaAktifData)
                                     <div class="row">
                                         <div class="col-6">
@@ -231,11 +285,12 @@
 
                         {{-- STATUS PEMBAYARAN (PINDAH KE SINI ✅) --}}
                         <div class="col-md-6 d-flex">
-                            <div class="card p-3 shadow-sm w-100 h-100">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-info-circle me-1"></i> Status Pembayaran
+                            <div class="card dashboard-card-modern p-3 w-100 h-100">
+                                <h6 class="card-title-modern">
+                                    <i class="bi bi-credit-card-2-front text-primary"></i>
+                                    Status Pembayaran
                                 </h6>
-
+                                <hr class="my-2">
                                 <table class="table table-borderless mb-0">
                                     @if ($pembayaran)
                                         <tr>
