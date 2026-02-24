@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Login - FindKos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
     <!-- Google Font Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -35,18 +35,17 @@
             class="w-1/2 bg-gradient-to-b from-blue-500 to-blue-700 text-white flex flex-col justify-center px-20 relative">
 
             <!-- Logo (pakai gambar + link) -->
-            <a href="/" class="absolute top-8 left-10 flex items-center gap-2">
-                <img src="https://cdn-icons-png.flaticon.com/512/69/69524.png" class="w-8 h-8">
-                <span class="text-2xl font-bold tracking-wide">
-                    FIND<span class="text-blue-200">KOS</span>
-                </span>
-            </a>
-
-            <!-- Image -->
-            <div class="mb-10">
-                <img src="{{ asset('images/kos.png') }}" alt="Ilustrasi Kos" class="w-[450px]">
+            <div class="logo"
+                style="position:absolute; top:10px; left:40px; display:flex; align-items:center; gap:12px; font-weight:700; font-size:22px;">
+                <img src="{{ asset('images/logo.png') }}" style="width:40px;">
+                <span>FindKos</span>
             </div>
 
+            <!-- Image & Text -->
+            <div class="left-content" style="margin-top:80px; padding-left:0px;">
+                <img src="{{ asset('images/kos.png') }}" style="width:420px; display:block; margin-bottom:30px;">
+
+            </div>
             <!-- Text -->
             <h2 class="text-5xl font-bold mb-2">Halo.....</h2>
             <h2 class="text-5xl font-bold mb-6">Selamat Datang</h2>
@@ -150,19 +149,19 @@
         </div>
     </div>
     <script>
-function togglePassword(el) {
-    const input = document.getElementById("password");
-    const icon = el.querySelector("i");
+        function togglePassword(el) {
+            const input = document.getElementById("password");
+            const icon = el.querySelector("i");
 
-    if (input.type === "password") {
-        input.type = "text";
-        icon.classList.replace("bi-eye", "bi-eye-slash");
-    } else {
-        input.type = "password";
-        icon.classList.replace("bi-eye-slash", "bi-eye");
-    }
-}
-</script>
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        }
+    </script>
 
 
 </body>

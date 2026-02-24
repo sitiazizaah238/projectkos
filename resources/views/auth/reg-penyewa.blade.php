@@ -7,11 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
         * {
             box-sizing: border-box;
         }
+
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
@@ -32,26 +34,29 @@
 
         .logo {
             position: absolute;
-            top: 25px;
+            top: 15px;
             left: 40px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            /* beri sedikit jarak lebih */
             font-weight: 700;
-            font-size: 18px;
+            font-size: 22px;
+            /* besarkan font FINDKOS */
         }
 
         .logo img {
-            width: 30px;
+            width: 40px;
+            /* besarkan logo */
         }
 
         .left-content {
-            margin-top: 110px;
+            margin-top: 70px;
             padding-left: 40px;
         }
 
         .left-content img {
-            width: 380px;
+            width: 420px;
             display: block;
             margin-bottom: 30px;
         }
@@ -133,7 +138,7 @@
 
             <div class="logo">
                 <img src="{{ asset('images/logo.png') }}">
-                <span>FINDKOS</span>
+                <span>FindKos</span>
             </div>
 
             <div class="left-content">
@@ -168,26 +173,26 @@
                     </div>
 
 
-                    <div class="form-group" style="position:relative;">
-                        <label>Password</label>
-                        <input type="password" name="password" id="password" placeholder="Masukan password"
-                            style="padding-right:45px;">
+                    <div class="form-group" style="display:flex; gap:10px;">
+                        <div style="flex:1; position:relative;">
+                            <label>Password</label>
+                            <input type="password" name="password" id="password" placeholder="Masukan password"
+                                style="padding-right:45px; width:100%;">
+                            <span onclick="togglePassword('password', this)"
+                                style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
 
-                        <span onclick="togglePassword('password')"
-                            style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
-                            👁
-                        </span>
-                    </div>
-
-                    <div class="form-group" style="position:relative;">
-                        <label>Konfirmasi Password</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation"
-                            placeholder="Ulangi password" style="padding-right:45px;">
-
-                        <span onclick="togglePassword('password_confirmation')"
-                            style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
-                            👁
-                        </span>
+                        <div style="flex:1; position:relative;">
+                            <label>Konfirmasi Password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                placeholder="Ulangi password" style="padding-right:45px; width:100%;">
+                            <span onclick="togglePassword('password_confirmation', this)"
+                                style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
                     </div>
 
                     <button type="submit">Daftar</button>
