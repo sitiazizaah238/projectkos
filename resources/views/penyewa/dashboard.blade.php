@@ -136,16 +136,16 @@
 
                         {{-- TOTAL KOS --}}
                         <div class="col-md-3 mb-4">
-                            <div class="card border-0 shadow rounded-4 h-100 text-white"
-                                style="background: linear-gradient(135deg,#f59e0b,#fbbf24);">
+                            <div class="card rounded-4 h-100 text-dark bg-light position-relative overflow-hidden"
+                                style="border: 3px solid; border-image: linear-gradient(45deg, #f59e0b, #dc2626) 1; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <small class="opacity-75">Total Kos Disewa</small>
+                                        <small class="opacity-75 text-uppercase">Total Kos Disewa</small>
                                         <h3 class="fw-bold mt-2 mb-0">{{ $totalKos }}</h3>
                                     </div>
-                                    <div class="bg-white bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center"
+                                    <div class="icon-container bg-secondary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center"
                                         style="width:55px;height:55px;">
-                                        <i class="bi bi-house-fill fs-4"></i>
+                                        <i class="bi bi-house-fill fs-4 text-dark"></i>
                                     </div>
                                 </div>
                             </div>
@@ -153,16 +153,16 @@
 
                         {{-- SEWA AKTIF --}}
                         <div class="col-md-3 mb-4">
-                            <div class="card border-0 shadow rounded-4 h-100 text-white"
-                                style="background: linear-gradient(135deg,#16a34a,#22c55e);">
+                            <div class="card rounded-4 h-100 text-dark bg-light position-relative overflow-hidden"
+                                style="border: 3px solid; border-image: linear-gradient(45deg, #f59e0b, #dc2626) 1; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <small class="opacity-75">Sewa Aktif</small>
+                                        <small class="opacity-75 text-uppercase">Sewa Aktif</small>
                                         <h3 class="fw-bold mt-2 mb-0">{{ $sewaAktif }}</h3>
                                     </div>
-                                    <div class="bg-white bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center"
+                                    <div class="icon-container bg-secondary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center"
                                         style="width:55px;height:55px;">
-                                        <i class="bi bi-check-circle-fill fs-4"></i>
+                                        <i class="bi bi-check-circle-fill fs-4 text-dark"></i>
                                     </div>
                                 </div>
                             </div>
@@ -170,16 +170,16 @@
 
                         {{-- MENUNGGU PERSETUJUAN --}}
                         <div class="col-md-3 mb-4">
-                            <div class="card border-0 shadow rounded-4 h-100 text-white"
-                                style="background: linear-gradient(135deg,#2563eb,#3b82f6);">
+                            <div class="card rounded-4 h-100 text-dark bg-light position-relative overflow-hidden"
+                                style="border: 3px solid; border-image: linear-gradient(45deg, #f59e0b, #dc2626) 1; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <small class="opacity-75">Menunggu Persetujuan</small>
+                                        <small class="opacity-75 text-uppercase">Menunggu Persetujuan</small>
                                         <h3 class="fw-bold mt-2 mb-0">{{ $menunggu }}</h3>
                                     </div>
-                                    <div class="bg-white bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center"
+                                    <div class="icon-container bg-secondary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center"
                                         style="width:55px;height:55px;">
-                                        <i class="bi bi-hourglass-split fs-4"></i>
+                                        <i class="bi bi-hourglass-split fs-4 text-dark"></i>
                                     </div>
                                 </div>
                             </div>
@@ -187,21 +187,20 @@
 
                         {{-- RIWAYAT --}}
                         <div class="col-md-3 mb-4">
-                            <div class="card border-0 shadow rounded-4 h-100 text-white"
-                                style="background: linear-gradient(135deg,#dc2626,#ef4444);">
+                            <div class="card rounded-4 h-100 text-dark bg-light position-relative overflow-hidden"
+                                style="border: 3px solid; border-image: linear-gradient(45deg, #f59e0b, #dc2626) 1; transition: transform 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <small class="opacity-75">Riwayat Sewa</small>
+                                        <small class="opacity-75 text-uppercase">Riwayat Sewa</small>
                                         <h3 class="fw-bold mt-2 mb-0">{{ $riwayat }}</h3>
                                     </div>
-                                    <div class="bg-white bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center"
+                                    <div class="icon-container bg-secondary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center"
                                         style="width:55px;height:55px;">
-                                        <i class="bi bi-clock-history fs-4"></i>
+                                        <i class="bi bi-clock-history fs-4 text-dark"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     {{-- ================= KOS SAAT INI + STATUS ================= --}}
                     <div class="row mt-4 g-3 align-items-stretch">
