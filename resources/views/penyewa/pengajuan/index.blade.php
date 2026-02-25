@@ -1,37 +1,31 @@
 @extends('layouts.app')
-
+@if (request('read'))
+    @php
+        DB::table('pengajuan_sewas')
+            ->where('id', request('read'))
+            ->update(['status_notif' => 1]);
+    @endphp
+@endif
 @section('content')
     <div class="d-flex">
 
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-            {{-- ================= TOPBAR (SAMA KAYA DASHBOARD) ================= --}}
+           {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
-
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
-
                     <span class="me-2">{{ Auth::user()->name }}</span>
-
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/' . Auth::user()->photo) }}"
-                            style="
-            width:40px;
-            height:40px;
-            border-radius:50%;
-            object-fit:cover;
-            border:2px solid white;
-         ">
+                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid white;">
                     @else
                         <i class="bi bi-person-circle fs-3"></i>
                     @endif
-
                 </button>
-
             </div>
-
-
+              
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
                 <h3 class="fw-bold mb-1" style="font-size: 30px;">Data Pengajuan</h3>
@@ -114,10 +108,20 @@
 
                                             {{-- AKSI --}}
                                             <td>
-                                                @if ($item->status == 'disetujui')
+                                                @php
+                                                    $pembayaran = DB::table('pembayarans')
+                                                        ->where('pengajuan_sewa_id', $item->id)
+                                                        ->first();
+                                                @endphp
+
+                                                @if ($item->status == 'disetujui' && !$pembayaran)
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalBayar{{ $item->id }}">
                                                         Bayar Sekarang
+                                                    </button>
+                                                @elseif($item->status == 'disetujui' && $pembayaran && $pembayaran->status == 'menunggu')
+                                                    <button class="btn btn-sm btn-secondary" disabled>
+                                                        Menunggu Verifikasi
                                                     </button>
                                                 @elseif($item->status == 'aktif')
                                                     <span class="badge bg-success">Sudah Dibayar</span>

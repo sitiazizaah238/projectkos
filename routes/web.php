@@ -174,7 +174,11 @@ Route::get('/notif/pengajuan/{id}', function ($id) {
     $p->update(['is_read' => 1]);
 
     return redirect()->route('pemilik.pengajuan.index');
+    Route::get('/pemilik/verifikasi/{id}',
+    [PembayaranController::class, 'show'])
+    ->name('pemilik.verifikasi.show');
 });
+
     });
 
     // punya penyewa
