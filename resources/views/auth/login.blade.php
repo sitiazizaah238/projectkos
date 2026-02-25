@@ -69,7 +69,7 @@
                     <div class="mb-8">
                         <label class="block mb-3 text-gray-700 font-semibold text-lg">Email</label>
                         <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                            class="w-full px-6 py-4 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+                            class="w-full px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
                             placeholder="Masukan Email..">
                     </div>
 
@@ -81,7 +81,7 @@
                         </label>
 
                         <input type="password" name="password" id="password" required
-                            class="w-full px-6 py-4 pr-14 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+                            class="w-full px-6 py-3 pr-14 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
                             placeholder="Masukan Password..">
 
                         <span onclick="togglePassword(this)"
@@ -91,11 +91,9 @@
 
                     </div>
 
-
-
                     <!-- Button -->
                     <button type="submit"
-                        class="w-full py-4 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-xl transition duration-300">
+                        class="w-full py-3 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-xl transition duration-300">
                         Masuk
                     </button>
 
