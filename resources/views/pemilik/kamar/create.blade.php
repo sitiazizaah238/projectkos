@@ -196,10 +196,11 @@
 
                                         <div class="mb-3">
                                             <label class="form-label">Status Kamar</label>
-                                            <select name="status" class="form-select">
-                                                <option value="tersedia">Tersedia</option>
-                                                <option value="terisi">Terisi</option>
-                                            </select>
+                                            <input type="hidden" name="status" value="tersedia">
+
+                                            <div class="form-control bg-light">
+                                                Tersedia
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
