@@ -20,16 +20,9 @@
     // 🔔 NOTIF SECTION
     // =====================
 
-    $notifKos = Kos::where('user_id', $userId)
-                ->where('status', 'disetujui')
-                ->where('is_read', false)
-                ->latest()
-                ->get();
+    $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', false)->latest()->get();
 
-    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)
-                        ->where('is_read', false)
-                        ->latest()
-                        ->get();
+    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
 
     $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
 @endphp
@@ -41,7 +34,7 @@
         @include('components.sidebar-pemilik')
 
         <div class="flex-grow-1">
- {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 <div class="dropdown position-relative">
 
@@ -151,8 +144,10 @@
                                         <td>
                                             @if ($p->status == 'menunggu')
                                                 <span class="badge bg-warning">Menunggu</span>
-                                            @else
+                                            @elseif ($p->status == 'aktif')
                                                 <span class="badge bg-success">Aktif</span>
+                                            @elseif ($p->status == 'ditolak')
+                                                <span class="badge bg-danger">Ditolak</span>
                                             @endif
                                         </td>
                                         <td>
