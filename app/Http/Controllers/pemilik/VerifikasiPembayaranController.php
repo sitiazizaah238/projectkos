@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Pemilik;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pembayaran;
-
+use Illuminate\Http\Request;
 class VerifikasiPembayaranController extends Controller
 {
     public function index()
@@ -54,13 +54,18 @@ class VerifikasiPembayaranController extends Controller
 
     return back()->with('success','Pembayaran dikonfirmasi & kamar terisi');
 }
-  public function tolak($id)
+  public function tolak(Request $request, $id)
 {
+    $request->validate([
+        'alasan' => 'required|string'
+    ]);
+
     $pembayaran = Pembayaran::with('pengajuan')
                     ->findOrFail($id);
 
     $pembayaran->update([
-        'status' => 'ditolak'
+        'status' => 'ditolak',
+        'alasan' => $request->alasan
     ]);
 
     $pembayaran->pengajuan->update([

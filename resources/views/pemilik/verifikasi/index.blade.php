@@ -275,26 +275,46 @@
                 });
             });
 
-            document.querySelectorAll('.btn-tolak').forEach(button => {
-                button.addEventListener('click', function() {
+          document.querySelectorAll('.btn-tolak').forEach(button => {
+    button.addEventListener('click', function() {
 
-                    let id = this.getAttribute('data-id');
+        let id = this.getAttribute('data-id');
 
-                    Swal.fire({
-                        title: 'Tolak Pembayaran?',
-                        text: "Pembayaran akan ditolak!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Tolak!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('form-tolak-' + id).submit();
-                        }
-                    });
+        Swal.fire({
+            title: 'Tolak Pembayaran',
+            input: 'textarea',
+            inputLabel: 'Masukkan alasan penolakan',
+            inputPlaceholder: 'Contoh: Nominal pembayaran kurang / Bukti transfer tidak jelas / Data tidak valid',
+            inputAttributes: {
+                'aria-label': 'Masukkan alasan'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Tolak Pembayaran',
+            cancelButtonText: 'Batal',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Alasan wajib diisi!'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
 
-                });
-            });
+                let form = document.getElementById('form-tolak-' + id);
+
+                // buat input hidden untuk alasan
+                let input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "alasan";
+                input.value = result.value;
+
+                form.appendChild(input);
+
+                form.submit();
+            }
+        });
+
+    });
+});
 
         });
     </script>

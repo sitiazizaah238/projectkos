@@ -12,6 +12,9 @@ use App\Http\Controllers\Penyewa\RecommendationController;
 use App\Http\Controllers\Penyewa\KosController as PenyewaKosController;
 use App\Http\Controllers\Penyewa\PembayaranController;
 use App\Http\Controllers\Pemilik\PengajuanController;
+use App\Models\PengajuanSewa;
+use App\Models\Pembayaran;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -163,22 +166,23 @@ Route::middleware('auth')->group(function () {
             [PengajuanController::class, 'konfirmasiPembayaran']
         )->name('pemilik.pengajuan.konfirmasi');
         Route::get('/notif/kos/{id}', function ($id) {
-    $kos = \App\Models\Kos::findOrFail($id);
-    $kos->update(['is_read' => 1]);
+            $kos = \App\Models\Kos::findOrFail($id);
+            $kos->update(['is_read' => 1]);
 
-    return redirect()->route('pemilik.kos.index');
-});
+            return redirect()->route('pemilik.kos.index');
+        });
 
-Route::get('/notif/pengajuan/{id}', function ($id) {
-    $p = \App\Models\PengajuanSewa::findOrFail($id);
-    $p->update(['is_read' => 1]);
+        Route::get('/notif/pengajuan/{id}', function ($id) {
+            $p = \App\Models\PengajuanSewa::findOrFail($id);
+            $p->update(['is_read' => 1]);
 
-    return redirect()->route('pemilik.pengajuan.index');
-    Route::get('/pemilik/verifikasi/{id}',
-    [PembayaranController::class, 'show'])
-    ->name('pemilik.verifikasi.show');
-});
-
+            return redirect()->route('pemilik.pengajuan.index');
+            Route::get(
+                '/pemilik/verifikasi/{id}',
+                [PembayaranController::class, 'show']
+            )
+                ->name('pemilik.verifikasi.show');
+        });
     });
 
     // punya penyewa
@@ -229,6 +233,29 @@ Route::get('/notif/pengajuan/{id}', function ($id) {
 
         Route::post('/penyewa/profile', [ProfilePenyewaController::class, 'update'])
             ->name('penyewa.profile.update');
+        Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
+
+            $data = \App\Models\PengajuanSewa::findOrFail($id);
+
+            if ($data->user_id == auth()->id()) {
+                $data->update(['status_notif' => 1]);
+            }
+
+            return redirect()->route('penyewa.pengajuan.index');
+        })->name('penyewa.notif.pengajuan');
+
+
+        Route::get('/penyewa/notif/pembayaran/{id}', function ($id) {
+
+            $data = \App\Models\Pembayaran::with('pengajuan')->findOrFail($id);
+
+            if ($data->pengajuan && $data->pengajuan->user_id == auth()->id()) {
+                $data->status_notif = 1;
+                $data->save();
+            }
+
+            return redirect()->route('penyewa.pembayaran.index');
+        })->name('penyewa.notif.pembayaran');
     });
 });
 

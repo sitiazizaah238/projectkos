@@ -31,7 +31,7 @@ public function ajukanUlang(Request $request, $id)
 
     $pembayaran->update([
         'bukti' => $path,
-        'status' => 'menunggu_verifikasi',
+        'status' => 'menunggu',
         'alasan' => null
     ]);
 

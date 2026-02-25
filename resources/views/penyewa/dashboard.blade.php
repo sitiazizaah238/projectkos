@@ -71,7 +71,64 @@
 
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
+                @php
+                    $userId = Auth::id();
 
+                    $notifPengajuan = \App\Models\PengajuanSewa::where('user_id', $userId)
+                        ->where('status', 'disetujui')
+                        ->where('status_notif', 0)
+                        ->get();
+
+                    $notifPembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    })
+                        ->whereIn('status', ['disetujui', 'ditolak'])
+                        ->where('status_notif', 0)
+                        ->get();
+
+                    $totalNotif = $notifPengajuan->count() + $notifPembayaran->count();
+                @endphp
+                {{-- 🔔 NOTIFIKASI --}}
+                <div class="dropdown me-3">
+
+                    <button class="btn position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4 text-white"></i>
+
+                        @if ($totalNotif > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ $totalNotif }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow" style="width:300px">
+
+                        <h6 class="dropdown-header">Notifikasi</h6>
+
+                        {{-- NOTIF PENGAJUAN --}}
+                        @foreach ($notifPengajuan as $p)
+                            <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
+                                <strong>Pengajuan Disetujui</strong><br>
+                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui admin
+                            </a>
+                        @endforeach
+
+                        {{-- NOTIF PEMBAYARAN --}}
+                        @foreach ($notifPembayaran as $pb)
+                            <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
+                                <strong>Status Pembayaran</strong><br>
+                                Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
+                                {{ $pb->status }}
+                            </a>
+                        @endforeach
+                        @if ($totalNotif == 0)
+                            <li class="dropdown-item text-muted small">
+                                Tidak ada notifikasi
+                            </li>
+                        @endif
+
+                    </ul>
+                </div>
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -376,7 +433,8 @@
                                             <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
                                                 <h6 class="fw-bold mb-0" style="min-width:0;">{{ $k->nama_kos }}</h6>
                                                 <span class="badge bg-primary flex-shrink-0">
-                                                    <i class="bi {{ $tipeIcon }} me-1"></i>{{ ucfirst($k->tipe_kos) }}
+                                                    <i
+                                                        class="bi {{ $tipeIcon }} me-1"></i>{{ ucfirst($k->tipe_kos) }}
                                                 </span>
                                             </div>
 
