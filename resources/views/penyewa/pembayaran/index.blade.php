@@ -5,9 +5,79 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-            {{-- ================= TOPBAR ================= --}}
+               {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
+                @php
+                    $userId = Auth::id();
 
+                    $notifPengajuan = \App\Models\PengajuanSewa::where('user_id', $userId)
+                        ->where('status', 'disetujui')
+                        ->latest()
+                        ->get();
+
+                    $notifPengajuanUnread = \App\Models\PengajuanSewa::where('user_id', $userId)
+                        ->where('status', 'disetujui')
+                        ->where('status_notif', 0)
+                        ->count();
+
+                    $notifPembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    })
+                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
+                        ->latest()
+                        ->get();
+
+                    $notifPembayaranUnread = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    })
+                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
+                        ->where('status_notif', 0)
+                        ->count();
+
+                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
+                @endphp
+                {{-- 🔔 NOTIFIKASI --}}
+                <div class="dropdown me-3">
+
+                    <button class="btn position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4 text-white"></i>
+
+                        @if ($totalNotif > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ $totalNotif }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow" style="width:300px">
+
+                        <h6 class="dropdown-header">Notifikasi</h6>
+
+                        {{-- NOTIF PENGAJUAN --}}
+                        @foreach ($notifPengajuan as $p)
+                            <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
+                                <strong>Pengajuan Disetujui</strong><br>
+                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
+                            </a>
+                        @endforeach
+
+                        {{-- NOTIF PEMBAYARAN --}}
+                        @foreach ($notifPembayaran as $pb)
+                            <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
+                                <strong>Status Pembayaran</strong><br>
+                                Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
+                                {{ $pb->status }}
+                            </a>
+                        @endforeach
+                        {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
+                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
+                            <li class="dropdown-item text-muted small">
+                                Tidak ada notifikasi
+                            </li>
+                        @endif
+
+                    </ul>
+                </div>
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -15,12 +85,19 @@
 
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/' . Auth::user()->photo) }}"
-                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid white;">
+                            style="
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+            border:2px solid white;
+         ">
                     @else
                         <i class="bi bi-person-circle fs-3"></i>
                     @endif
 
                 </button>
+
             </div>
 
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">

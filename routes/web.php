@@ -233,17 +233,18 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/penyewa/profile', [ProfilePenyewaController::class, 'update'])
             ->name('penyewa.profile.update');
-        Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
+      Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
 
-            $data = \App\Models\PengajuanSewa::findOrFail($id);
+    $userId = auth()->id();
 
-            if ($data->user_id == auth()->id()) {
-                $data->update(['status_notif' => 1]);
-            }
+    // tandai SEMUA notif pengajuan sebagai terbaca
+    \App\Models\PengajuanSewa::where('user_id', $userId)
+        ->where('status', 'disetujui')
+        ->where('status_notif', 0)
+        ->update(['status_notif' => 1]);
 
-            return redirect()->route('penyewa.pengajuan.index');
-        })->name('penyewa.notif.pengajuan');
-
+    return redirect()->route('penyewa.pengajuan.index');
+})->name('penyewa.notif.pengajuan');
 
         Route::get('/penyewa/notif/pembayaran/{id}', function ($id) {
 

@@ -98,7 +98,7 @@
                         ->where('status_notif', 0)
                         ->count();
 
-              $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
+                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
                 <div class="dropdown me-3">
@@ -133,7 +133,8 @@
                                 {{ $pb->status }}
                             </a>
                         @endforeach
-                        @if ($totalNotif == 0)
+                        {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
+                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
                             <li class="dropdown-item text-muted small">
                                 Tidak ada notifikasi
                             </li>
