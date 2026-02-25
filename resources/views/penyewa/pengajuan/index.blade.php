@@ -12,7 +12,7 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-           {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -25,7 +25,7 @@
                     @endif
                 </button>
             </div>
-              
+
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
                 <h3 class="fw-bold mb-1" style="font-size: 30px;">Data Pengajuan</h3>
@@ -88,9 +88,16 @@
                                             </td>
                                             {{-- STATUS KAMAR --}}
                                             <td>
-                                                @if ($item->kamar->status == 'tersedia')
+                                                @php
+                                                    $pembayaran = DB::table('pembayarans')
+                                                        ->where('pengajuan_sewa_id', $item->id)
+                                                        ->first();
+                                                @endphp
+
+                                                {{-- Jika pengajuan belum aktif ATAU pembayaran masih menunggu --}}
+                                                @if ($item->status !== 'aktif')
                                                     <span class="badge bg-success">Tersedia</span>
-                                                @elseif($item->kamar->status == 'terisi')
+                                                @elseif($item->status == 'aktif')
                                                     <span class="badge bg-danger">Terisi</span>
                                                 @else
                                                     <span class="badge bg-secondary">-</span>
@@ -115,18 +122,17 @@
                                                 @endphp
 
                                                 @if ($item->status == 'disetujui' && !$pembayaran)
+                                                    {{-- Bisa bayar --}}
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalBayar{{ $item->id }}">
                                                         Bayar Sekarang
                                                     </button>
-                                                @elseif($item->status == 'disetujui' && $pembayaran && $pembayaran->status == 'menunggu')
-                                                    <button class="btn btn-sm btn-secondary" disabled>
-                                                        Menunggu Verifikasi
-                                                    </button>
-                                                @elseif($item->status == 'aktif')
-                                                    <span class="badge bg-success">Sudah Dibayar</span>
                                                 @else
-                                                    -
+                                                    {{-- Semua kondisi selain itu = disabled --}}
+                                                    <button class="btn btn-sm btn-secondary" disabled
+                                                        style="pointer-events:none; opacity:0.65;">
+                                                        Bayar Sekarang
+                                                    </button>
                                                 @endif
                                             </td>
 

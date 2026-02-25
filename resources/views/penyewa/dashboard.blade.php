@@ -76,17 +76,29 @@
 
                     $notifPengajuan = \App\Models\PengajuanSewa::where('user_id', $userId)
                         ->where('status', 'disetujui')
-                        ->where('status_notif', 0)
+                        ->latest()
                         ->get();
+
+                    $notifPengajuanUnread = \App\Models\PengajuanSewa::where('user_id', $userId)
+                        ->where('status', 'disetujui')
+                        ->where('status_notif', 0)
+                        ->count();
 
                     $notifPembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
                         $q->where('user_id', $userId);
                     })
-                        ->whereIn('status', ['disetujui', 'ditolak'])
-                        ->where('status_notif', 0)
+                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
+                        ->latest()
                         ->get();
 
-                    $totalNotif = $notifPengajuan->count() + $notifPembayaran->count();
+                    $notifPembayaranUnread = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    })
+                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
+                        ->where('status_notif', 0)
+                        ->count();
+
+              $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
                 <div class="dropdown me-3">
@@ -109,7 +121,7 @@
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
                                 <strong>Pengajuan Disetujui</strong><br>
-                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui admin
+                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
                             </a>
                         @endforeach
 
