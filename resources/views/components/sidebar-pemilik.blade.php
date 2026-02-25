@@ -1,15 +1,38 @@
+{{-- Overlay --}}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <div class="sidebar p-4" id="sidebar">
+   <h4 class="fw-bold text-primary mb-3 d-flex align-items-center"
+    style="
+        gap:10px;
+        font-size:clamp(18px,1.6vw,22px);
+        letter-spacing:0.3px;
+        font-weight:600;
+        margin-top:-6px;
+    ">
 
-    <h4 class="fw-bold text-primary mb-4">
-        <i class="bi bi-house-door-fill"></i> FINDKOS
-    </h4>
+    {{-- Logo jika ada --}}
+    <img src="{{ asset('images/logo.png') }}"
+         alt="Logo"
+         style="
+            height:clamp(36px,4vw,48px);
+            width:auto;
+            object-fit:contain;
+         "
+         onerror="this.style.display='none'">
 
-    <div class="mb-4">
-        <small>Welcome</small>
-        <div class="fw-bold">{{ Auth::user()->email }}</div>
-    </div>
+
+    <span style="
+        font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+        color:#1f2937;
+    ">
+        FindKos
+        <HR></HR>
+    </span>
+
+</h4>
+
+
 
     <ul class="nav flex-column">
 
