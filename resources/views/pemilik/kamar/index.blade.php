@@ -108,8 +108,8 @@
 
                 {{-- PAGE TITLE --}}
                 <div class="mb-2">
-                   <h3 class="fw-bold" style="font-size:25px;">
-                    Manajemen Kamar</h3>
+                    <h3 class="fw-bold" style="font-size:25px;">
+                        Manajemen Kamar</h3>
                     <small class="text-muted">Manajemen Kos / Data Kamar Kos</small>
                 </div>
 
@@ -191,9 +191,12 @@
 
                                             <form action="{{ route('pemilik.kamar.destroy', $k->id) }}" method="POST"
                                                 class="d-inline delete-form">
+
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">
+
+                                                <button type="button" class="btn btn-sm btn-danger btn-delete"
+                                                    data-status="{{ $k->status }}">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </button>
                                             </form>
@@ -222,29 +225,46 @@
 
     {{-- SWEET ALERT --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".btn-delete").forEach(btn => {
-                btn.addEventListener("click", function() {
-                    let form = this.closest("form");
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn-delete").forEach(btn => {
 
-                    Swal.fire({
-                        title: 'Yakin hapus?',
-                        text: "Data kamar akan dihapus permanen!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Ya, hapus',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
+        btn.addEventListener("click", function () {
+
+            let status = this.dataset.status;
+            let form = this.closest("form");
+
+            // ❌ Kalau kamar TERISI
+            if (status === 'terisi') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tidak Bisa Dihapus!',
+                    text: 'Kamar sedang terisi oleh penyewa.',
+                    confirmButtonColor: '#d33'
                 });
+                return;
+            }
+
+            // ✅ Kalau kamar TERSEDIA
+            Swal.fire({
+                title: 'Yakin hapus?',
+                text: "Data kamar akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
+
         });
-    </script>
+
+    });
+});
+</script>
     {{-- PROFILE MODAL --}}
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">

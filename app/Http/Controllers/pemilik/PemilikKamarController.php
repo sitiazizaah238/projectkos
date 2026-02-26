@@ -34,7 +34,7 @@ class PemilikKamarController extends Controller
     public function create()
     {
         $kos = Kos::where('user_id', Auth::id())
-            ->where('status', 'disetujui') 
+            ->where('status', 'disetujui')
             ->get();
 
         return view('pemilik.kamar.create', compact('kos'));
@@ -63,7 +63,7 @@ class PemilikKamarController extends Controller
             foreach ($request->file('foto') as $file) {
                 $paths[] = $file->store('kamar', 'public');
             }
-            $data['foto'] = $paths; 
+            $data['foto'] = $paths;
         }
 
         Kamar::create($data);
@@ -115,7 +115,7 @@ class PemilikKamarController extends Controller
             foreach ($request->file('foto') as $file) {
                 $paths[] = $file->store('kamar', 'public');
             }
-            $data['foto'] = $paths; 
+            $data['foto'] = $paths;
         }
 
         $kamar->update($data);
@@ -138,6 +138,10 @@ class PemilikKamarController extends Controller
     public function destroy(Kamar $kamar)
     {
         if ($kamar->kos->user_id != Auth::id()) abort(403);
+ // CEK JIKA KAMAR TERISI
+    if ($kamar->status == 'terisi') {
+        return back()->with('error', 'Kamar sedang terisi dan tidak bisa dihapus!');
+    }
 
         if ($kamar->foto) {
             foreach ($kamar->foto as $old) {
