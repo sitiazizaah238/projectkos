@@ -64,7 +64,6 @@ public function konfirmasiPembayaran($id)
     $p->status = 'aktif';
     $p->save();
 
-    // 🔥 Ubah status kamar jadi terisi
     if ($p->kamar) {
         $p->kamar->status = 'terisi';
         $p->kamar->save();
