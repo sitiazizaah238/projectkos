@@ -46,65 +46,80 @@
                 <img src="{{ asset('images/kos.png') }}" style="width:420px; display:block; margin-bottom:30px;">
 
             </div>
-            <!-- Text -->
-            <h2 class="text-5xl font-bold mb-2">Halo.....</h2>
-            <h2 class="text-5xl font-bold mb-6">Selamat Datang</h2>
+            <h2 style="font-size:45px; font-weight:700; line-height:1.2; margin-bottom:16px;">
+    Selamat Datang Kembali!
+</h2>
 
-            <p class="text-xl text-blue-100 leading-relaxed">
-                Di Website FindKos di wilayah <br>
-                Lohbener Indramayu
+            <p class="text-lg text-blue-100 leading-relaxed">
+                Masuk Untuk Mengakses Dashboard <br>
+                Anda dan Kelola Akun Dengan Mudah
             </p>
+
 
         </div>
 
         <!-- RIGHT SIDE -->
+        <!-- RIGHT SIDE -->
         <div class="w-1/2 bg-gray-100 flex items-center justify-center">
 
-            <div class="w-[420px]">
+            <div class="w-[420px] bg-white p-10 rounded-2xl shadow-sm">
+
+                <!-- TITLE -->
+                <div class="mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Masuk ke Akun Anda
+                    </h2>
+
+                    <p class="text-sm text-gray-500 mt-1">
+                        Masukkan Email dan Password Untuk Melanjutkan
+                    </p>
+                </div>
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
-                    <!-- Email -->
-                    <div class="mb-8">
-                        <label class="block mb-3 text-gray-700 font-semibold text-lg">Email</label>
+
+                    <!-- EMAIL -->
+                    <div class="mb-6">
+                        <label class="block mb-2 text-gray-700 font-medium">Email</label>
+
                         <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                            class="w-full px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+                            class="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Masukan Email..">
                     </div>
 
-                    <!-- Password -->
-                    <div class="mb-8 relative">
+                    <!-- PASSWORD -->
+                    <div class="mb-6 relative">
 
-                        <label class="block mb-3 text-gray-700 font-semibold text-lg">
+                        <label class="block mb-2 text-gray-700 font-medium">
                             Password
                         </label>
 
                         <input type="password" name="password" id="password" required
-                            class="w-full px-6 py-3 pr-14 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
+                            class="w-full px-5 py-3 pr-14 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Masukan Password..">
 
                         <span onclick="togglePassword(this)"
-                            class="absolute right-5 top-[58px] cursor-pointer text-gray-500 text-xl">
+                            class="absolute right-5 top-[42px] cursor-pointer text-gray-500 text-xl">
                             <i class="bi bi-eye"></i>
                         </span>
 
                     </div>
 
-                    <!-- Button -->
+                    <!-- LOGIN BUTTON -->
                     <button type="submit"
-                        class="w-full py-3 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-xl transition duration-300">
+                        class="w-full py-3 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-lg transition">
                         Masuk
                     </button>
 
-                    <!-- Register -->
-                    <p class="text-center mt-6 text-base text-gray-600">
+                    <!-- REGISTER -->
+                    <p class="text-center mt-5 text-sm text-gray-600">
                         Tidak Memiliki Akun?
                         <button type="button" @click="openModal = true"
                             class="text-blue-600 font-semibold hover:underline">
                             Register
                         </button>
-
                     </p>
 
                 </form>
