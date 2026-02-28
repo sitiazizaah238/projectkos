@@ -144,8 +144,8 @@
             <div class="left-content">
                 <img src="{{ asset('images/kos.png') }}">
 
-                <h1>Halo....<br>Selamat Datang</h1>
-                <p>Di Website FindKos di wilayah<br>Lohbener Indramayu</p>
+              <h1>Registrasi Akun </h1>
+                <p>Lengkapi data diri Anda untuk mulai menggunakan <br> layanan FindKos di wilayah Lohbener Indramayu.</p>
             </div>
         </div>
 

@@ -21,16 +21,9 @@
     // 🔔 NOTIF SECTION
     // =====================
 
-    $notifKos = Kos::where('user_id', $userId)
-                ->where('status', 'disetujui')
-                ->where('is_read', false)
-                ->latest()
-                ->get();
+    $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', false)->latest()->get();
 
-    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)
-                        ->where('is_read', false)
-                        ->latest()
-                        ->get();
+    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
 
     $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
 @endphp
@@ -63,7 +56,7 @@
                     </div>
                 </div>
             </div>
- {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 <div class="dropdown position-relative">
 
@@ -80,7 +73,8 @@
 
                     </button>
 
-                    <div class="dropdown-menu dropdown-menu-end p-2" style="width:320px; max-height:300px; overflow-y:auto;">
+                    <div class="dropdown-menu dropdown-menu-end p-2"
+                        style="width:320px; max-height:300px; overflow-y:auto;">
 
                         <h6 class="dropdown-header">Notifikasi</h6>
 
@@ -206,29 +200,29 @@
                                         </td>
 
                                         <td>
-                                            @if ($item->status == 'menunggu')
-                                                <form id="form-konfirmasi-{{ $item->id }}"
-                                                    action="{{ route('pemilik.verifikasi.konfirmasi', $item->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="button" class="btn btn-sm btn-primary btn-konfirmasi"
-                                                        data-id="{{ $item->id }}">
-                                                        Konfirmasi
-                                                    </button>
-                                                </form>
+                                            <form id="form-konfirmasi-{{ $item->id }}"
+                                                action="{{ route('pemilik.verifikasi.konfirmasi', $item->id) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="button"
+                                                    class="btn btn-sm {{ $item->status == 'menunggu' ? 'btn-primary' : 'btn-secondary' }} btn-konfirmasi"
+                                                    data-id="{{ $item->id }}"
+                                                    {{ $item->status != 'menunggu' ? 'disabled' : '' }}>
+                                                    Konfirmasi
+                                                </button>
+                                            </form>
 
-                                                <form id="form-tolak-{{ $item->id }}"
-                                                    action="{{ route('pemilik.verifikasi.tolak', $item->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="button" class="btn btn-sm btn-danger btn-tolak"
-                                                        data-id="{{ $item->id }}">
-                                                        Tolak
-                                                    </button>
-                                                </form>
-                                            @else
-                                                -
-                                            @endif
+                                            <form id="form-tolak-{{ $item->id }}"
+                                                action="{{ route('pemilik.verifikasi.tolak', $item->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                <button type="button"
+                                                    class="btn btn-sm {{ $item->status == 'menunggu' ? 'btn-danger' : 'btn-secondary' }} btn-tolak"
+                                                    data-id="{{ $item->id }}"
+                                                    {{ $item->status != 'menunggu' ? 'disabled' : '' }}>
+                                                    Tolak
+                                                </button>
+                                            </form>
                                         </td>
 
                                     </tr>
@@ -275,46 +269,46 @@
                 });
             });
 
-          document.querySelectorAll('.btn-tolak').forEach(button => {
-    button.addEventListener('click', function() {
+            document.querySelectorAll('.btn-tolak').forEach(button => {
+                button.addEventListener('click', function() {
 
-        let id = this.getAttribute('data-id');
+                    let id = this.getAttribute('data-id');
 
-        Swal.fire({
-            title: 'Tolak Pembayaran',
-            input: 'textarea',
-            inputLabel: 'Masukkan alasan penolakan',
-            inputPlaceholder: 'Contoh: Nominal pembayaran kurang / Bukti transfer tidak jelas / Data tidak valid',
-            inputAttributes: {
-                'aria-label': 'Masukkan alasan'
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Tolak Pembayaran',
-            cancelButtonText: 'Batal',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Alasan wajib diisi!'
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Tolak Pembayaran',
+                        input: 'textarea',
+                        inputLabel: 'Masukkan alasan penolakan',
+                        inputPlaceholder: 'Contoh: Nominal pembayaran kurang / Bukti transfer tidak jelas / Data tidak valid',
+                        inputAttributes: {
+                            'aria-label': 'Masukkan alasan'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Tolak Pembayaran',
+                        cancelButtonText: 'Batal',
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Alasan wajib diisi!'
+                            }
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
 
-                let form = document.getElementById('form-tolak-' + id);
+                            let form = document.getElementById('form-tolak-' + id);
 
-                // buat input hidden untuk alasan
-                let input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "alasan";
-                input.value = result.value;
+                            // buat input hidden untuk alasan
+                            let input = document.createElement("input");
+                            input.type = "hidden";
+                            input.name = "alasan";
+                            input.value = result.value;
 
-                form.appendChild(input);
+                            form.appendChild(input);
 
-                form.submit();
-            }
-        });
+                            form.submit();
+                        }
+                    });
 
-    });
-});
+                });
+            });
 
         });
     </script>

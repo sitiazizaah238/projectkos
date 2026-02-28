@@ -149,8 +149,8 @@
             <div class="left-content">
                 <img src="{{ asset('images/kos.png') }}">
 
-                <h1>Halo...<br>Selamat Datang</h1>
-                <p>Di Website FindKos di wilayah<br>Lohbener Indramayu</p>
+                <h1>Registrasi Akun </h1>
+                <p>Lengkapi data diri Anda untuk mulai menggunakan <br> layanan FindKos di wilayah Lohbener Indramayu.</p>
             </div>
         </div>
 
@@ -162,23 +162,23 @@
                     @csrf
 
                     <div class="form-group">
-                        <label>Nama Pemilik</label>
-                        <input type="text" name="name" placeholder="Masukan nama pemilik">
+                        <label>Nama Lengkap</label>
+                        <input type="text" name="name" placeholder="Masukan nama Lengkap....">
                     </div>
 
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" name="email" placeholder="Masukan email">
+                        <input type="email" name="email" placeholder="Masukan email....">
                     </div>
 
                     <div class="form-group">
                         <label>No HP</label>
-                        <input type="text" name="no_hp" placeholder="Masukan no HP" inputmode="numeric" required
+                        <input type="text" name="no_hp" placeholder="Masukan no HP....." inputmode="numeric" required
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
                     <div class="form-group">
                         <label>Alamat</label>
-                        <input type="text" name="alamat" placeholder="Masukan alamat lengkap" required>
+                        <input type="text" name="alamat" placeholder="Masukan alamat lengkap....." required>
                     </div>
 
 
