@@ -13,7 +13,7 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-              {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
+            {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 @php
                     $userId = Auth::id();
@@ -110,7 +110,7 @@
 
 
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
-               <h3 class="fw-bold" style="font-size: 30px;">Rekomendasi Untuk Anda</h3>
+                <h3 class="fw-bold" style="font-size: 30px;">Rekomendasi Untuk Anda</h3>
                 <p class="text-muted">Berdasarkan preferensi pencarian dan riwayat Anda.</p>
 
                 <div class="row g-4 mt-2">
@@ -139,9 +139,38 @@
                                 </div>
 
                                 {{-- Foto --}}
-                                @if ($k->foto)
-                                    <img src="{{ asset('storage/' . $k->foto) }}" class="card-img-top"
-                                        style="height:180px; object-fit:cover;">
+                                @php
+                                    $fotos = is_array($k->foto) ? $k->foto : json_decode($k->foto, true);
+                                @endphp
+
+                                @if ($fotos && count($fotos) > 0)
+                                    <div id="carouselRekom{{ $k->id }}" class="carousel slide"
+                                        data-bs-ride="carousel" data-bs-interval="3000">
+
+                                        <div class="carousel-inner">
+
+                                            @foreach ($fotos as $index => $foto)
+                                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                    <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
+                                                        style="height:180px; object-fit:cover;">
+                                                </div>
+                                            @endforeach
+
+                                        </div>
+
+                                        @if (count($fotos) > 1)
+                                            <button class="carousel-control-prev" type="button"
+                                                data-bs-target="#carouselRekom{{ $k->id }}" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon"></span>
+                                            </button>
+
+                                            <button class="carousel-control-next" type="button"
+                                                data-bs-target="#carouselRekom{{ $k->id }}" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon"></span>
+                                            </button>
+                                        @endif
+
+                                    </div>
                                 @else
                                     <div style="height:180px; background:#dee2e6;"
                                         class="d-flex align-items-center justify-content-center">
@@ -211,13 +240,12 @@
                                             <small class="text-muted">Belum ada kamar tersedia</small>
                                         @endif
                                     </div>
-                                        {{-- 5. Tombol Detail --}}
-                                        <div class="mt-auto">
-                                            <a href="{{ route('penyewa.kos.detail', $k->id) }}"
-                                                class="btn btn-primary w-100">
-                                                Lihat Detail
-                                            </a>
-                                        </div>
+                                    {{-- 5. Tombol Detail --}}
+                                    <div class="mt-auto">
+                                        <a href="{{ route('penyewa.kos.detail', $k->id) }}" class="btn btn-primary w-100">
+                                            Lihat Detail
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -244,23 +272,23 @@
         </div>
     </div>
     {{-- PROFILE MODAL --}}
-            <div class="modal fade" id="profileModal" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered modal-sm">
-                    <div class="modal-content p-3 text-center" style="border-radius:20px;">
-                        <div class="mb-3">
-                            <div class="fw-bold">{{ Auth::user()->name }}</div>
-                            <small class="text-muted">{{ Auth::user()->email }}</small>
-                        </div>
-                        <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">Profil</a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button class="btn btn-danger w-100">Logout</button>
-                        </form>
-                    </div>
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
                 </div>
+                <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">Profil</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn-danger w-100">Logout</button>
+                </form>
             </div>
-
         </div>
+    </div>
+
+    </div>
     </div>
 
 @endsection

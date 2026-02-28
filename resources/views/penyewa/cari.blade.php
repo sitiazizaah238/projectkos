@@ -8,7 +8,7 @@
 
         <div class="flex-grow-1">
 
-               {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
+            {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 @php
                     $userId = Auth::id();
@@ -292,9 +292,42 @@
                                         style="border-radius:16px; overflow:hidden;">
 
                                         {{-- Foto --}}
-                                        @if ($k->foto)
-                                            <img src="{{ asset('storage/' . $k->foto) }}" class="card-img-top"
-                                                style="height:180px; object-fit:cover;">
+                                        {{-- Foto --}}
+                                        @php
+                                            $fotos = is_array($k->foto) ? $k->foto : json_decode($k->foto, true);
+                                        @endphp
+
+                                        @if ($fotos && count($fotos) > 0)
+                                            <div id="carouselKos{{ $k->id }}" class="carousel slide"
+                                                data-bs-ride="carousel" data-bs-interval="3000">
+
+                                                <div class="carousel-inner">
+
+                                                    @foreach ($fotos as $index => $foto)
+                                                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                            <img src="{{ asset('storage/' . $foto) }}"
+                                                                class="d-block w-100"
+                                                                style="height:180px; object-fit:cover;">
+                                                        </div>
+                                                    @endforeach
+
+                                                </div>
+
+                                                @if (count($fotos) > 1)
+                                                    <button class="carousel-control-prev" type="button"
+                                                        data-bs-target="#carouselKos{{ $k->id }}"
+                                                        data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon"></span>
+                                                    </button>
+
+                                                    <button class="carousel-control-next" type="button"
+                                                        data-bs-target="#carouselKos{{ $k->id }}"
+                                                        data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon"></span>
+                                                    </button>
+                                                @endif
+
+                                            </div>
                                         @else
                                             <div style="height:180px; background:#dee2e6;"
                                                 class="d-flex align-items-center justify-content-center">

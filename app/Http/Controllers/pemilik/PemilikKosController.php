@@ -26,18 +26,25 @@ class PemilikKosController extends Controller
     // ================= SIMPAN =================
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_kos' => 'required',
-            'lokasi' => 'required',
-            'tipe_kos' => 'required',
-            'foto' => 'nullable|image'
-        ]);
+   $request->validate([
+    'nama_kos' => 'required',
+    'lokasi' => 'required',
+    'tipe_kos' => 'required',
+    'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048'
+]);
 
-        $foto = null;
+$fotoPaths = [];
 
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('kos', 'public');
-        }
+if ($request->hasFile('foto')) {
+
+    if (count($request->file('foto')) > 3) {
+        return back()->withErrors(['foto' => 'Maksimal 3 foto']);
+    }
+
+    foreach ($request->file('foto') as $file) {
+        $fotoPaths[] = $file->store('kos', 'public');
+    }
+}
 
         $kos = Kos::create([
             'user_id' => auth()->id(),
@@ -46,7 +53,7 @@ class PemilikKosController extends Controller
             'tipe_kos' => $request->tipe_kos,
             'deskripsi' => $request->deskripsi,
             'fasilitas' => $request->fasilitas,
-            'foto' => $foto,
+            'foto' => $fotoPaths,
             'status' => 'menunggu'
         ]);
 
@@ -77,21 +84,38 @@ class PemilikKosController extends Controller
         return view('pemilik.kos.edit', compact('kos'));
     }
 
-  public function update(Request $request, $id)
+ public function update(Request $request, $id)
 {
     $kos = Kos::findOrFail($id);
 
-    $data = $request->all();
+    $request->validate([
+        'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048'
+    ]);
 
-    if ($request->hasFile('foto')) {
-        $data['foto'] = $request->file('foto')->store('kos', 'public');
-    }
+    $data = $request->only([
+        'nama_kos',
+        'lokasi',
+        'tipe_kos',
+        'deskripsi'
+    ]);
 
     $data['fasilitas'] = $request->fasilitas ?? [];
 
+    $existingPhotos = $kos->foto ?? [];
+
+    if ($request->hasFile('foto')) {
+        foreach ($request->file('foto') as $file) {
+
+            if (count($existingPhotos) >= 3) break;
+
+            $existingPhotos[] = $file->store('kos', 'public');
+        }
+    }
+
+    $data['foto'] = $existingPhotos;
+
     $kos->update($data);
 
-    // ✅ SIMPAN LOG UPDATE
     LogAktivitas::create([
         'user_id' => auth()->id(),
         'kos_id' => $kos->id,

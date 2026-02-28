@@ -126,17 +126,39 @@
                     <div class="col-md-7">
 
                         {{-- FOTO --}}
-                        <div class="mb-3">
-                            @if ($kos->foto)
-                                <img src="{{ asset('storage/' . $kos->foto) }}" class="img-fluid rounded-4 shadow"
-                                    style="width:100%; height:400px; object-fit:cover;">
-                            @else
-                                <div class="bg-light d-flex align-items-center justify-content-center rounded-4"
-                                    style="height:240px;">
-                                    Tidak ada foto
-                                </div>
-                            @endif
-                        </div>
+@if($kos->foto && count($kos->foto) > 0)
+
+<div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
+
+    <div class="carousel-inner">
+
+        @foreach($kos->foto as $key => $f)
+            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                <img src="{{ asset('storage/'.$f) }}"
+                     class="d-block w-100 rounded-4 shadow"
+                     style="height:400px; object-fit:cover;">
+            </div>
+        @endforeach
+
+    </div>
+
+    <button class="carousel-control-prev" type="button"
+        data-bs-target="#carouselKos" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button"
+        data-bs-target="#carouselKos" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+</div>
+
+@else
+    <div class="bg-light text-center p-5 rounded">
+        Tidak ada foto
+    </div>
+@endif
 
                         {{-- MAP --}}
                         <div class="card shadow rounded-4">

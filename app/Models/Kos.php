@@ -21,6 +21,7 @@ class Kos extends Model
         'is_read'
     ];
 protected $casts = [
+     'foto' => 'array',
     'fasilitas' => 'array'
 ];
 
