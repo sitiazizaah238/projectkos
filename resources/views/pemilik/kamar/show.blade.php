@@ -15,31 +15,23 @@
     $kamarTersedia = Kamar::whereIn('kos_id', $kosIds)->where('status', 'tersedia')->count();
     $totalPenyewa = PengajuanSewa::whereIn('kos_id', $kosIds)->where('status', 'aktif')->count();
 
-    // =====================
-    // 🔔 NOTIF SECTION
-    // =====================
-
     $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', false)->latest()->get();
-
     $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
-
     $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
 @endphp
 
 @section('content')
     <div class="d-flex">
 
-        {{-- SIDEBAR --}}
         @include('components.sidebar-pemilik')
 
         <div class="flex-grow-1">
 
-           {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 <div class="dropdown position-relative">
 
                     <button class="btn text-white position-relative" data-bs-toggle="dropdown">
-
                         <i class="bi bi-bell fs-4"></i>
 
                         @if ($jumlahNotif > 0)
@@ -48,14 +40,11 @@
                                 {{ $jumlahNotif }}
                             </span>
                         @endif
-
                     </button>
 
                     <div class="dropdown-menu dropdown-menu-end p-2" style="width:320px; max-height:300px; overflow-y:auto;">
-
                         <h6 class="dropdown-header">Notifikasi</h6>
 
-                        {{-- NOTIF KOS DISETUJUI --}}
                         @foreach ($notifKos as $n)
                             <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
                                 <strong>Kos Disetujui</strong><br>
@@ -63,7 +52,6 @@
                             </a>
                         @endforeach
 
-                        {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
                                 <strong>{{ $p->nama_penyewa }}</strong><br>
@@ -76,9 +64,9 @@
                                 Tidak ada notifikasi
                             </div>
                         @endif
-
                     </div>
                 </div>
+
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -88,14 +76,7 @@
 
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
-                            style="
-                    width:35px;
-                    height:35px;
-                    min-width:35px;
-                    min-height:35px;
-                    border-radius:50%;
-                    object-fit:cover;
-                ">
+                            style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
                     @else
                         <i class="bi bi-person-circle fs-3"></i>
                     @endif
@@ -105,24 +86,20 @@
 
             <div class="container-fluid p-4">
 
-                <h1 class="fw-bold mb-1" style="font-size:32px;">
-                    Detail Kamar
-                </h1>
+                <h1 class="fw-bold mb-1" style="font-size:32px;">Detail Kamar</h1>
                 <small class="text-muted">Manajemen Kamar / Detail Kamar</small>
 
                 <div class="row mt-4">
 
-                    {{-- LEFT --}}
+                    {{-- ================= LEFT (FIXED) ================= --}}
                     <div class="col-md-7">
 
                         <h1 class="fw-bold mb-4">
                             Kamar {{ $kamar->nama_kamar }}
                         </h1>
 
-                        {{-- FOTO KAMAR --}}
                         @php
                             $fotos = [];
-
                             if (!empty($kamar->foto)) {
                                 if (is_array($kamar->foto)) {
                                     $fotos = $kamar->foto;
@@ -134,16 +111,51 @@
                         @endphp
 
                         @if (!empty($fotos))
-                            <div class="row g-3 mb-4">
-                                @foreach ($fotos as $foto)
-                                    <div class="col-12 col-sm-6 col-lg-4">
-                                        <div class="card border-0 shadow-sm h-100"
-                                            style="border-radius:15px; overflow:hidden;">
-                                            <img src="{{ asset('storage/' . $foto) }}" class="w-100"
-                                                style="height:250px; object-fit:cover;">
-                                        </div>
+                            <div class="card shadow-sm border-0 mb-4" style="border-radius:15px; overflow:hidden;">
+
+                                <div id="carouselFotoKamar" class="carousel slide" data-bs-ride="carousel">
+
+                                    <div class="carousel-indicators">
+                                        @foreach ($fotos as $index => $foto)
+                                            <button type="button" data-bs-target="#carouselFotoKamar"
+                                                data-bs-slide-to="{{ $index }}"
+                                                class="{{ $index == 0 ? 'active' : '' }}">
+                                            </button>
+                                        @endforeach
                                     </div>
-                                @endforeach
+
+                                    <div class="carousel-inner">
+                                        @foreach ($fotos as $index => $foto)
+                                            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
+                                                    style="
+    max-height:420px;
+    object-fit:contain;
+    background:#f8f9fa;
+">
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselFotoKamar"
+                                        data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselFotoKamar"
+                                        data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                            {{-- BUTTON KEMBALI (DI BAWAH CARD FOTO) --}}
+                            <div class="mb-4">
+                                <a href="{{ route('pemilik.kamar.index') }}"
+                                    class="btn btn-outline-primary px-4 rounded-pill">
+                                    <i class="bi bi-arrow-left"></i> Kembali
+                                </a>
                             </div>
                         @else
                             <p class="text-muted">Foto tidak tersedia</p>
@@ -151,35 +163,30 @@
 
                     </div>
 
-                    {{-- RIGHT --}}
+                    {{-- ================= RIGHT (TIDAK DIUBAH) ================= --}}
                     <div class="col-md-5">
-                        {{-- Spacer biar sejajar dengan judul kiri --}}
                         <div style="height:38px;"></div>
-                        <div class="card shadow-sm border-0" style="border-radius:15px;">
+                        <div class="card shadow-sm border-0 h-100" style="border-radius:15px;">
                             <div class="card-body">
 
-                                <h6 class="fw-bold mb-3">ℹ️ Informasi Kos</h6>
+                                <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                                    <i class="bi bi-info-circle"></i> Informasi Kos
+                                </h6>
                                 <hr>
 
                                 <div class="row mb-2">
                                     <div class="col-6 text-muted">Nama Kos</div>
-                                    <div class="col-6 fw-semibold">
-                                        {{ $kamar->kos->nama_kos }}
-                                    </div>
+                                    <div class="col-6 fw-semibold">{{ $kamar->kos->nama_kos }}</div>
                                 </div>
 
                                 <div class="row mb-2">
                                     <div class="col-6 text-muted">Lokasi Kos</div>
-                                    <div class="col-6">
-                                        {{ $kamar->kos->alamat }}
-                                    </div>
+                                    <div class="col-6">{{ $kamar->kos->lokasi ?? '-' }}</div>
                                 </div>
 
                                 <div class="row mb-2">
                                     <div class="col-6 text-muted">Tipe Kos</div>
-                                    <div class="col-6">
-                                        {{ ucfirst($kamar->kos->tipe_kos) }}
-                                    </div>
+                                    <div class="col-6">{{ ucfirst($kamar->kos->tipe_kos) }}</div>
                                 </div>
 
                                 <div class="row mb-2">
@@ -211,71 +218,67 @@
                                     <div class="text-muted mb-1">Deskripsi Kamar</div>
                                     <div>{{ $kamar->deskripsi }}</div>
                                 </div>
+                                {{-- FASILITAS DI DALAM INFO CARD --}}
+                                @php
+                                    $fasilitas = [];
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                    if (is_array($kamar->fasilitas)) {
+                                        $fasilitas = $kamar->fasilitas;
+                                    } elseif (is_string($kamar->fasilitas) && !empty($kamar->fasilitas)) {
+                                        $fasilitas = [$kamar->fasilitas];
+                                    }
+                                @endphp
 
-                {{-- FASILITAS SAFE VERSION --}}
-                @php
-                    $fasilitas = [];
+                                @if (!empty($fasilitas))
+                                    <hr class="my-3">
 
-                    if (is_array($kamar->fasilitas)) {
-                        $fasilitas = $kamar->fasilitas;
-                    } elseif (is_string($kamar->fasilitas) && !empty($kamar->fasilitas)) {
-                        $fasilitas = [$kamar->fasilitas];
-                    }
-                @endphp
+                                    <div>
+                                        <div class="text-muted mb-2">Fasilitas Kamar</div>
 
-                @if (!empty($fasilitas))
-                    <div class="card mt-4 shadow-sm border-0" style="border-radius:15px;">
-                        <div class="card-body">
-
-                            <h6 class="fw-bold mb-3">ℹ️ Fasilitas Kamar</h6>
-                            <hr>
-
-                            <div class="row">
-                                @foreach ($fasilitas as $item)
-                                    <div class="col-md-4 mb-2">
-                                        ✔ {{ $item }}
+                                        <div class="row g-2">
+                                            @foreach ($fasilitas as $item)
+                                                <div class="col-6">
+                                                    <div class="d-flex align-items-center gap-2 border rounded-pill px-3 py-2"
+                                                        style="font-size:14px;background:#f8f9fa;">
+                                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                                        {{ $item }}
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                @endforeach
+                                @endif
                             </div>
-
                         </div>
                     </div>
-                @endif
-                <div class="text-end mt-3">
-                    <a href="{{ route('pemilik.kamar.index') }}" class="btn btn-primary">
-                        ← Kembali
-                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- PROFILE MODAL --}}
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
                 </div>
 
+                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
+
             </div>
         </div>
     </div>
-    {{-- PROFILE MODAL --}}
-<div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content p-3 text-center" style="border-radius:20px;">
-            <div class="mb-3">
-                <div class="fw-bold">{{ Auth::user()->name }}</div>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
-            </div>
-
-            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-
 @endsection
