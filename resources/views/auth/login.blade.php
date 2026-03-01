@@ -47,8 +47,8 @@
 
             </div>
             <h2 style="font-size:45px; font-weight:700; line-height:1.2; margin-bottom:16px;">
-    Selamat Datang Kembali!
-</h2>
+                Selamat Datang Kembali!
+            </h2>
 
             <p class="text-lg text-blue-100 leading-relaxed">
                 Masuk Untuk Mengakses Dashboard <br>
@@ -89,23 +89,24 @@
                             placeholder="Masukan Email..">
                     </div>
 
-                    <!-- PASSWORD -->
-                    <div class="mb-6 relative">
+              <div class="mb-6">
+    <label class="block mb-2 text-gray-700 font-medium">
+        Password
+    </label>
 
-                        <label class="block mb-2 text-gray-700 font-medium">
-                            Password
-                        </label>
+    <div class="relative flex items-center">
+        <input type="password" name="password" id="password" required
+            class="w-full px-5 py-3 pr-12 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Masukan Password..">
 
-                        <input type="password" name="password" id="password" required
-                            class="w-full px-5 py-3 pr-14 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Masukan Password..">
+        <button type="button"
+            onclick="togglePassword(this)"
+            class="absolute right-4 text-gray-400 hover:text-gray-600 text-lg">
+            <i class="bi bi-eye"></i>
+        </button>
+    </div>
+</div>
 
-                        <span onclick="togglePassword(this)"
-                            class="absolute right-5 top-[42px] cursor-pointer text-gray-500 text-xl">
-                            <i class="bi bi-eye"></i>
-                        </span>
-
-                    </div>
 
                     <!-- LOGIN BUTTON -->
                     <button type="submit"
