@@ -168,16 +168,17 @@
 
                                         <td>{{ $loop->iteration }}</td>
 
+
                                         {{-- FOTO --}}
-                                        <td>
+                                        {{-- FOTO --}}
+                                        <td style="width:110px;"> {{-- kolom dikit dilebarkan --}}
                                             @if ($k->foto && count($k->foto) > 0)
-                                                <img src="{{ asset('storage/' . $k->foto[0]) }}" width="70"
-                                                    style="border-radius:8px">
+                                                <img src="{{ asset('storage/' . $k->foto[0]) }}"
+                                                    style="width:80px; height:60px; border-radius:8px; object-fit:cover;">
                                             @else
                                                 -
                                             @endif
                                         </td>
-
                                         <td>{{ $k->nama_kos }}</td>
                                         <td>{{ $k->lokasi }}</td>
                                         <td>{{ $k->tipe_kos }}</td>

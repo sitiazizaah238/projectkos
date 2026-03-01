@@ -8,6 +8,8 @@ use App\Models\Kos;
 use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Storage;
+
 class PemilikKosController extends Controller
 {
     // ================= LIST DATA =================
@@ -84,7 +86,8 @@ if ($request->hasFile('foto')) {
         return view('pemilik.kos.edit', compact('kos'));
     }
 
- public function update(Request $request, $id)
+
+public function update(Request $request, $id)
 {
     $kos = Kos::findOrFail($id);
 
@@ -101,8 +104,26 @@ if ($request->hasFile('foto')) {
 
     $data['fasilitas'] = $request->fasilitas ?? [];
 
+    // Ambil foto lama
     $existingPhotos = $kos->foto ?? [];
 
+    // =========================
+    // HAPUS FOTO YANG DIPILIH
+    // =========================
+    if ($request->deleted_photos) {
+        $deleted = explode(',', $request->deleted_photos);
+
+        foreach ($deleted as $photo) {
+            Storage::disk('public')->delete($photo);
+        }
+
+        $existingPhotos = array_diff($existingPhotos, $deleted);
+        $existingPhotos = array_values($existingPhotos);
+    }
+
+    // =========================
+    // TAMBAH FOTO BARU
+    // =========================
     if ($request->hasFile('foto')) {
         foreach ($request->file('foto') as $file) {
 
