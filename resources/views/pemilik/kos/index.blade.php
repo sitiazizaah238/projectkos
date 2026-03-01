@@ -133,13 +133,15 @@
                         </div>
 
                         {{-- SEARCH (CUMA UI, BELUM FUNCTION) --}}
-                        <div class="input-group" style="width:250px;">
-                            <input type="text" class="form-control" placeholder="Cari data...">
-                            <button class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-
+                        <form action="{{ route('pemilik.kos.index') }}" method="GET">
+                            <div class="input-group" style="width:250px;">
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                    placeholder="Cari nama/lokasi/tipe...">
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                     {{-- BODY --}}
@@ -169,7 +171,7 @@
                                         <td>{{ $loop->iteration }}</td>
 
 
-                                        {{-- FOTO --}}
+
                                         {{-- FOTO --}}
                                         <td style="width:110px;"> {{-- kolom dikit dilebarkan --}}
                                             @if ($k->foto && count($k->foto) > 0)

@@ -13,12 +13,22 @@ use Illuminate\Support\Facades\Storage;
 class PemilikKosController extends Controller
 {
     // ================= LIST DATA =================
-    public function index()
-    {
-        $kos = Kos::where('user_id', Auth::id())->latest()->get();
-        return view('pemilik.kos.index', compact('kos'));
+   public function index(Request $request)
+{
+    $query = Kos::where('user_id', Auth::id());
+
+    if ($request->search) {
+        $query->where(function($q) use ($request) {
+            $q->where('nama_kos', 'like', '%' . $request->search . '%')
+              ->orWhere('lokasi', 'like', '%' . $request->search . '%')
+              ->orWhere('tipe_kos', 'like', '%' . $request->search . '%');
+        });
     }
 
+    $kos = $query->latest()->get();
+
+    return view('pemilik.kos.index', compact('kos'));
+}
     // ================= FORM TAMBAH =================
     public function create()
     {
