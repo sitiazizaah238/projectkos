@@ -3,19 +3,60 @@
 <head>
     <title>Laporan Keuangan</title>
     <style>
-        body { font-family: sans-serif; }
-        table { width:100%; border-collapse: collapse; }
-        th, td {
-            border:1px solid #000;
-            padding:8px;
-            text-align:center;
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 20px;
+            color: #000;
         }
-        th { background:#eee; }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #000;
+            color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+
+        tbody tr:hover {
+            background: #eaeaea;
+        }
+
+        tfoot td {
+            font-weight: bold;
+            background: #ddd;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .total {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<h2 style="text-align:center;">LAPORAN KEUANGAN</h2>
+<h2>LAPORAN KEUANGAN</h2>
 
 <table>
     <thead>
@@ -24,7 +65,8 @@
             <th>Nama Penyewa</th>
             <th>Nama Kamar</th>
             <th>Tanggal</th>
-            <th>Metode</th>
+            <th>Durasi Sewa</th>
+            <th>Metode Bayar</th>
             <th>Total</th>
         </tr>
     </thead>
@@ -33,9 +75,15 @@
         @foreach($laporan as $item)
         <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ optional($item->pengajuan->penyewa)->name ?? '-' }}</td>
+            <td class="text-left">{{ optional($item->pengajuan->penyewa)->name ?? '-' }}</td>
             <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
             <td>{{ $item->created_at->format('d M Y') }}</td>
+
+            {{-- DURASI SEWA --}}
+            <td>
+                {{ $item->pengajuan->durasi ?? '-' }} Bulan
+            </td>
+
             <td>{{ $item->metode->nama_metode }}</td>
             <td>
                 Rp {{ number_format($item->pengajuan->total_bayar,0,',','.') }}
@@ -46,8 +94,8 @@
 
     <tfoot>
         <tr>
-            <td colspan="5"><b>Total</b></td>
-            <td>
+            <td colspan="6" class="text-left total">Total Keseluruhan</td>
+            <td class="total">
                 Rp {{ number_format($laporan->sum(fn($i) => $i->pengajuan->total_bayar),0,',','.') }}
             </td>
         </tr>

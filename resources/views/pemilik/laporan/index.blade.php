@@ -8,9 +8,6 @@
     $userId = Auth::id();
     $kosIds = Kos::where('user_id', $userId)->pluck('id');
 
-    // =====================
-    // 🔔 NOTIF SECTION
-    // =====================
     $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', false)->latest()->get();
 
     $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
@@ -25,14 +22,13 @@
 
         <div class="flex-grow-1">
 
-            {{-- ================= TOPBAR ================= --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
 
                 {{-- NOTIF --}}
                 <div class="dropdown position-relative">
                     <button class="btn text-white position-relative" data-bs-toggle="dropdown">
                         <i class="bi bi-bell fs-4"></i>
-
                         @if ($jumlahNotif > 0)
                             <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
                                 style="top:10px; font-size:10px;">
@@ -48,7 +44,7 @@
                         @foreach ($notifKos as $n)
                             <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
                                 <strong>Kos Disetujui</strong><br>
-                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui admin
+                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui
                             </a>
                         @endforeach
 
@@ -66,32 +62,25 @@
                         @endif
                     </div>
                 </div>
+
+                {{-- PROFILE --}}
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
-                    <span class="fw-semibold text-white small">
+                    <span class="fw-semibold small">
                         {{ Auth::user()->name }}
                     </span>
 
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
-                            style="
-                    width:35px;
-                    height:35px;
-                    min-width:35px;
-                    min-height:35px;
-                    border-radius:50%;
-                    object-fit:cover;
-                ">
+                            style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
                     @else
                         <i class="bi bi-person-circle fs-3"></i>
                     @endif
-
                 </button>
-
             </div>
 
-            {{-- ================= CONTENT ================= --}}
+            {{-- CONTENT --}}
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
                 <h3 class="fw-bold mb-1" style="font-size:28px;">
@@ -102,25 +91,55 @@
                     Rekapitulasi Data Pembayaran Penyewa
                 </small>
 
-                <div class="d-flex justify-content-end gap-2 mb-3">
-                    <a href="{{ route('pemilik.laporan.print') }}" class="btn btn-danger" target="_blank" data-no-loader>
-                        Export PDF
-                    </a>
+                {{-- FILTER & EXPORT SEJARAH --}}
+                <form method="GET" action="{{ route('pemilik.laporan.index') }}" id="filterForm" class="mb-3">
+                    <div class="row g-2 align-items-end">
 
-                    <a href="{{ route('pemilik.laporan.excel') }}" class="btn btn-success" target="_blank" data-no-loader>
-                        Export Excel
-                    </a>
-                </div>
+                        {{-- SEARCH DENGAN ICON --}}
+                        <div class="col-md-4">
+                            <form method="GET" action="">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control border-secondary rounded-start"
+                                        placeholder="Cari penyewa / kamar..." value="{{ request('search') }}"
+                                        onkeyup="if(event.keyCode === 13){ this.form.submit(); }">
+                                    <button type="submit" class="btn btn-secondary rounded-end">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
 
+                        {{-- FILTER TANGGAL DENGAN LABEL --}}
+                        <div class="col-md-3">
+                            <label for="dari" class="form-label small text-muted">Tanggal</label>
+                            <input type="date" name="dari" id="dari" class="form-control"
+                                value="{{ request('dari') }}" onchange="this.form.submit()">
+                        </div>
+
+                        {{-- EXPORT PDF & EXCEL --}}
+                        <div class="col-md-5 d-flex justify-content-end gap-2">
+                            <a href="{{ route('pemilik.laporan.print') }}" class="btn btn-danger" target="_blank"
+                                data-no-loader>
+                                <i class="bi bi-file-pdf me-1"></i> Export PDF
+                            </a>
+
+                            <a href="{{ route('pemilik.laporan.excel') }}" class="btn btn-success" target="_blank"
+                                data-no-loader>
+                                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+                            </a>
+                        </div>
+
+                    </div>
+                </form>
+
+
+                {{-- TABLE --}}
                 <div class="card shadow-sm rounded-4">
-
                     <div class="card-header bg-dark text-white">
-                        <i class="bi bi-journal-text me-2"></i>
-                        <span class="fw-semibold">Data Laporan Pembayaran</span>
+                        Data Laporan Pembayaran
                     </div>
 
                     <div class="table-responsive">
-
                         <table class="table table-bordered mb-0 text-center">
 
                             <thead class="table-light">
@@ -128,6 +147,7 @@
                                     <th>No</th>
                                     <th>Nama Penyewa</th>
                                     <th>Nama Kamar</th>
+                                    <th>Durasi</th>
                                     <th>Tanggal Bayar</th>
                                     <th>Metode Pembayaran</th>
                                     <th>Total Bayar</th>
@@ -136,10 +156,11 @@
 
                             <tbody>
                                 @forelse($laporan as $item)
-                                    <tr class="align-middle">
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ optional($item->pengajuan->penyewa)->name ?? '-' }}</td>
+                                    <tr>
+                                        <td>{{ $laporan->firstItem() + $loop->index }}</td>
+                                        <td>{{ optional($item->pengajuan->penyewa)->name }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
+                                        <td>{{ $item->pengajuan->durasi }} Bulan</td>
                                         <td>{{ $item->created_at->format('d M Y') }}</td>
                                         <td>{{ $item->metode->nama_metode }}</td>
                                         <td class="fw-semibold text-success">
@@ -148,15 +169,17 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6">Belum ada data pembayaran</td>
+                                        <td colspan="7">Belum ada data pembayaran</td>
                                     </tr>
                                 @endforelse
                             </tbody>
 
-                            @if ($laporan->count() > 0)
+                            @if ($laporan->count())
                                 <tfoot>
                                     <tr class="table-light fw-bold">
-                                        <td colspan="5" class="text-end">Total Keseluruhan</td>
+                                        <td colspan="6" class="text-end">
+                                            Total Halaman Ini
+                                        </td>
                                         <td class="text-success">
                                             Rp
                                             {{ number_format($laporan->sum(fn($i) => $i->pengajuan->total_bayar), 0, ',', '.') }}
@@ -166,102 +189,14 @@
                             @endif
 
                         </table>
-
                     </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            document.querySelectorAll('.btn-konfirmasi').forEach(button => {
-                button.addEventListener('click', function() {
-
-                    let id = this.getAttribute('data-id');
-
-                    Swal.fire({
-                        title: 'Konfirmasi Pembayaran?',
-                        text: "Pembayaran akan disetujui dan kamar otomatis terisi!",
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Konfirmasi!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('form-konfirmasi-' + id).submit();
-                        }
-                    });
-
-                });
-            });
-
-            document.querySelectorAll('.btn-tolak').forEach(button => {
-                button.addEventListener('click', function() {
-
-                    let id = this.getAttribute('data-id');
-
-                    Swal.fire({
-                        title: 'Tolak Pembayaran',
-                        input: 'textarea',
-                        inputLabel: 'Masukkan alasan penolakan',
-                        inputPlaceholder: 'Contoh: Nominal pembayaran kurang / Bukti transfer tidak jelas / Data tidak valid',
-                        inputAttributes: {
-                            'aria-label': 'Masukkan alasan'
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: 'Tolak Pembayaran',
-                        cancelButtonText: 'Batal',
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return 'Alasan wajib diisi!'
-                            }
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-
-                            let form = document.getElementById('form-tolak-' + id);
-
-                            // buat input hidden untuk alasan
-                            let input = document.createElement("input");
-                            input.type = "hidden";
-                            input.name = "alasan";
-                            input.value = result.value;
-
-                            form.appendChild(input);
-
-                            form.submit();
-                        }
-                    });
-
-                });
-            });
-
-        });
-    </script>
-    {{-- PROFILE MODAL --}}
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content p-3 text-center" style="border-radius:20px;">
-                <div class="mb-3">
-                    <div class="fw-bold">{{ Auth::user()->name }}</div>
-                    <small class="text-muted">{{ Auth::user()->email }}</small>
                 </div>
 
-                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                    Profil
-                </a>
+                {{-- PAGINATION --}}
+                <div class="mt-3">
+                    {{ $laporan->links() }}
+                </div>
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-danger w-100">
-                        Logout
-                    </button>
-                </form>
             </div>
         </div>
     </div>
