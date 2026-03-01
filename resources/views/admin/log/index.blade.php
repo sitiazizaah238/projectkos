@@ -63,12 +63,26 @@
 
                         {{-- KANAN: SEARCH --}}
                         <form method="GET" action="">
-                            <div class="input-group input-group-sm" style="width: 250px;">
-                                <span class="input-group-text bg-white">
-                                    <i class="bi bi-search"></i>
-                                </span>
-                                <input type="text" name="search" class="form-control" placeholder="Cari..."
-                                    value="{{ request('search') }}">
+                            <div class="d-flex gap-2">
+
+                                {{-- FILTER WAKTU --}}
+                                <select name="filter" class="form-select form-select-sm" onchange="this.form.submit()">
+                                  
+                                    <option value="7" {{ request('filter') == '7' ? 'selected' : '' }}>7 Hari</option>
+                                    <option value="30" {{ request('filter') == '30' ? 'selected' : '' }}>30 Hari
+                                    </option>
+                                    <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>Semua</option>
+                                </select>
+
+                                {{-- SEARCH --}}
+                                <div class="input-group input-group-sm" style="width:200px;">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" name="search" class="form-control" placeholder="Cari..."
+                                        value="{{ request('search') }}">
+                                </div>
+
                             </div>
                         </form>
 
@@ -76,6 +90,28 @@
 
 
                     <div class="card-body p-0">
+                        <div class="card-body p-0">
+
+    {{-- 🔵 INFO FILTER --}}
+    @if(request('filter') == '7')
+        <div class="p-2 px-3 bg-light border-bottom">
+            <span class="badge bg-primary">
+                Menampilkan log 7 hari terakhir
+            </span>
+        </div>
+    @elseif(request('filter') == '30')
+        <div class="p-2 px-3 bg-light border-bottom">
+            <span class="badge bg-primary">
+                Menampilkan log 30 hari terakhir
+            </span>
+        </div>
+    @elseif(request('filter') == 'all')
+        <div class="p-2 px-3 bg-light border-bottom">
+            <span class="badge bg-secondary">
+                Menampilkan semua log aktivitas
+            </span>
+        </div>
+    @endif
                         <table class="table table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
@@ -90,7 +126,7 @@
                             <tbody>
                                 @forelse($logs as $log)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ ($logs->currentPage() - 1) * $logs->perPage() + $loop->iteration }}</td>
                                         <td>{{ $log->user->name ?? '-' }}</td>
                                         <td>{{ $log->kos->nama_kos ?? '-' }}</td>
                                         <td>{{ $log->aktivitas }}</td>
@@ -106,6 +142,11 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        @if ($logs->hasPages())
+                            <div class="p-3 d-flex justify-content-end">
+                                {{ $logs->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
 
