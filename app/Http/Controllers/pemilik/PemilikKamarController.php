@@ -28,7 +28,8 @@ class PemilikKamarController extends Controller
         })
         ->with('kos')
         ->latest()
-        ->get();
+        ->paginate(5)
+        ->withQueryString();
 
     return view('pemilik.kamar.index', compact('kamars', 'search'));
 }

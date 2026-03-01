@@ -161,7 +161,7 @@
                             <tbody>
                                 @forelse($kamars as $k)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ ($kamars->currentPage() - 1) * $kamars->perPage() + $loop->iteration }}</td>
                                         <td>{{ $k->kos->nama_kos }}</td>
                                         <td>{{ $k->nama_kamar }}</td>
                                         <td>
@@ -217,6 +217,27 @@
                             </tbody>
 
                         </table>
+                        @if ($kamars->hasPages())
+                            <div class="p-3 d-flex justify-content-end">
+                                {{ $kamars->links() }}
+                            </div>
+                        @endif
+                        <style>
+                            .pagination .page-link {
+                                color: #0d6efd;
+                            }
+
+                            .pagination .page-item.active .page-link {
+                                background-color: #0d6efd;
+                                border-color: #0d6efd;
+                                color: #fff;
+                            }
+
+                            .pagination .page-link:hover {
+                                background-color: #0b5ed7;
+                                color: #fff;
+                            }
+                        </style>
                     </div>
                 </div>
             </div>
@@ -225,46 +246,46 @@
 
     {{-- SWEET ALERT --}}
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".btn-delete").forEach(btn => {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".btn-delete").forEach(btn => {
 
-        btn.addEventListener("click", function () {
+                btn.addEventListener("click", function() {
 
-            let status = this.dataset.status;
-            let form = this.closest("form");
+                    let status = this.dataset.status;
+                    let form = this.closest("form");
 
-            // ❌ Kalau kamar TERISI
-            if (status === 'terisi') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Tidak Bisa Dihapus!',
-                    text: 'Kamar sedang terisi oleh penyewa.',
-                    confirmButtonColor: '#d33'
+                    // ❌ Kalau kamar TERISI
+                    if (status === 'terisi') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Tidak Bisa Dihapus!',
+                            text: 'Kamar sedang terisi oleh penyewa.',
+                            confirmButtonColor: '#d33'
+                        });
+                        return;
+                    }
+
+                    // ✅ Kalau kamar TERSEDIA
+                    Swal.fire({
+                        title: 'Yakin hapus?',
+                        text: "Data kamar akan dihapus permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, hapus',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+
                 });
-                return;
-            }
 
-            // ✅ Kalau kamar TERSEDIA
-            Swal.fire({
-                title: 'Yakin hapus?',
-                text: "Data kamar akan dihapus permanen!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, hapus',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
             });
-
         });
-
-    });
-});
-</script>
+    </script>
     {{-- PROFILE MODAL --}}
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">
