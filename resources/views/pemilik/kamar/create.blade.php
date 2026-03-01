@@ -115,128 +115,146 @@
                         Tambah Kamar
                     </div>
                     @if ($kos->isEmpty())
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning m-3">
                             Kos Anda belum disetujui. Anda tidak dapat menambahkan kamar.
                         </div>
-                    @endif
+                    @else
+                        <div class="card shadow-lg border-0" style="border-radius:20px;">
+                            <div class="card-body p-4">
+                                {{-- ERROR VALIDASI --}}
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul class="mb-0">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                                {{-- ERROR CUSTOM --}}
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                <form action="{{ route('pemilik.kamar.store') }}" method="POST"
+                                    enctype="multipart/form-data">
+                                    @csrf
 
-                    <div class="card shadow-lg border-0" style="border-radius:20px;">
-                        <div class="card-body p-4">
+                                    <div class="row">
 
-                            <form action="{{ route('pemilik.kamar.store') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
+                                        {{-- KIRI --}}
+                                        <div class="col-md-6">
 
-                                <div class="row">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nama Kos</label>
+                                                <select name="kos_id" class="form-select" required>
+                                                    <option value="">Pilih Nama Kos</option>
+                                                    @foreach ($kos as $k)
+                                                        <option
+                                                            value="{{ $k->id }}"{{ old('kos_id') == $k->id ? 'selected' : '' }}>
+                                                            {{ $k->nama_kos }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
 
-                                    {{-- KIRI --}}
-                                    <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nama Kamar</label>
+                                                <input type="text" name="nama_kamar" class="form-control"
+                                                    value="{{ old('nama_kamar') }}">
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Nama Kos</label>
-                                            <select name="kos_id" class="form-select">
-                                                <option value="">Pilih Nama Kos</option>
-                                                @foreach ($kos as $k)
-                                                    <option value="{{ $k->id }}">{{ $k->nama_kos }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Deskripsi Kamar</label>
+                                                <textarea name="deskripsi" class="form-control"></textarea>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Nama Kamar</label>
-                                            <input type="text" name="nama_kamar" class="form-control">
-                                        </div>
+                                            {{-- FASILITAS --}}
+                                            <label class="fw-semibold mb-2">Fasilitas Kamar</label>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Deskripsi Kamar</label>
-                                            <textarea name="deskripsi" class="form-control"></textarea>
-                                        </div>
-
-                                        {{-- FASILITAS --}}
-                                        <label class="fw-semibold mb-2">Fasilitas Kamar</label>
-
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="Kamar Mandi Dalam"> Kamar Mandi Dalam
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="Kamar Mandi Dalam"> Kamar Mandi Dalam
+                                                    </div>
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="AC"> AC</div>
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="Kipas Angin"> Kipas Angin</div>
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="Cermin"> Cermin</div>
                                                 </div>
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="AC"> AC</div>
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="Kipas Angin"> Kipas Angin</div>
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="Cermin"> Cermin</div>
+
+                                                <div class="col-6">
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="Lemari Pakaian"> Lemari Pakaian</div>
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="Meja"> Meja</div>
+                                                    <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                            name="fasilitas[]" value="Tempat Tidur"> Tempat Tidur</div>
+                                                </div>
                                             </div>
 
-                                            <div class="col-6">
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="Lemari Pakaian"> Lemari Pakaian</div>
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="Meja"> Meja</div>
-                                                <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                        name="fasilitas[]" value="Tempat Tidur"> Tempat Tidur</div>
+                                        </div>
+
+                                        {{-- KANAN --}}
+                                        <div class="col-md-6">
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Foto Kamar Kos (Maksimal 3 Foto)</label>
+
+                                                <input type="file" name="foto[]" id="fotoInput" class="form-control"
+                                                    multiple accept="image/*" required>
+
+                                                <small class="text-muted">maksimal 3 foto</small>
+
+                                                <div class="row mt-3" id="previewContainer"></div>
                                             </div>
+
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Status Kamar</label>
+                                                <input type="hidden" name="status" value="tersedia">
+
+                                                <div class="form-control bg-light">
+                                                    Tersedia
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Harga</label>
+                                                <input type="text" name="harga" id="hargaInput"
+                                                    class="form-control" placeholder="Rp 0" value="{{ old('harga') }}">
+                                            </div>
+
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Tipe Harga</label>
+                                                <select name="tipe_harga" class="form-select">
+                                                    <option value="bulanan">Bulan</option>
+                                                    <option value="tahunan">Tahun</option>
+                                                </select>
+                                            </div>
+
                                         </div>
 
                                     </div>
 
-                                    {{-- KANAN --}}
-                                    <div class="col-md-6">
+                                    {{-- BUTTON --}}
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <a href="{{ route('pemilik.kamar.index') }}" class="btn btn-danger me-2">
+                                            <i class="bi bi-x-circle"></i> Batal
+                                        </a>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Foto Kamar Kos (Maksimal 3 Foto)</label>
-
-                                            <input type="file" name="foto[]" id="fotoInput" class="form-control"
-                                                multiple accept="image/*" required>
-
-                                            <small class="text-muted">maksimal 3 foto</small>
-
-                                            <div class="row mt-3" id="previewContainer"></div>
-                                        </div>
-
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Status Kamar</label>
-                                            <input type="hidden" name="status" value="tersedia">
-
-                                            <div class="form-control bg-light">
-                                                Tersedia
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Harga</label>
-                                            <input type="text" name="harga" id="hargaInput" class="form-control"
-                                                placeholder="Rp 0">
-                                        </div>
-
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Tipe Harga</label>
-                                            <select name="tipe_harga" class="form-select">
-                                                <option value="bulanan">Bulan</option>
-                                                <option value="tahunan">Tahun</option>
-                                            </select>
-                                        </div>
-
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle"></i> Simpan
+                                        </button>
                                     </div>
 
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="d-flex justify-content-end mt-4">
-                                    <a href="{{ route('pemilik.kamar.index') }}" class="btn btn-danger me-2">
-                                        <i class="bi bi-x-circle"></i> Batal
-                                    </a>
-
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-circle"></i> Simpan
-                                    </button>
-                                </div>
-
-                            </form>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-
+@endif
                 </div>
             </div>
         </div>

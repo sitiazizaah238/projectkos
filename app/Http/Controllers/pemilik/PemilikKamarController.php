@@ -43,38 +43,49 @@ class PemilikKamarController extends Controller
         return view('pemilik.kamar.create', compact('kos'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'kos_id'     => 'required|exists:kos,id',
-            'nama_kamar' => 'required|string|max:255',
-            'harga'      => 'required',
-            'foto'       => 'required|array|min:1|max:3',
-            'foto.*'     => 'image|mimes:jpg,jpeg,png|max:2048'
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'kos_id'     => 'required|exists:kos,id',
+        'nama_kamar' => 'required|string|max:255',
+        'harga'      => 'required',
+        'foto'       => 'required|array|min:1|max:3',
+        'foto.*'     => 'image|mimes:jpg,jpeg,png|max:5120'
+    ]);
 
-        $harga = str_replace(['Rp', '.', ' '], '', $request->harga);
-        if (strlen($harga) <= 3) {
-            $harga = $harga . "000";
-        }
+    // ✅ TAMBAHAN (cek kos milik user)
+    $kos = Kos::where('id', $request->kos_id)
+        ->where('user_id', Auth::id())
+        ->first();
 
-        $data = $request->except('foto');
-        $data['harga'] = $harga;
-
-        if ($request->hasFile('foto')) {
-            $paths = [];
-            foreach ($request->file('foto') as $file) {
-                $paths[] = $file->store('kamar', 'public');
-            }
-            $data['foto'] = $paths;
-        }
-
-        Kamar::create($data);
-
-        return redirect()->route('pemilik.kamar.index')
-            ->with('success', 'Kamar berhasil ditambahkan');
+    if (!$kos) {
+        return back()->with('error', 'Kos tidak valid');
     }
 
+    $harga = str_replace(['Rp', '.', ' '], '', $request->harga);
+    if (strlen($harga) <= 3) {
+        $harga = $harga . "000";
+    }
+
+    $data = $request->except('foto');
+    $data['harga'] = $harga;
+
+    // ✅ TAMBAHAN (default fasilitas kalau tidak dicentang)
+    $data['fasilitas'] = $request->fasilitas ?? [];
+
+    if ($request->hasFile('foto')) {
+        $paths = [];
+        foreach ($request->file('foto') as $file) {
+            $paths[] = $file->store('kamar', 'public');
+        }
+        $data['foto'] = $paths;
+    }
+
+    Kamar::create($data);
+
+    return redirect()->route('pemilik.kamar.index')
+        ->with('success', 'Kamar berhasil ditambahkan');
+}
 
     public function edit(Kamar $kamar)
     {
