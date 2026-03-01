@@ -183,6 +183,20 @@ Route::middleware('auth')->group(function () {
             )
                 ->name('pemilik.verifikasi.show');
         });
+        // ================= LAPORAN KEUANGAN =================
+Route::get(
+    '/pemilik/laporan-keuangan',
+    [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'index']
+)->name('pemilik.laporan.index');
+Route::get(
+    '/pemilik/laporan/print',
+    [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'print']
+)->name('pemilik.laporan.print');
+
+Route::get(
+    '/pemilik/laporan/excel',
+    [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'excel']
+)->name('pemilik.laporan.excel');
     });
 
     // punya penyewa

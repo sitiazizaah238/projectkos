@@ -124,21 +124,81 @@
 
                 {{-- ================= FOTO + INFO ================= --}}
                 <div class="row g-4">
+{{-- FOTO KOS SLIDER --}}
+<div class="col-md-7">
+    @php
+        $fotoKos = [];
 
-                    {{-- FOTO --}}
-                    <div class="col-md-7">
-                        @if ($kos->foto)
-                            <div class="card shadow-sm rounded-4 overflow-hidden" style="height:420px;">
-                                <img src="{{ asset('storage/' . $kos->foto) }}" class="w-100 h-100"
-                                    style="object-fit:cover; object-position:center;">
-                            </div>
-                        @endif
+        if (!empty($kos->foto)) {
+            if (is_array($kos->foto)) {
+                $fotoKos = $kos->foto;
+            } elseif (is_string($kos->foto)) {
+                $decoded = json_decode($kos->foto, true);
+                $fotoKos = json_last_error() === JSON_ERROR_NONE ? $decoded : [$kos->foto];
+            }
+        }
+    @endphp
+
+    @if (!empty($fotoKos))
+        <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
+
+            {{-- INDICATOR --}}
+            <div class="carousel-indicators">
+                @foreach ($fotoKos as $i => $foto)
+                    <button type="button" data-bs-target="#carouselKos"
+                        data-bs-slide-to="{{ $i }}"
+                        class="{{ $i == 0 ? 'active' : '' }}">
+                    </button>
+                @endforeach
+            </div>
+
+            {{-- ISI SLIDE --}}
+            <div class="carousel-inner rounded-4 overflow-hidden" style="height:420px;">
+                @foreach ($fotoKos as $i => $foto)
+                    <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
+                        <img src="{{ asset('storage/' . $foto) }}"
+                            class="d-block w-100"
+                            style="height:420px; object-fit:cover;">
                     </div>
+                @endforeach
+            </div>
+
+            {{-- BUTTON --}}
+            <button class="carousel-control-prev" type="button"
+                data-bs-target="#carouselKos" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+
+            <button class="carousel-control-next" type="button"
+                data-bs-target="#carouselKos" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+
+        </div>
+    @else
+        <div class="bg-light d-flex justify-content-center align-items-center rounded-4"
+            style="height:420px;">
+            <i class="bi bi-image fs-1 text-muted"></i>
+        </div>
+    @endif
+</div>
+                    {{-- FOTO --}}
+                    @php
+                        $fotoKamar = [];
+
+                        if (!empty($kamar->foto)) {
+                            if (is_array($kamar->foto)) {
+                                $fotoKamar = $kamar->foto;
+                            } elseif (is_string($kamar->foto)) {
+                                $decoded = json_decode($kamar->foto, true);
+                                $fotoKamar = json_last_error() === JSON_ERROR_NONE ? $decoded : [$kamar->foto];
+                            }
+                        }
+                    @endphp
 
                     {{-- INFORMASI KOS --}}
                     <div class="col-md-5 d-flex">
-                      <div class="card shadow-sm rounded-4 p-4 w-100"
-     style="height:430px;">
+                        <div class="card shadow-sm rounded-4 p-4 w-100" style="min-height:430px;">
 
                             <h6 class="fw-bold border-bottom pb-2 mb-3">
                                 <i class="bi bi-info-circle"></i> Informasi Kos

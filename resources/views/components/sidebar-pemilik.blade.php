@@ -84,6 +84,12 @@
                 <i class="bi bi-credit-card me-2"></i> Verifikasi Pembayaran
             </a>
         </li>
-
+<li class="nav-item">
+    <a href="{{ route('pemilik.laporan.index') }}"
+        class="nav-link d-flex align-items-center
+        {{ request()->routeIs('pemilik.laporan.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+        <i class="bi bi-cash-stack me-2"></i> Laporan Keuangan
+    </a>
+</li>
     </ul>
 </div>
