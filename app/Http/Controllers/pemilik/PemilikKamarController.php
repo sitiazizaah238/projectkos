@@ -11,24 +11,27 @@ use Illuminate\Support\Facades\Storage;
 
 class PemilikKamarController extends Controller
 {
-    public function index(Request $request)
-    {
-        $search = $request->search;
+   public function index(Request $request)
+{
+    $search = $request->search;
 
-        $kamars = Kamar::whereHas('kos', function ($q) {
+    $kamars = Kamar::whereHas('kos', function ($q) {
             $q->where('user_id', Auth::id());
         })
-            ->when($search, function ($query) use ($search) {
-                $query->where('nama_kamar', 'like', '%' . $search . '%')
-                    ->orWhereHas('kos', function ($q) use ($search) {
-                        $q->where('nama_kos', 'like', '%' . $search . '%');
-                    });
-            })
-            ->with('kos')
-            ->get();
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_kamar', 'like', '%' . $search . '%')
+                  ->orWhereHas('kos', function ($k) use ($search) {
+                      $k->where('nama_kos', 'like', '%' . $search . '%');
+                  });
+            });
+        })
+        ->with('kos')
+        ->latest()
+        ->get();
 
-        return view('pemilik.kamar.index', compact('kamars', 'search'));
-    }
+    return view('pemilik.kamar.index', compact('kamars', 'search'));
+}
 
 
     public function create()
