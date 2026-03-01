@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanKeuanganExport;
 
+
 class LaporanKeuanganController extends Controller
 {
     /**
@@ -64,11 +65,13 @@ class LaporanKeuanganController extends Controller
     /**
      * Export Excel
      */
-    public function exportExcel()
-    {
-        return Excel::download(
-            new LaporanKeuanganExport(Auth::id()),
-            'laporan-keuangan.xlsx'
-        );
-    }
+    public function excel()
+{
+    $laporan = $this->getData();
+
+    return Excel::download(
+        new LaporanKeuanganExport($laporan),
+        'laporan-keuangan.xlsx'
+    );
+}
 }
