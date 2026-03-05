@@ -4,6 +4,7 @@
     use App\Models\Kos;
     use App\Models\Kamar;
     use App\Models\PengajuanSewa;
+    use App\Models\Pembayaran;
     use Illuminate\Support\Facades\Auth;
     use Carbon\Carbon;
 
@@ -24,7 +25,13 @@
 
     $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
 
-    $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
+    $notifPembayaran = Pembayaran::whereHas('pengajuan.kos', function ($q) use ($userId) {
+        $q->where('user_id', $userId);
+    })
+        ->where('status', 'menunggu')
+        ->latest()
+        ->get();
+    $jumlahNotif = $notifKos->count() + $notifPengajuan->count() + $notifPembayaran->count();
 @endphp
 
 @section('content')
@@ -69,7 +76,14 @@
                                 Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
                             </a>
                         @endforeach
-
+                        {{-- NOTIF PEMBAYARAN --}}
+                        @foreach ($notifPembayaran as $pb)
+                            <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
+                                <strong>Pembayaran Baru</strong><br>
+                                Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
+                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
+                            </a>
+                        @endforeach
                         @if ($jumlahNotif == 0)
                             <div class="text-center text-muted small p-3">
                                 Tidak ada notifikasi

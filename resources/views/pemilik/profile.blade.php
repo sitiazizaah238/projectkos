@@ -4,6 +4,7 @@
     use App\Models\Kos;
     use App\Models\Kamar;
     use App\Models\PengajuanSewa;
+    use App\Models\Pembayaran;
     use Illuminate\Support\Facades\Auth;
     use Carbon\Carbon;
 
@@ -20,18 +21,16 @@
     // 🔔 NOTIF SECTION
     // =====================
 
-    $notifKos = Kos::where('user_id', $userId)
-                ->where('status', 'disetujui')
-                ->where('is_read', false)
-                ->latest()
-                ->get();
+    $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', false)->latest()->get();
 
-    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)
-                        ->where('is_read', false)
-                        ->latest()
-                        ->get();
-
-    $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
+    $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
+    $notifPembayaran = Pembayaran::whereHas('pengajuan.kos', function ($q) use ($userId) {
+        $q->where('user_id', $userId);
+    })
+        ->where('status', 'menunggu')
+        ->latest()
+        ->get();
+    $jumlahNotif = $notifKos->count() + $notifPengajuan->count() + $notifPembayaran->count();
 @endphp
 @section('content')
     <div class="d-flex">
@@ -40,7 +39,7 @@
         @include('components.sidebar-pemilik')
 
         <div class="flex-grow-1">
-           {{-- TOPBAR --}}
+            {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 <div class="dropdown position-relative">
 
@@ -74,6 +73,14 @@
                             <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
                                 <strong>{{ $p->nama_penyewa }}</strong><br>
                                 Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
+                            </a>
+                        @endforeach
+                         {{-- NOTIF PEMBAYARAN --}}
+                        @foreach ($notifPembayaran as $pb)
+                            <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
+                                <strong>Pembayaran Baru</strong><br>
+                                Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
+                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
                             </a>
                         @endforeach
 
@@ -122,8 +129,8 @@
                         Edit Profile Pemilik
                     </h6>
 
-                 <form action="{{ route('pemilik.profile.update') }}" method="POST" enctype="multipart/form-data">
-    @csrf
+                    <form action="{{ route('pemilik.profile.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
 
                         {{-- FOTO --}}
                         <div class="mb-3">
@@ -140,7 +147,8 @@
 
                             <div class="col-md-6 mb-3">
                                 <label>Email</label>
-                                <input type="email" name="email" value="{{ Auth::user()->email }}" class="form-control">
+                                <input type="email" name="email" value="{{ Auth::user()->email }}"
+                                    class="form-control">
                             </div>
                         </div>
 
@@ -215,33 +223,33 @@
         }
     </script>
     {{-- PROFILE MODAL --}}
-<div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content p-3 text-center" style="border-radius:20px;">
-            <div class="mb-3">
-                <div class="fw-bold">{{ Auth::user()->name }}</div>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
             </div>
-
-            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Logout
-                </button>
-            </form>
         </div>
     </div>
-</div>
- <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                confirmButtonColor: '#0d6efd'
-            });
-        </script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#0d6efd'
+        });
+    </script>
 @endsection

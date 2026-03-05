@@ -4,6 +4,7 @@
     use App\Models\Kos;
     use App\Models\Kamar;
     use App\Models\PengajuanSewa;
+    use App\Models\Pembayaran;
     use Illuminate\Support\Facades\Auth;
     use Carbon\Carbon;
 
@@ -24,7 +25,13 @@
 
     $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
 
-    $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
+    $notifPembayaran = Pembayaran::whereHas('pengajuan.kos', function ($q) use ($userId) {
+        $q->where('user_id', $userId);
+    })
+        ->where('status', 'menunggu')
+        ->latest()
+        ->get();
+    $jumlahNotif = $notifKos->count() + $notifPengajuan->count() + $notifPembayaran->count();
 @endphp
 
 @section('content')
@@ -71,7 +78,14 @@
                                 Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
                             </a>
                         @endforeach
-
+                        {{-- NOTIF PEMBAYARAN --}}
+                        @foreach ($notifPembayaran as $pb)
+                            <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
+                                <strong>Pembayaran Baru</strong><br>
+                                Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
+                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
+                            </a>
+                        @endforeach
                         @if ($jumlahNotif == 0)
                             <div class="text-center text-muted small p-3">
                                 Tidak ada notifikasi
@@ -126,39 +140,36 @@
                     <div class="col-md-7">
 
                         {{-- FOTO --}}
-@if($kos->foto && count($kos->foto) > 0)
+                        @if ($kos->foto && count($kos->foto) > 0)
+                            <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
 
-<div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
 
-    <div class="carousel-inner">
+                                    @foreach ($kos->foto as $key => $f)
+                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                            <img src="{{ asset('storage/' . $f) }}" class="d-block w-100 rounded-4 shadow"
+                                                style="height:400px; object-fit:cover;">
+                                        </div>
+                                    @endforeach
 
-        @foreach($kos->foto as $key => $f)
-            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                <img src="{{ asset('storage/'.$f) }}"
-                     class="d-block w-100 rounded-4 shadow"
-                     style="height:400px; object-fit:cover;">
-            </div>
-        @endforeach
+                                </div>
 
-    </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselKos"
+                                    data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
 
-    <button class="carousel-control-prev" type="button"
-        data-bs-target="#carouselKos" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselKos"
+                                    data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
 
-    <button class="carousel-control-next" type="button"
-        data-bs-target="#carouselKos" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </button>
-
-</div>
-
-@else
-    <div class="bg-light text-center p-5 rounded">
-        Tidak ada foto
-    </div>
-@endif
+                            </div>
+                        @else
+                            <div class="bg-light text-center p-5 rounded">
+                                Tidak ada foto
+                            </div>
+                        @endif
 
                         {{-- MAP --}}
                         <div class="card shadow rounded-4">

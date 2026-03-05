@@ -4,6 +4,7 @@
     use App\Models\Kos;
     use App\Models\Kamar;
     use App\Models\PengajuanSewa;
+    use App\Models\Pembayaran;
     use Illuminate\Support\Facades\Auth;
     use Carbon\Carbon;
 
@@ -24,7 +25,13 @@
 
     $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
 
-    $jumlahNotif = $notifKos->count() + $notifPengajuan->count();
+    $notifPembayaran = Pembayaran::whereHas('pengajuan.kos', function ($q) use ($userId) {
+        $q->where('user_id', $userId);
+    })
+        ->where('status', 'menunggu')
+        ->latest()
+        ->get();
+    $jumlahNotif = $notifKos->count() + $notifPengajuan->count() + $notifPembayaran->count();
 @endphp
 
 @section('content')
@@ -71,7 +78,14 @@
                                 Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
                             </a>
                         @endforeach
-
+                        {{-- NOTIF PEMBAYARAN --}}
+                        @foreach ($notifPembayaran as $pb)
+                            <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
+                                <strong>Pembayaran Baru</strong><br>
+                                Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
+                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
+                            </a>
+                        @endforeach
                         @if ($jumlahNotif == 0)
                             <div class="text-center text-muted small p-3">
                                 Tidak ada notifikasi
@@ -204,36 +218,36 @@
         </div>
     </div>
     <script>
-let selectedFiles = [];
-const input = document.getElementById('fotoInput');
-const preview = document.getElementById('previewContainer');
+        let selectedFiles = [];
+        const input = document.getElementById('fotoInput');
+        const preview = document.getElementById('previewContainer');
 
-input.addEventListener('change', function(e) {
+        input.addEventListener('change', function(e) {
 
-    const newFiles = Array.from(e.target.files);
-    selectedFiles = [...selectedFiles, ...newFiles];
+            const newFiles = Array.from(e.target.files);
+            selectedFiles = [...selectedFiles, ...newFiles];
 
-    if (selectedFiles.length > 3) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Maksimal 3 Foto!'
+            if (selectedFiles.length > 3) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Maksimal 3 Foto!'
+                });
+                selectedFiles = selectedFiles.slice(0, 3);
+            }
+
+            renderPreview();
+            updateFileInput();
         });
-        selectedFiles = selectedFiles.slice(0, 3);
-    }
 
-    renderPreview();
-    updateFileInput();
-});
+        function renderPreview() {
+            preview.innerHTML = "";
 
-function renderPreview() {
-    preview.innerHTML = "";
+            selectedFiles.forEach((file, index) => {
 
-    selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-
-            preview.innerHTML += `
+                    preview.innerHTML += `
                 <div class="col-4 mb-3">
                     <div class="position-relative">
                         <img src="${e.target.result}"
@@ -247,23 +261,23 @@ function renderPreview() {
                     </div>
                 </div>
             `;
+                }
+                reader.readAsDataURL(file);
+            });
         }
-        reader.readAsDataURL(file);
-    });
-}
 
-function removeImage(index) {
-    selectedFiles.splice(index, 1);
-    renderPreview();
-    updateFileInput();
-}
+        function removeImage(index) {
+            selectedFiles.splice(index, 1);
+            renderPreview();
+            updateFileInput();
+        }
 
-function updateFileInput() {
-    const dataTransfer = new DataTransfer();
-    selectedFiles.forEach(file => {
-        dataTransfer.items.add(file);
-    });
-    input.files = dataTransfer.files;
-}
-</script>
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            input.files = dataTransfer.files;
+        }
+    </script>
 @endsection
