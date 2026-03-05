@@ -5,7 +5,7 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-               {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
+            {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 @php
                     $userId = Auth::id();
@@ -153,14 +153,15 @@
 
                                         {{-- AKSI --}}
                                         <td>
-                                            @if ($item->status == 'ditolak')
-                                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                    data-bs-target="#modalUlang{{ $item->id }}">
-                                                    Ajukan Ulang
-                                                </button>
-                                            @else
-                                                -
-                                            @endif
+                                            <button
+                                                class="btn btn-sm
+        {{ $item->status == 'ditolak' ? 'btn-warning' : 'btn-secondary' }}"
+                                                @if ($item->status == 'ditolak') data-bs-toggle="modal"
+            data-bs-target="#modalUlang{{ $item->id }}"
+        @else
+            disabled @endif>
+                                                Ajukan Ulang
+                                            </button>
                                         </td>
                                     </tr>
 
