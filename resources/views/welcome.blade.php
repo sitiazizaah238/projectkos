@@ -281,7 +281,7 @@
                             Cari Kos
                         </a>
 
-                        <button @click="openModal = true" class="btn btn-primary">
+                        <button @click="openModal = true" class="btn btn-outline-primary">
                             Daftar
                         </button>
 
@@ -394,7 +394,7 @@
 
     <!-- FOOTER -->
     <footer class="bg-dark text-white text-center py-3">
-        © {{ date('Y') }} <strong>FINDKOS</strong> | Sistem Penyewaan Kamar Kos berbasis AI
+        © {{ date('Y') }} <strong>FindKos</strong> | Sistem Penyewaan Kamar Kos berbasis AI
     </footer>
 
 </body>
