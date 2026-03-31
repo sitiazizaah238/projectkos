@@ -17,14 +17,14 @@ class ProfilePemilikController extends Controller
         ]);
     }
 
-    // update profile
-   public function update(Request $request)
+public function update(Request $request)
 {
     $user = Auth::user();
 
     $request->validate([
         'name' => 'required',
         'email' => 'required|email',
+        'no_hp' => 'nullable|string|max:15', // ✅ tambahin ini
         'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         'password' => 'nullable|confirmed|min:6',
     ]);
@@ -36,16 +36,30 @@ class ProfilePemilikController extends Controller
         if ($user->photo && Storage::exists('public/profile/' . $user->photo)) {
             Storage::delete('public/profile/' . $user->photo);
         }
-         // upload foto baru
+
+        // upload foto baru
         $file = $request->file('photo');
         $filename = time() . '.' . $file->getClientOriginalExtension();
-       $file->storeAs('profile', $filename, 'public');
+        $file->storeAs('profile', $filename, 'public');
+
         $user->photo = $filename;
+    }
+
+    // ================= FORMAT NO HP =================
+    $no_hp = $request->no_hp;
+
+    if ($no_hp) {
+        $no_hp = preg_replace('/[^0-9]/', '', $no_hp); // hanya angka
+
+        if (substr($no_hp, 0, 1) == '0') {
+            $no_hp = '62' . substr($no_hp, 1);
+        }
     }
 
     // ================= DATA =================
     $user->name = $request->name;
     $user->email = $request->email;
+    $user->no_hp = $no_hp; // ✅ simpan no hp
 
     // ================= PASSWORD =================
     if ($request->filled('password')) {
@@ -53,7 +67,8 @@ class ProfilePemilikController extends Controller
     }
 
     $user->save();
-return redirect()->route('pemilik.profile')
-    ->with('success', 'Profile berhasil diperbarui');
+
+    return redirect()->route('pemilik.profile')
+        ->with('success', 'Profile berhasil diperbarui');
 }
 }

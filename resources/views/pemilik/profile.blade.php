@@ -132,25 +132,32 @@
                     <form action="{{ route('pemilik.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        {{-- FOTO --}}
-                        <div class="mb-3">
-                            <label class="form-label">Foto Profil</label>
-                            <input type="file" name="photo" class="form-control">
-                        </div>
+                       {{-- FOTO + NO HP --}}
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Foto Profil</label>
+        <input type="file" name="photo" class="form-control">
+    </div>
 
-                        {{-- NAMA + EMAIL --}}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label>Nama</label>
-                                <input type="text" name="name" value="{{ Auth::user()->name }}" class="form-control">
-                            </div>
+    <div class="col-md-6 mb-3">
+        <label>Nomor HP</label>
+        <input type="text" name="no_hp" value="{{ Auth::user()->no_hp }}"
+            class="form-control" placeholder="08xxxxxxxxxx">
+    </div>
+</div>
 
-                            <div class="col-md-6 mb-3">
-                                <label>Email</label>
-                                <input type="email" name="email" value="{{ Auth::user()->email }}"
-                                    class="form-control">
-                            </div>
-                        </div>
+{{-- NAMA + EMAIL --}}
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label>Nama</label>
+        <input type="text" name="name" value="{{ Auth::user()->name }}" class="form-control">
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ Auth::user()->email }}" class="form-control">
+    </div>
+</div>
 
                         {{-- PASSWORD --}}
                         <div class="border rounded p-3 mt-3">
