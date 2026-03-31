@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Penyewa;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PengajuanSewa;
-use App\Models\Kamar; // 🔥 tambahkan ini
+use App\Models\Kamar;
 use Illuminate\Support\Facades\Auth;
 
 class PengajuanController extends Controller
@@ -31,7 +31,6 @@ class PengajuanController extends Controller
         'durasi' => 'required|integer'
     ]);
 
-    // 🔥 CEK DUPLIKAT
     $cek = PengajuanSewa::where('user_id', Auth::id())
         ->where('kamar_id', $request->kamar_id)
         ->whereIn('status', ['menunggu', 'disetujui'])
@@ -41,10 +40,8 @@ class PengajuanController extends Controller
         return back()->with('error', 'Kamu sudah mengajukan kamar ini!');
     }
 
-    // 🔥 Ambil kamar
     $kamar = Kamar::findOrFail($request->kamar_id);
 
-    // 🔥 Hitung total bayar
     $totalBayar = $kamar->harga * $request->durasi;
 
     PengajuanSewa::create([
