@@ -255,9 +255,9 @@
                                     $namaPemilik = $kos->user->name ?? 'Pemilik Kos';
 
                                     $waMessage =
-                                        "Halo, bapak/ibu {$namaPemilik}. Saya tertarik untuk menyewa kamar nomor (isi nomor kamar) di kost *{$kos->nama_kos}*\n\nBerikut data saya:\nNama: *" .
+                                        "Halo, bapak/ibu {$namaPemilik}. Saya tertarik untuk menyewa kamar kos nomor (isi nomor kamar) di kost *{$kos->nama_kos}*.\n\nBerikut data saya:\nNama: *" .
                                         Auth::user()->name .
-                                        "*\nTanggal mulai sewa: (isi tanggal mulai -> format: hari/bulan/tahun)\nDurasi (berapa bulan) : (isi durasi sewa)\n\nApakah saya bisa mendapatkan informasi lebih lanjut mengenai kamar tersebut?\n\nTerima kasih.";
+                                        "*\nTanggal mulai sewa: (isi tanggal mulai)\nDurasi sewa : (isi durasi sewa)\n\nApakah saya bisa mendapatkan informasi lebih lanjut mengenai kamar tersebut?\n\nTerima kasih.";
                                     $waUrl = "https://wa.me/{$waNumber}?text=" . rawurlencode($waMessage);
                                 @endphp
                                 <div class="mt-auto pt-4">
