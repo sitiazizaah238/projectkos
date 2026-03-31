@@ -21,6 +21,22 @@
 
     <!-- GLOBAL CSS DASHBOARD -->
     <style>
+        /* Fix for Bootstrap collapse conflict with Tailwind */
+        .collapse:not(.show) {
+            display: none !important;
+        }
+
+        .collapse.show {
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        .collapsing {
+            height: 0;
+            overflow: hidden;
+            transition: height .35s ease;
+        }
+
         body {
             background: #f5f7fb;
             font-family: 'Figtree', sans-serif;
@@ -28,12 +44,14 @@
 
         .sidebar {
             width: 260px;
-            min-height: 100vh;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
             background: #ffffff;
             border-right: 1px solid #e5e7eb;
             transition: all 0.3s ease;
             flex-shrink: 0;
-            position: relative;
         }
 
         .sidebar .nav-link {
@@ -50,18 +68,21 @@
         }
 
         .sidebar .nav-link:hover {
-            background: #0d6efd;
-            color: #fff;
+            background: #0d6efd !important;
+            color: #fff !important;
         }
 
         .sidebar .nav-link:hover i {
-            color: #fff;
+            color: #fff !important;
         }
 
         .topbar {
             height: 64px;
             background: #0d6efd;
             color: white;
+            position: sticky;
+            top: 0;
+            z-index: 900;
         }
 
         .card-stat {
