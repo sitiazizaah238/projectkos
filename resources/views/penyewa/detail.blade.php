@@ -7,7 +7,6 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-            {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4">
                 @php
                     $userId = Auth::id();
@@ -116,72 +115,68 @@
                     @endphp
 
                     <span class="badge bg-secondary p-2">
-                        Total Kamar : {{ $total }}
-                        Terisi : {{ $terisi }}
-                        Tersedia : {{ $tersedia }}
+                        Total Kamar : {{ $total }} | Terisi : {{ $terisi }} | Tersedia : {{ $tersedia }}
                     </span>
                 </div>
 
                 {{-- ================= FOTO + INFO ================= --}}
                 <div class="row g-4">
-{{-- FOTO KOS SLIDER --}}
-<div class="col-md-7">
-    @php
-        $fotoKos = [];
+                    {{-- FOTO KOS SLIDER --}}
+                    <div class="col-md-7">
+                        @php
+                            $fotoKos = [];
 
-        if (!empty($kos->foto)) {
-            if (is_array($kos->foto)) {
-                $fotoKos = $kos->foto;
-            } elseif (is_string($kos->foto)) {
-                $decoded = json_decode($kos->foto, true);
-                $fotoKos = json_last_error() === JSON_ERROR_NONE ? $decoded : [$kos->foto];
-            }
-        }
-    @endphp
+                            if (!empty($kos->foto)) {
+                                if (is_array($kos->foto)) {
+                                    $fotoKos = $kos->foto;
+                                } elseif (is_string($kos->foto)) {
+                                    $decoded = json_decode($kos->foto, true);
+                                    $fotoKos = json_last_error() === JSON_ERROR_NONE ? $decoded : [$kos->foto];
+                                }
+                            }
+                        @endphp
 
-    @if (!empty($fotoKos))
-        <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
+                        @if (!empty($fotoKos))
+                            <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
 
-            {{-- INDICATOR --}}
-            <div class="carousel-indicators">
-                @foreach ($fotoKos as $i => $foto)
-                    <button type="button" data-bs-target="#carouselKos"
-                        data-bs-slide-to="{{ $i }}"
-                        class="{{ $i == 0 ? 'active' : '' }}">
-                    </button>
-                @endforeach
-            </div>
+                                {{-- INDICATOR --}}
+                                <div class="carousel-indicators">
+                                    @foreach ($fotoKos as $i => $foto)
+                                        <button type="button" data-bs-target="#carouselKos"
+                                            data-bs-slide-to="{{ $i }}" class="{{ $i == 0 ? 'active' : '' }}">
+                                        </button>
+                                    @endforeach
+                                </div>
 
-            {{-- ISI SLIDE --}}
-            <div class="carousel-inner rounded-4 overflow-hidden" style="height:420px;">
-                @foreach ($fotoKos as $i => $foto)
-                    <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
-                        <img src="{{ asset('storage/' . $foto) }}"
-                            class="d-block w-100"
-                            style="height:420px; object-fit:cover;">
+                                {{-- ISI SLIDE --}}
+                                <div class="carousel-inner rounded-4 overflow-hidden" style="height:420px;">
+                                    @foreach ($fotoKos as $i => $foto)
+                                        <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
+                                            <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
+                                                style="height:420px; object-fit:cover;">
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- BUTTON --}}
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselKos"
+                                    data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselKos"
+                                    data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+
+                            </div>
+                        @else
+                            <div class="bg-light d-flex justify-content-center align-items-center rounded-4"
+                                style="height:420px;">
+                                <i class="bi bi-image fs-1 text-muted"></i>
+                            </div>
+                        @endif
                     </div>
-                @endforeach
-            </div>
-
-            {{-- BUTTON --}}
-            <button class="carousel-control-prev" type="button"
-                data-bs-target="#carouselKos" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </button>
-
-            <button class="carousel-control-next" type="button"
-                data-bs-target="#carouselKos" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </button>
-
-        </div>
-    @else
-        <div class="bg-light d-flex justify-content-center align-items-center rounded-4"
-            style="height:420px;">
-            <i class="bi bi-image fs-1 text-muted"></i>
-        </div>
-    @endif
-</div>
                     {{-- FOTO --}}
                     @php
                         $fotoKamar = [];
@@ -245,8 +240,35 @@
                                         {{ $fasilitas }}
                                     </div>
                                 @endforeach
-
                             </div>
+
+                            {{-- Tombol WhatsApp --}}
+                            @if (!empty($kos->user->no_hp))
+                                @php
+                                    $waNumber = $kos->user->no_hp;
+                                    // bersihkan karakter selain angka
+                                    $waNumber = preg_replace('/[^0-9]/', '', $waNumber);
+                                    if (str_starts_with($waNumber, '0')) {
+                                        $waNumber = '62' . substr($waNumber, 1);
+                                    }
+
+                                    $namaPemilik = $kos->user->name ?? 'Pemilik Kos';
+
+                                    $waMessage =
+                                        "Halo, bapak/ibu {$namaPemilik}. Saya tertarik untuk menyewa kamar nomor (isi nomor kamar) di kost *{$kos->nama_kos}*\n\nBerikut data saya:\nNama: *" .
+                                        Auth::user()->name .
+                                        "*\nTanggal mulai sewa: (isi tanggal mulai -> format: hari/bulan/tahun)\nDurasi (berapa bulan) : (isi durasi sewa)\n\nApakah saya bisa mendapatkan informasi lebih lanjut mengenai kamar tersebut?\n\nTerima kasih.";
+                                    $waUrl = "https://wa.me/{$waNumber}?text=" . rawurlencode($waMessage);
+                                @endphp
+                                <div class="mt-auto pt-4">
+                                    <a href="{{ $waUrl }}" target="_blank"
+                                        class="btn w-100 rounded-pill py-2 text-white fw-bold shadow-sm d-flex align-items-center justify-content-center"
+                                        style="background-color: #25D366; transition: all 0.3s ease;">
+                                        <i class="bi bi-whatsapp fs-5 me-2"></i> Hubungi Pemilik via WA
+                                    </a>
+                                </div>
+                            @endif
+
                         </div>
 
                     </div>
