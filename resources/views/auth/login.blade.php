@@ -59,7 +59,6 @@
         </div>
 
         <!-- RIGHT SIDE -->
-        <!-- RIGHT SIDE -->
         <div class="w-1/2 bg-gray-100 flex items-center justify-center">
 
             <div class="w-[420px] bg-white p-10 rounded-2xl shadow-sm">
@@ -75,11 +74,13 @@
                         Masukkan Email dan Password Untuk Melanjutkan
                     </p>
                 </div>
-
+                @if (session('error'))
+                    <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
-
-
                     <!-- EMAIL -->
                     <div class="mb-6">
                         <label class="block mb-2 text-gray-700 font-medium">Email</label>
@@ -88,24 +89,28 @@
                             class="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Masukan Email..">
                     </div>
+                    @error('email')
+                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                    @enderror
+                    <div class="mb-6">
+                        <label class="block mb-2 text-gray-700 font-medium">
+                            Password
+                        </label>
 
-              <div class="mb-6">
-    <label class="block mb-2 text-gray-700 font-medium">
-        Password
-    </label>
+                        <div class="relative flex items-center">
+                            <input type="password" name="password" id="password" required
+                                class="w-full px-5 py-3 pr-12 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                placeholder="Masukan Password..">
 
-    <div class="relative flex items-center">
-        <input type="password" name="password" id="password" required
-            class="w-full px-5 py-3 pr-12 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Masukan Password..">
-
-        <button type="button"
-            onclick="togglePassword(this)"
-            class="absolute right-4 text-gray-400 hover:text-gray-600 text-lg">
-            <i class="bi bi-eye"></i>
-        </button>
-    </div>
-</div>
+                            <button type="button" onclick="togglePassword(this)"
+                                class="absolute right-4 text-gray-400 hover:text-gray-600 text-lg">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    @error('password')
+                        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                    @enderror
 
 
                     <!-- LOGIN BUTTON -->
@@ -113,7 +118,11 @@
                         class="w-full py-3 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-lg transition">
                         Masuk
                     </button>
-
+                    <div class="text-right mb-4">
+                        <a href="{{ route('password.request') }}" class="text-sm text-blue-500 hover:underline">
+                            Lupa Password?
+                        </a>
+                    </div>
                     <!-- REGISTER -->
                     <p class="text-center mt-5 text-sm text-gray-600">
                         Tidak Memiliki Akun?

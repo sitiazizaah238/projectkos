@@ -9,20 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
         }
 
-        .container {
-            display: flex;
-            height: 100vh;
-        }
+        .container { display: flex; height: 100vh; }
 
         .left {
             width: 50%;
@@ -39,21 +35,13 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            /* beri sedikit jarak lebih */
             font-weight: 700;
             font-size: 22px;
-            /* besarkan font FINDKOS */
         }
 
-        .logo img {
-            width: 40px;
-            /* besarkan logo */
-        }
+        .logo img { width: 40px; }
 
-        .left-content {
-            margin-top: 70px;
-            padding-left: 40px;
-        }
+        .left-content { margin-top: 70px; padding-left: 40px; }
 
         .left-content img {
             width: 420px;
@@ -65,7 +53,6 @@
             margin: 0;
             font-size: 42px;
             font-weight: 700;
-            line-height: 1.2;
         }
 
         .left-content p {
@@ -90,9 +77,7 @@
             margin-bottom: 25px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
 
         .form-group label {
             display: block;
@@ -110,6 +95,16 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        .error-text {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .error-input {
+            border: 1px solid red;
+        }
+
         button {
             width: 100%;
             padding: 14px;
@@ -120,7 +115,6 @@
             font-size: 16px;
             margin-top: 15px;
             cursor: pointer;
-            font-family: 'Poppins', sans-serif;
         }
 
         a {
@@ -128,88 +122,144 @@
             text-decoration: none;
             font-weight: 500;
         }
+
+        /* ALERT SUCCESS */
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <div class="left">
+<div class="container">
 
-            <div class="logo">
-                <img src="{{ asset('images/logo.png') }}">
-                <span>FindKos</span>
-            </div>
-
-            <div class="left-content">
-                <img src="{{ asset('images/kos.png') }}">
-
-              <h1>Registrasi Akun </h1>
-                <p>Lengkapi data diri Anda untuk mulai menggunakan <br> layanan FindKos di wilayah Lohbener Indramayu.</p>
-            </div>
+    <!-- LEFT -->
+    <div class="left">
+        <div class="logo">
+            <img src="{{ asset('images/logo.png') }}">
+            <span>FindKos</span>
         </div>
 
-        <div class="right">
-            <div class="card">
-                <h2>Register Penyewa</h2>
-
-                <form action="/register-penyewa" method="POST">
-                    @csrf
-
-                    <div class="form-group">
-                        <label>Nama Lengkap</label>
-                        <input type="text" name="name" placeholder="Masukan nama lengkap">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" name="email" placeholder="Masukan email">
-                    </div>
-
-                    <div class="form-group">
-                        <label>No HP</label>
-                        <input type="text" name="no_hp" placeholder="Masukan no HP" inputmode="numeric" required
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    </div>
-
-
-                    <div class="form-group" style="display:flex; gap:10px;">
-                        <div style="flex:1; position:relative;">
-                            <label>Password</label>
-                            <input type="password" name="password" id="password" placeholder="Masukan password"
-                                style="padding-right:45px; width:100%;">
-                            <span onclick="togglePassword('password', this)"
-                                style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
-                                <i class="bi bi-eye"></i>
-                            </span>
-                        </div>
-
-                        <div style="flex:1; position:relative;">
-                            <label>Konfirmasi Password</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
-                                placeholder="Ulangi password" style="padding-right:45px; width:100%;">
-                            <span onclick="togglePassword('password_confirmation', this)"
-                                style="position:absolute; right:15px; top:38px; cursor:pointer; color:#888;">
-                                <i class="bi bi-eye"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <button type="submit">Daftar</button>
-                </form>
-
-                <p style="text-align:center;margin-top:12px">
-                    Sudah punya akun? <a href="/login">Login</a>
-                </p>
-            </div>
+        <div class="left-content">
+            <img src="{{ asset('images/kos.png') }}">
+            <h1>Registrasi Akun</h1>
+            <p>Lengkapi data diri Anda untuk mulai menggunakan layanan FindKos di wilayah Lohbener Indramayu.</p>
         </div>
     </div>
-    <script>
-        function togglePassword(id) {
-            const input = document.getElementById(id);
-            input.type = input.type === "password" ? "text" : "password";
-        }
-    </script>
-</body>
 
+    <!-- RIGHT -->
+    <div class="right">
+        <div class="card">
+            <h2>Register Penyewa</h2>
+
+            <!-- SUCCESS MESSAGE -->
+            @if(session('success'))
+                <div class="alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <form action="/register-penyewa" method="POST">
+                @csrf
+
+                <!-- Nama -->
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="name" value="{{ old('name') }}"
+                        class="@error('name') error-input @enderror"
+                        placeholder="Masukan nama lengkap">
+
+                    @error('name')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ old('email') }}"
+                        class="@error('email') error-input @enderror"
+                        placeholder="Masukan email">
+
+                    @error('email')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- No HP -->
+                <div class="form-group">
+                    <label>No HP</label>
+                    <input type="text" name="no_hp" value="{{ old('no_hp') }}"
+                        class="@error('no_hp') error-input @enderror"
+                        placeholder="Masukan no HP"
+                        inputmode="numeric"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+                    @error('no_hp')
+                        <p class="error-text">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Password -->
+                <div class="form-group" style="display:flex; gap:10px;">
+
+                    <div style="flex:1; position:relative;">
+                        <label>Password</label>
+                        <input type="password" name="password" id="password"
+                            class="@error('password') error-input @enderror"
+                            placeholder="Masukan password"
+                            style="padding-right:45px; width:100%;">
+
+                        <span onclick="togglePassword('password')"
+                            style="position:absolute; right:15px; top:38px; cursor:pointer;">
+                            <i class="bi bi-eye"></i>
+                        </span>
+
+                        @error('password')
+                            <p class="error-text">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div style="flex:1; position:relative;">
+                        <label>Konfirmasi Password</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation"
+                            class="@error('password_confirmation') error-input @enderror"
+                            placeholder="Ulangi password"
+                            style="padding-right:45px; width:100%;">
+
+                        <span onclick="togglePassword('password_confirmation')"
+                            style="position:absolute; right:15px; top:38px; cursor:pointer;">
+                            <i class="bi bi-eye"></i>
+                        </span>
+
+                        @error('password_confirmation')
+                            <p class="error-text">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <button type="submit">Daftar</button>
+            </form>
+
+            <p style="text-align:center;margin-top:12px">
+                Sudah punya akun? <a href="/login">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+}
+</script>
+
+</body>
 </html>
