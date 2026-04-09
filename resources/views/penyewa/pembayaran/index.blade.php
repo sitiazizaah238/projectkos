@@ -6,7 +6,7 @@
 
         <div class="flex-grow-1">
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 @php
                     $userId = Auth::id();
 
@@ -37,13 +37,13 @@
                     $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
-                <div class="dropdown me-3">
+                <div class="dropdown position-relative">
 
-                    <button class="btn position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4 text-white"></i>
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -126,6 +126,8 @@
                                     <th>Nama Kamar</th>
                                     <th>Total Bayar</th>
                                     <th>Durasi</th>
+                                    <th>Status Pengajuan</th>
+                                    <th>Status Sewa</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -133,12 +135,43 @@
 
                             <tbody>
                                 @forelse ($pembayaran as $item)
+                                    @php
+                                        $statusPengajuan = $item->pengajuan->statusSaatIni();
+                                    @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->pengajuan->kos->nama_kos }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
                                         <td>Rp {{ number_format($item->pengajuan->total_bayar ?? 0, 0, ',', '.') }}</td>
                                         <td>{{ $item->pengajuan->durasi }} Bulan</td>
+
+                                        <td>
+                                            @if ($statusPengajuan == 'menunggu')
+                                                <span class="badge bg-warning">Menunggu</span>
+                                            @elseif($statusPengajuan == 'disetujui')
+                                                <span class="badge bg-primary">Disetujui</span>
+                                            @elseif($statusPengajuan == 'aktif')
+                                                <span class="badge bg-success">Aktif</span>
+                                            @elseif($statusPengajuan == 'jatuh_tempo')
+                                                <span class="badge bg-warning text-dark">Jatuh Tempo</span>
+                                            @elseif($statusPengajuan == 'selesai')
+                                                <span class="badge bg-secondary">Selesai</span>
+                                            @elseif($statusPengajuan == 'ditolak')
+                                                <span class="badge bg-danger">Ditolak</span>
+                                            @else
+                                                <span class="badge bg-secondary">-</span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if ($statusPengajuan == 'aktif' || $statusPengajuan == 'jatuh_tempo')
+                                                <span class="badge bg-danger">Terisi</span>
+                                            @elseif($statusPengajuan == 'selesai' || $statusPengajuan == 'disetujui')
+                                                <span class="badge bg-success">Tersedia</span>
+                                            @else
+                                                <span class="badge bg-secondary">-</span>
+                                            @endif
+                                        </td>
 
                                         {{-- STATUS --}}
                                         <td>
@@ -209,7 +242,7 @@
 
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center py-4 text-muted">
+                                        <td colspan="9" class="text-center py-4 text-muted">
                                             Tidak ada riwayat pembayaran
                                         </td>
                                     </tr>

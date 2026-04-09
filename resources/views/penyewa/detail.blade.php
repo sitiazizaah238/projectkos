@@ -7,7 +7,7 @@
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 @php
                     $userId = Auth::id();
 
@@ -38,13 +38,13 @@
                     $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
-                <div class="dropdown me-3">
+                <div class="dropdown position-relative">
 
-                    <button class="btn position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4 text-white"></i>
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif

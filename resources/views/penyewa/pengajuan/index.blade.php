@@ -7,13 +7,36 @@
     @endphp
 @endif
 @section('content')
+    <style>
+        .payment-method-option {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #dee2e6;
+        }
+
+        .payment-method-option:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 6px 18px rgba(13, 110, 253, 0.12);
+        }
+
+        .payment-method-radio {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+        }
+
+        .payment-method-option:has(input:checked) {
+            border-color: #0d6efd;
+            background: #eef5ff;
+        }
+    </style>
     <div class="d-flex">
 
         @include('components.sidebar-penyewa')
 
         <div class="flex-grow-1">
-              {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 @php
                     $userId = Auth::id();
 
@@ -44,13 +67,13 @@
                     $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
-                <div class="dropdown me-3">
+                <div class="dropdown position-relative">
 
-                    <button class="btn position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4 text-white"></i>
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -142,6 +165,9 @@
 
                                 @if ($pengajuan->count() > 0)
                                     @foreach ($pengajuan as $item)
+                                        @php
+                                            $statusSaatIni = $item->statusSaatIni();
+                                        @endphp
                                         <tr class="text-center align-middle">
                                             <td>{{ $loop->iteration }}</td>
 
@@ -155,13 +181,17 @@
 
                                             {{-- STATUS --}}
                                             <td>
-                                                @if ($item->status == 'menunggu')
+                                                @if ($statusSaatIni == 'menunggu')
                                                     <span class="badge bg-warning">Menunggu</span>
-                                                @elseif($item->status == 'disetujui')
+                                                @elseif($statusSaatIni == 'disetujui')
                                                     <span class="badge bg-primary">Disetujui</span>
-                                                @elseif($item->status == 'aktif')
+                                                @elseif($statusSaatIni == 'aktif')
                                                     <span class="badge bg-success">Aktif</span>
-                                                @elseif($item->status == 'ditolak')
+                                                @elseif($statusSaatIni == 'jatuh_tempo')
+                                                    <span class="badge bg-warning text-dark">Jatuh Tempo</span>
+                                                @elseif($statusSaatIni == 'selesai')
+                                                    <span class="badge bg-secondary">Selesai</span>
+                                                @elseif($statusSaatIni == 'ditolak')
                                                     <span class="badge bg-danger">Ditolak</span>
                                                 @else
                                                     <span class="badge bg-secondary">-</span>
@@ -169,19 +199,12 @@
                                             </td>
                                             {{-- STATUS KAMAR --}}
                                             <td>
-                                                @php
-                                                    $pembayaran = DB::table('pembayarans')
-                                                        ->where('pengajuan_sewa_id', $item->id)
-                                                        ->first();
-                                                @endphp
-
-                                                {{-- Jika pengajuan belum aktif ATAU pembayaran masih menunggu --}}
-                                                @if ($item->status !== 'aktif')
-                                                    <span class="badge bg-success">Tersedia</span>
-                                                @elseif($item->status == 'aktif')
+                                                @if ($statusSaatIni === 'aktif' || $statusSaatIni === 'jatuh_tempo')
                                                     <span class="badge bg-danger">Terisi</span>
+                                                @elseif($statusSaatIni === 'selesai')
+                                                    <span class="badge bg-success">Tersedia</span>
                                                 @else
-                                                    <span class="badge bg-secondary">-</span>
+                                                    <span class="badge bg-success">Tersedia</span>
                                                 @endif
                                             </td>
 
@@ -197,16 +220,29 @@
                                             {{-- AKSI --}}
                                             <td>
                                                 @php
-                                                    $pembayaran = DB::table('pembayarans')
+                                                    $pembayaranTerakhir = DB::table('pembayarans')
                                                         ->where('pengajuan_sewa_id', $item->id)
+                                                        ->latest()
                                                         ->first();
+
+                                                    $pembayaranMenunggu = DB::table('pembayarans')
+                                                        ->where('pengajuan_sewa_id', $item->id)
+                                                        ->where('status', 'menunggu')
+                                                        ->exists();
                                                 @endphp
 
-                                                @if ($item->status == 'disetujui' && !$pembayaran)
+                                                @if (
+                                                    ($statusSaatIni == 'disetujui' && !$pembayaranTerakhir) ||
+                                                        ($statusSaatIni == 'jatuh_tempo' && !$pembayaranMenunggu))
                                                     {{-- Bisa bayar --}}
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalBayar{{ $item->id }}">
                                                         Bayar Sekarang
+                                                    </button>
+                                                @elseif($statusSaatIni == 'jatuh_tempo' && $pembayaranMenunggu)
+                                                    <button class="btn btn-sm btn-warning" disabled
+                                                        style="pointer-events:none; opacity:0.8;">
+                                                        Menunggu Verifikasi
                                                     </button>
                                                 @else
                                                     {{-- Semua kondisi selain itu = disabled --}}
@@ -249,10 +285,16 @@
                                                                 <small>Total Bayar</small>
                                                                 <div class="fw-bold text-success">
                                                                     Rp
-                                                                    {{ number_format($item->kamar->harga * $item->durasi, 0, ',', '.') }}
+                                                                    {{ number_format($item->kamar->harga, 0, ',', '.') }}
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @if ($statusSaatIni == 'jatuh_tempo')
+                                                            <div class="mt-2 alert alert-warning py-2 small mb-0">
+                                                                Tagihan bulanan jatuh tempo. Silakan bayar untuk
+                                                                mengaktifkan status sewa kembali.
+                                                            </div>
+                                                        @endif
                                                     </div>
 
                                                     {{-- Form Pembayaran --}}
@@ -265,21 +307,25 @@
                                                             <label class="fw-semibold mb-2">Pilih Metode Pembayaran</label>
 
                                                             @forelse($item->kos->user->metodePembayaran ?? [] as $metode)
-                                                                <div
-                                                                    class="border rounded-3 p-2 mb-2 d-flex justify-content-between align-items-center">
-                                                                    <div>
-                                                                        <input type="radio" name="metode_id"
+                                                                <label
+                                                                    class="payment-method-option rounded-3 p-2 mb-2 d-flex justify-content-between align-items-center w-100">
+                                                                    <div class="d-flex gap-2 align-items-start">
+                                                                        <input class="form-check-input payment-method-radio"
+                                                                            type="radio" name="metode_id"
                                                                             value="{{ $metode->id }}" required>
-                                                                        {{ $metode->nama_metode }}
-                                                                        <br>
-                                                                        <small>{{ $metode->no_rekening }}</small>
+                                                                        <div>
+                                                                            <div class="fw-semibold">
+                                                                                {{ $metode->nama_metode }}
+                                                                            </div>
+                                                                            <small>{{ $metode->no_rekening }}</small>
+                                                                        </div>
                                                                     </div>
 
                                                                     @if ($metode->gambar)
                                                                         <img src="{{ asset('storage/' . $metode->gambar) }}"
                                                                             width="70">
                                                                     @endif
-                                                                </div>
+                                                                </label>
                                                             @empty
                                                                 <div class="text-muted small">
                                                                     Metode pembayaran belum tersedia

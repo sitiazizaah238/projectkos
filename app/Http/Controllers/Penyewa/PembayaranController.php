@@ -6,37 +6,38 @@ use App\Http\Controllers\Controller;
 use App\Models\PengajuanSewa;
 use App\Models\Pembayaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PembayaranController extends Controller
 {
     public function index()
-{
-    $pembayaran = Pembayaran::whereHas('pengajuan', function($q){
-        $q->where('user_id', auth()->id());
-    })->with('pengajuan.kos','pengajuan.kamar')
-      ->latest()
-      ->get();
+    {
+        $pembayaran = Pembayaran::whereHas('pengajuan', function ($q) {
+            $q->where('user_id', Auth::id());
+        })->with('pengajuan.kos', 'pengajuan.kamar', 'pengajuan.pembayarans')
+            ->latest()
+            ->get();
 
-    return view('penyewa.pembayaran.index', compact('pembayaran'));
-}
-public function ajukanUlang(Request $request, $id)
-{
-    $request->validate([
-        'bukti' => 'required|image|max:2048'
-    ]);
+        return view('penyewa.pembayaran.index', compact('pembayaran'));
+    }
+    public function ajukanUlang(Request $request, $id)
+    {
+        $request->validate([
+            'bukti' => 'required|image|max:2048'
+        ]);
 
-    $pembayaran = Pembayaran::findOrFail($id);
+        $pembayaran = Pembayaran::findOrFail($id);
 
-    $path = $request->file('bukti')->store('bukti','public');
+        $path = $request->file('bukti')->store('bukti', 'public');
 
-    $pembayaran->update([
-        'bukti' => $path,
-        'status' => 'menunggu',
-        'alasan' => null
-    ]);
+        $pembayaran->update([
+            'bukti' => $path,
+            'status' => 'menunggu',
+            'alasan' => null
+        ]);
 
-    return back()->with('success','Pembayaran berhasil diajukan ulang.');
-}
+        return back()->with('success', 'Pembayaran berhasil diajukan ulang.');
+    }
     public function store(Request $request, $id)
     {
         $request->validate([
@@ -44,12 +45,22 @@ public function ajukanUlang(Request $request, $id)
             'bukti' => 'required|image|max:2048'
         ]);
 
-        $pengajuan = PengajuanSewa::findOrFail($id);
+        $pengajuan = PengajuanSewa::with('pembayarans')->findOrFail($id);
+
+        $statusSaatIni = $pengajuan->statusSaatIni();
+
+        if (!in_array($statusSaatIni, ['disetujui', 'jatuh_tempo'], true)) {
+            return back()->with('error', 'Tagihan belum tersedia untuk dibayar.');
+        }
+
+        if ($pengajuan->adaPembayaranMenunggu()) {
+            return back()->with('error', 'Masih ada pembayaran menunggu verifikasi.');
+        }
 
         $buktiPath = $request->file('bukti')
-                    ->store('bukti','public');
+            ->store('bukti', 'public');
 
-        // 🔥 INSERT KE TABEL PEMBAYARANS
+        // INSERT KE TABEL PEMBAYARANS
         Pembayaran::create([
             'pengajuan_sewa_id' => $pengajuan->id,
             'metode_id' => $request->metode_id,
@@ -57,6 +68,6 @@ public function ajukanUlang(Request $request, $id)
             'status' => 'menunggu'
         ]);
 
-        return back()->with('success','Pembayaran berhasil dikirim!');
+        return back()->with('success', 'Pembayaran berhasil dikirim!');
     }
 }
