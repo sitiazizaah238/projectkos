@@ -70,7 +70,7 @@
         <div class="flex-grow-1">
 
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4">
+            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
                 @php
                     $userId = Auth::id();
 
@@ -101,13 +101,13 @@
                     $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
-                <div class="dropdown me-3">
+                <div class="dropdown position-relative">
 
-                    <button class="btn position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4 text-white"></i>
+                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -174,17 +174,56 @@
                     use App\Models\Pembayaran;
 
                     $userId = Auth::id();
-                    // Ambil sewa aktif terbaru
-                    $sewaAktifData = PengajuanSewa::with(['kos', 'kamar'])
+                    // Ambil sewa terbaru yang masih aktif atau sudah selesai
+                    $sewaAktifData = PengajuanSewa::with(['kos', 'kamar', 'pembayarans'])
                         ->where('user_id', $userId)
-                        ->where('status', 'aktif')
+                        ->whereIn('status', ['aktif', 'selesai'])
                         ->latest()
                         ->first();
 
-                    // Ambil pembayaran terakhir dari sewa aktif
+                    // Ambil pembayaran terakhir dari pengajuan yang tampil
                     $pembayaran = null;
                     if ($sewaAktifData) {
-                        $pembayaran = Pembayaran::where('pengajuan_sewa_id', $sewaAktifData->id)->latest()->first();
+                        $pembayaran = Pembayaran::where('pengajuan_sewa_id', $sewaAktifData->id)
+                            ->where('status', 'dikonfirmasi')
+                            ->latest()
+                            ->first();
+
+                        $tanggalMulaiSewa = \Carbon\Carbon::parse($sewaAktifData->tanggal_mulai)->startOfDay();
+                        $tanggalSelesaiSewa = $tanggalMulaiSewa
+                            ->copy()
+                            ->addMonths((int) $sewaAktifData->durasi)
+                            ->endOfDay();
+
+                        if (now()->startOfDay()->lt($tanggalMulaiSewa)) {
+                            $bulanTagihanSaatIni = 1;
+                        } else {
+                            $bulanTagihanSaatIni = min(
+                                $tanggalMulaiSewa->diffInMonths(now()->startOfDay()) + 1,
+                                max((int) $sewaAktifData->durasi, 1),
+                            );
+                        }
+
+                        $jumlahKonfirmasi = Pembayaran::where('pengajuan_sewa_id', $sewaAktifData->id)
+                            ->where('status', 'dikonfirmasi')
+                            ->count();
+
+                        $jatuhTempoTagihan = $tanggalMulaiSewa->copy()->addMonths($bulanTagihanSaatIni - 1);
+
+                        if (now()->greaterThan($tanggalSelesaiSewa)) {
+                            $statusTagihan = 'selesai';
+                        } elseif (
+                            $sewaAktifData->status === 'aktif' &&
+                            now()->greaterThanOrEqualTo($jatuhTempoTagihan) &&
+                            $jumlahKonfirmasi < $bulanTagihanSaatIni
+                        ) {
+                            $statusTagihan = 'jatuh_tempo';
+                        } else {
+                            $statusTagihan = $sewaAktifData->status;
+                        }
+                    } else {
+                        $statusTagihan = null;
+                        $jatuhTempoTagihan = null;
                     }
                     // Total Kos yang pernah diajukan / disewa
                     $totalKos = PengajuanSewa::where('user_id', $userId)->count();
@@ -201,9 +240,7 @@
                 @endphp
                 {{-- ================= CARD STATISTIK ================= --}}
                 <div class="row mt-4 g-3 align-items-stretch">
-
                     <div class="row">
-
                         {{-- TOTAL KOS --}}
                         <div class="col-md-3 mb-4">
                             <div class="card rounded-4 h-100 text-dark bg-light position-relative overflow-hidden"
@@ -272,6 +309,7 @@
                             </div>
                         </div>
                     </div>
+
                     {{-- ================= KOS SAAT INI + STATUS ================= --}}
                     <div class="row mt-4 g-3 align-items-stretch">
 
@@ -284,27 +322,17 @@
                                 </h6>
                                 <hr class="my-2">
                                 @if ($sewaAktifData)
+                                    @php
+                                        $tanggalMulai = \Carbon\Carbon::parse($sewaAktifData->tanggal_mulai);
+                                        $jumlahBulan = (int) $sewaAktifData->durasi;
+                                        $tanggalSelesai = $tanggalMulai->copy()->addMonths($jumlahBulan)->endOfDay();
+                                        $statusSewaAktif = $statusTagihan;
+                                    @endphp
                                     <div class="row">
                                         <div class="col-6">
                                             <p class="mb-1"><b>{{ $sewaAktifData->kos->nama_kos }}</b></p>
 
                                             <small>Kamar : {{ $sewaAktifData->kamar->nama_kamar }}</small><br>
-
-                                            @php
-                                                $durasi = \App\Models\Pembayaran::whereHas('pengajuan', function (
-                                                    $q,
-                                                ) use ($sewaAktifData) {
-                                                    $q->where('kamar_id', $sewaAktifData->kamar_id)->where(
-                                                        'user_id',
-                                                        auth()->id(),
-                                                    );
-                                                })
-                                                    ->where('status', 'dikonfirmasi')
-                                                    ->latest()
-                                                    ->first();
-
-                                                $jumlahBulan = $durasi ? $durasi->pengajuan->durasi : 1;
-                                            @endphp
 
                                             <small>
                                                 Durasi Sewa : {{ $jumlahBulan }} Bulan
@@ -312,31 +340,20 @@
                                             <br>
                                             <small>
                                                 Status :
-                                                <span class="badge bg-success">Aktif</span>
+                                                @if ($statusSewaAktif === 'selesai')
+                                                    <span class="badge bg-secondary">Selesai</span>
+                                                @elseif($statusSewaAktif === 'jatuh_tempo')
+                                                    <span class="badge bg-warning text-dark">Jatuh Tempo</span>
+                                                @elseif($statusSewaAktif === 'aktif')
+                                                    <span class="badge bg-success">Aktif</span>
+                                                @else
+                                                    <span class="badge bg-warning text-dark">
+                                                        {{ ucfirst($statusSewaAktif) }}
+                                                    </span>
+                                                @endif
                                             </small>
                                         </div>
                                         <div class="col-6">
-                                            @php
-                                                $tanggalMulai = \Carbon\Carbon::parse($sewaAktifData->created_at);
-
-                                                // Ambil dari pembayaran yang dikonfirmasi
-                                                $pembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function (
-                                                    $q,
-                                                ) use ($sewaAktifData) {
-                                                    $q->where('kamar_id', $sewaAktifData->kamar_id)->where(
-                                                        'user_id',
-                                                        auth()->id(),
-                                                    );
-                                                })
-                                                    ->where('status', 'dikonfirmasi')
-                                                    ->latest()
-                                                    ->first();
-
-                                                $jumlahBulan = $pembayaran ? (int) $pembayaran->pengajuan->durasi : 1;
-
-                                                $tanggalSelesai = $tanggalMulai->copy()->addMonths($jumlahBulan);
-                                            @endphp
-
                                             <small>Tanggal Sewa</small>
                                             <p>{{ $tanggalMulai->format('d-m-Y') }}</p>
 
@@ -352,7 +369,7 @@
                             </div>
                         </div>
 
-                        {{-- STATUS PEMBAYARAN (PINDAH KE SINI ✅) --}}
+                        {{-- STATUS PEMBAYARAN --}}
                         <div class="col-md-6 d-flex">
                             <div class="card dashboard-card-modern p-3 w-100 h-100">
                                 <h6 class="card-title-modern">
@@ -361,7 +378,22 @@
                                 </h6>
                                 <hr class="my-2">
                                 <table class="table table-borderless mb-0">
-                                    @if ($pembayaran)
+                                    @if ($statusTagihan === 'jatuh_tempo')
+                                        <tr>
+                                            <td>Status</td>
+                                            <td>
+                                                <span class="badge bg-warning text-dark">Jatuh Tempo</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jatuh Tempo</td>
+                                            <td>{{ $jatuhTempoTagihan?->format('d-m-Y') ?? '-' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tagihan</td>
+                                            <td>Rp {{ number_format($sewaAktifData->kamar->harga ?? 0, 0, ',', '.') }}</td>
+                                        </tr>
+                                    @elseif ($pembayaran)
                                         <tr>
                                             <td>Status</td>
                                             <td>
@@ -394,7 +426,6 @@
                                 </table>
                             </div>
                         </div>
-
                     </div>
 
                     {{-- ================= REKOMENDASI KOS ================= --}}
@@ -476,7 +507,8 @@
                                         <div class="card-body d-flex flex-column">
 
                                             <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
-                                                <h6 class="fw-bold mb-0" style="min-width:0;">{{ $k->nama_kos }}</h6>
+                                                <h6 class="fw-bold mb-0" style="min-width:0;">
+                                                    {{ $k->nama_kos }}</h6>
                                                 <span class="badge bg-primary flex-shrink-0">
                                                     <i
                                                         class="bi {{ $tipeIcon }} me-1"></i>{{ ucfirst($k->tipe_kos) }}
@@ -518,7 +550,8 @@
                                             <div class="mb-3">
                                                 @if ($kamarTermurah)
                                                     <small class="text-muted fw-semibold">
-                                                        <i class="bi bi-tag me-1 text-primary"></i>Harga mulai dari:
+                                                        <i class="bi bi-tag me-1 text-primary"></i>Harga mulai
+                                                        dari:
                                                     </small>
                                                     <div>
                                                         <span class="fw-bold text-dark">
@@ -554,7 +587,8 @@
                                         <h5 class="fw-bold">Belum Ada Rekomendasi</h5>
                                         <p class="text-muted">
                                             Kami belum mengenal seleramu. Silakan gunakan fitur
-                                            <strong>"Cari Kos"</strong> dan gunakan filter untuk membantu AI kami bekerja.
+                                            <strong>"Cari Kos"</strong> dan gunakan filter untuk membantu AI
+                                            kami bekerja.
                                         </p>
                                         <div class="mt-2">
                                             <a href="{{ route('penyewa.cari.kos') }}"

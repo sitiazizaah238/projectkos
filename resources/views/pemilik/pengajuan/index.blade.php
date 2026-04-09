@@ -149,6 +149,9 @@
 
                             <tbody>
                                 @foreach ($pengajuan as $p)
+                                    @php
+                                        $statusSaatIni = $p->statusSaatIni();
+                                    @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $p->kos->nama_kos }}</td>
@@ -156,14 +159,20 @@
                                         <td>{{ $p->kamar->nama_kamar }}</td>
                                         <td>{{ $p->tanggal_mulai }}</td>
                                         <td>
-                                            @if ($p->status == 'menunggu')
+                                            @if ($statusSaatIni == 'menunggu')
                                                 <span class="badge bg-warning">Menunggu</span>
-                                            @elseif ($p->status == 'disetujui')
+                                            @elseif ($statusSaatIni == 'disetujui')
                                                 <span class="badge bg-success">Disetujui</span>
-                                            @elseif ($p->status == 'ditolak')
+                                            @elseif ($statusSaatIni == 'aktif')
+                                                <span class="badge bg-primary">Aktif</span>
+                                            @elseif ($statusSaatIni == 'jatuh_tempo')
+                                                <span class="badge bg-warning text-dark">Jatuh Tempo</span>
+                                            @elseif ($statusSaatIni == 'selesai')
+                                                <span class="badge bg-secondary">Selesai</span>
+                                            @elseif ($statusSaatIni == 'ditolak')
                                                 <span class="badge bg-danger">Ditolak</span>
-                                            @elseif ($p->status == 'aktif')
-                                                <span class="badge bg-success">Aktif</span>
+                                            @else
+                                                <span class="badge bg-secondary">-</span>
                                             @endif
                                         </td>
                                         <td>

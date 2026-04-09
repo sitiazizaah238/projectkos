@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\KosController as AdminKosController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -14,6 +13,7 @@ use App\Http\Controllers\Penyewa\PembayaranController;
 use App\Http\Controllers\Pemilik\PengajuanController;
 use App\Models\PengajuanSewa;
 use App\Models\Pembayaran;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 // GLOBAL DASHBOARD (redirect by role)
 Route::get('/dashboard', function () {
-    $user = auth()->user();
+    $user = Auth::user();
 
     if ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
@@ -177,26 +177,21 @@ Route::middleware('auth')->group(function () {
             $p->update(['is_read' => 1]);
 
             return redirect()->route('pemilik.pengajuan.index');
-            Route::get(
-                '/pemilik/verifikasi/{id}',
-                [PembayaranController::class, 'show']
-            )
-                ->name('pemilik.verifikasi.show');
         });
         // ================= LAPORAN KEUANGAN =================
-Route::get(
-    '/pemilik/laporan-keuangan',
-    [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'index']
-)->name('pemilik.laporan.index');
-Route::get(
-    '/pemilik/laporan/print',
-    [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'print']
-)->name('pemilik.laporan.print');
+        Route::get(
+            '/pemilik/laporan-keuangan',
+            [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'index']
+        )->name('pemilik.laporan.index');
+        Route::get(
+            '/pemilik/laporan/print',
+            [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'print']
+        )->name('pemilik.laporan.print');
 
-Route::get(
-    '/pemilik/laporan/excel',
-    [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'excel']
-)->name('pemilik.laporan.excel');
+        Route::get(
+            '/pemilik/laporan/excel',
+            [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'excel']
+        )->name('pemilik.laporan.excel');
     });
 
     // punya penyewa
@@ -247,24 +242,24 @@ Route::get(
 
         Route::post('/penyewa/profile', [ProfilePenyewaController::class, 'update'])
             ->name('penyewa.profile.update');
-      Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
+        Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
 
-    $userId = auth()->id();
+            $userId = Auth::id();
 
-    // tandai SEMUA notif pengajuan sebagai terbaca
-    \App\Models\PengajuanSewa::where('user_id', $userId)
-        ->where('status', 'disetujui')
-        ->where('status_notif', 0)
-        ->update(['status_notif' => 1]);
+            // tandai SEMUA notif pengajuan sebagai terbaca
+            PengajuanSewa::where('user_id', $userId)
+                ->where('status', 'disetujui')
+                ->where('status_notif', 0)
+                ->update(['status_notif' => 1]);
 
-    return redirect()->route('penyewa.pengajuan.index');
-})->name('penyewa.notif.pengajuan');
+            return redirect()->route('penyewa.pengajuan.index');
+        })->name('penyewa.notif.pengajuan');
 
         Route::get('/penyewa/notif/pembayaran/{id}', function ($id) {
 
-            $data = \App\Models\Pembayaran::with('pengajuan')->findOrFail($id);
+            $data = Pembayaran::with('pengajuan')->findOrFail($id);
 
-            if ($data->pengajuan && $data->pengajuan->user_id == auth()->id()) {
+            if ($data->pengajuan && $data->pengajuan->user_id == Auth::id()) {
                 $data->status_notif = 1;
                 $data->save();
             }

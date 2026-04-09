@@ -146,14 +146,19 @@
 
                         <div class="col-md-4">
                             <small>Status</small>
-                            <div
-                                class="fw-semibold
-                {{ $pengajuan->status == 'aktif'
-                    ? 'text-success'
-                    : ($pengajuan->status == 'ditolak'
-                        ? 'text-danger'
-                        : 'text-warning') }}">
-                                {{ ucfirst($pengajuan->status) }}
+                            @php
+                                $statusSaatIni = $pengajuan->statusSaatIni();
+                                $statusClass = match ($statusSaatIni) {
+                                    'aktif' => 'text-success',
+                                    'jatuh_tempo' => 'text-warning',
+                                    'selesai' => 'text-secondary',
+                                    'ditolak' => 'text-danger',
+                                    default => 'text-warning',
+                                };
+                                $statusLabel = ucwords(str_replace('_', ' ', $statusSaatIni));
+                            @endphp
+                            <div class="fw-semibold {{ $statusClass }}">
+                                {{ $statusLabel }}
                             </div>
                         </div>
                     </div>
@@ -222,6 +227,13 @@
                             <small>Tanggal Mulai</small>
                             <div class="fw-semibold">
                                 {{ $pengajuan->tanggal_mulai }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <small>Tanggal Selesai</small>
+                            <div class="fw-semibold">
+                                {{ $pengajuan->tanggalSelesai()->format('d-m-Y') }}
                             </div>
                         </div>
                     </div>
