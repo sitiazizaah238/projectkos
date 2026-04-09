@@ -29,6 +29,22 @@
             border-color: #0d6efd;
             background: #eef5ff;
         }
+
+        .btn-alasan-detail {
+            background: #ffe3e3;
+            border: 1px solid #dc3545;
+            color: #b02a37;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-alasan-detail:hover {
+            background: #dc3545;
+            border: 2px solid #b02a37;
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.28);
+            transform: translateY(-1px);
+        }
     </style>
     <div class="d-flex">
 
@@ -73,7 +89,8 @@
                         <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+                                style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -175,7 +192,7 @@
 
                                             <td>{{ $item->kamar->nama_kamar ?? '-' }}</td>
 
-                                            <td>{{ $item->tanggal_mulai }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d') }}</td>
 
                                             <td>{{ $item->durasi }} Bulan</td>
 
@@ -211,7 +228,13 @@
                                             {{-- ALASAN --}}
                                             <td>
                                                 @if ($item->status == 'ditolak')
-                                                    {{ $item->alasan ?? '-' }}
+                                                    <button type="button" class="btn btn-sm btn-alasan-detail"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAlasanPenolakan"
+                                                        data-alasan="{{ $item->alasan ?: '-' }}"
+                                                        data-kos="{{ $item->kos->nama_kos ?? '-' }}"
+                                                        data-kamar="{{ $item->kamar->nama_kamar ?? '-' }}">
+                                                        Detail
+                                                    </button>
                                                 @else
                                                     -
                                                 @endif
@@ -377,6 +400,69 @@
             </div>
         </div>
     </div>
+
+    {{-- ================= MODAL ALASAN PENOLAKAN ================= --}}
+    <div class="modal fade" id="modalAlasanPenolakan" tabindex="-1" aria-labelledby="modalAlasanPenolakanLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAlasanPenolakanLabel">Alasan Penolakan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="small text-muted mb-2" id="alasanMetaInfo"></div>
+                    <div id="alasanPenolakanText">-</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alasanModal = document.getElementById('modalAlasanPenolakan');
+            if (!alasanModal) return;
+            let lastTrigger = null;
+
+            alasanModal.addEventListener('show.bs.modal', function(event) {
+                const trigger = event.relatedTarget;
+                lastTrigger = trigger || null;
+                if (!trigger) return;
+
+                const alasan = trigger.getAttribute('data-alasan') || '-';
+                const kos = trigger.getAttribute('data-kos') || '-';
+                const kamar = trigger.getAttribute('data-kamar') || '-';
+
+                const alasanText = alasanModal.querySelector('#alasanPenolakanText');
+                const metaInfo = alasanModal.querySelector('#alasanMetaInfo');
+
+                if (alasanText) alasanText.textContent = alasan;
+                if (metaInfo) metaInfo.textContent = `Kos: ${kos} | Kamar: ${kamar}`;
+            });
+
+            alasanModal.addEventListener('hide.bs.modal', function() {
+                const activeElement = document.activeElement;
+
+                // Pindahkan fokus keluar modal sebelum Bootstrap memberi aria-hidden=true.
+                if (activeElement && alasanModal.contains(activeElement)) {
+                    activeElement.blur();
+                }
+            });
+
+            alasanModal.addEventListener('hidden.bs.modal', function() {
+                if (lastTrigger && typeof lastTrigger.focus === 'function' && document.contains(
+                    lastTrigger)) {
+                    lastTrigger.focus();
+                } else {
+                    document.body.focus();
+                }
+            });
+        });
+    </script>
+
     {{-- ================= PROFILE MODAL ================= --}}
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">
