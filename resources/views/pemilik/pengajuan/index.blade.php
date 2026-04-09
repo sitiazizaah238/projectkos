@@ -162,6 +162,8 @@
                                                 <span class="badge bg-success">Disetujui</span>
                                             @elseif ($p->status == 'ditolak')
                                                 <span class="badge bg-danger">Ditolak</span>
+                                            @elseif ($p->status == 'aktif')
+                                                <span class="badge bg-success">Aktif</span>
                                             @endif
                                         </td>
                                         <td>
