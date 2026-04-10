@@ -82,9 +82,9 @@
                             <thead class="table-light">
                                 <tr>
                                     <th width="50">No</th>
-                                    <th>Pemilik</th>
+                                    <th>Pemilik Kos</th>
                                     <th>Nama Kos</th>
-                                    <th>Lokasi</th>
+                                    <th>Lokasi Kos</th>
                                     <th width="120">Status</th>
                                     <th width="120" class="text-center">Aksi</th>
                                 </tr>
@@ -109,28 +109,46 @@
                                         </td>
 
                                         <td>
-                                            @if ($k->status == 'menunggu')
-                                                {{-- SETUJU --}}
-                                                <form action="{{ route('admin.kos.approve', $k->id) }}" method="POST"
-                                                    class="d-inline approve-form">
-                                                    @csrf
-                                                    <button type="button" class="btn btn-sm btn-success btn-approve">
-                                                        <i class="bi bi-check-circle"></i>
-                                                    </button>
-                                                </form>
+                                            <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
 
-                                                {{-- TOLAK --}}
-                                                <form action="{{ route('admin.kos.reject', $k->id) }}" method="POST"
-                                                    class="d-inline reject-form">
-                                                    @csrf
-                                                    <input type="hidden" name="alasan">
-                                                    <button type="button" class="btn btn-sm btn-danger btn-reject">
-                                                        <i class="bi bi-x-circle"></i>
+                                                @if ($k->status == 'menunggu')
+                                                    <form action="{{ route('admin.kos.approve', $k->id) }}" method="POST"
+                                                        class="approve-form m-0">
+                                                        @csrf
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-success btn-approve px-3">
+                                                            Setuju
+                                                        </button>
+                                                    </form>
+
+                                                    <form action="{{ route('admin.kos.reject', $k->id) }}" method="POST"
+                                                        class="reject-form m-0">
+                                                        @csrf
+                                                        <input type="hidden" name="alasan">
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-danger btn-reject px-3">
+                                                            Tolak
+                                                        </button>
+                                                    </form>
+                                                @elseif ($k->status == 'disetujui')
+                                                    <button class="btn btn-sm btn-secondary px-3" disabled>
+                                                        Setuju
                                                     </button>
-                                                </form>
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
+
+                                                    <button class="btn btn-sm btn-secondary px-3" disabled>
+                                                        Tolak
+                                                    </button>
+                                                @elseif ($k->status == 'ditolak')
+                                                    <button class="btn btn-sm btn-secondary px-3" disabled>
+                                                        Setuju
+                                                    </button>
+
+                                                    <button class="btn btn-sm btn-danger px-3" disabled>
+                                                        Tolak
+                                                    </button>
+                                                @endif
+
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
