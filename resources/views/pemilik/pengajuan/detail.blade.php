@@ -226,7 +226,7 @@
                         <div class="col-md-3">
                             <small>Tanggal Mulai</small>
                             <div class="fw-semibold">
-                                {{ $pengajuan->tanggal_mulai }}
+                              {{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->format('d-m-Y') }}
                             </div>
                         </div>
 

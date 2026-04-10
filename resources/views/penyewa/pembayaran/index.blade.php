@@ -103,7 +103,7 @@
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
                 <h3 class="fw-bold mb-1" style="font-size: 30px;">
-                    Riwayat Pembayaran
+                    Data Pembayaran
                 </h3>
 
                 <small class="text-muted d-block mb-4">
@@ -127,7 +127,7 @@
                                     <th>Total Bayar</th>
                                     <th>Durasi</th>
                                     <th>Status Pengajuan</th>
-                                    <th>Status Sewa</th>
+                                    <th>Status Kamar</th>
                                     <th>Status Pembayaran</th>
                                     <th>Aksi</th>
                                 </tr>

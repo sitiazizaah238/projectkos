@@ -44,7 +44,8 @@
                         <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+                                style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -440,9 +441,8 @@
                                                     <div class="mb-3">
                                                         <label class="fw-semibold">Tanggal Mulai</label>
                                                         <input type="date" name="tanggal_mulai" class="form-control"
-                                                            required>
+                                                            min="{{ date('Y-m-d') }}" required>
                                                     </div>
-
                                                     <div class="mb-4">
                                                         <label class="fw-semibold">Durasi Sewa</label>
                                                         <select name="durasi" class="form-select" required>

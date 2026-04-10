@@ -157,7 +157,7 @@
                                         <td>{{ $p->kos->nama_kos }}</td>
                                         <td>{{ $p->penyewa->name }}</td>
                                         <td>{{ $p->kamar->nama_kamar }}</td>
-                                        <td>{{ $p->tanggal_mulai }}</td>
+                                      <td>{{ \Carbon\Carbon::parse($p->tanggal_mulai)->format('d-m-Y') }}</td>
                                         <td>
                                             @if ($statusSaatIni == 'menunggu')
                                                 <span class="badge bg-warning">Menunggu</span>
