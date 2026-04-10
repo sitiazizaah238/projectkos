@@ -128,7 +128,7 @@
                                     <th>Durasi</th>
                                     <th>Status Pengajuan</th>
                                     <th>Status Sewa</th>
-                                    <th>Status</th>
+                                    <th>Status Pembayaran</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
