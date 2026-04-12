@@ -11,6 +11,7 @@ use App\Http\Controllers\Penyewa\RecommendationController;
 use App\Http\Controllers\Penyewa\KosController as PenyewaKosController;
 use App\Http\Controllers\Penyewa\PembayaranController;
 use App\Http\Controllers\Pemilik\PengajuanController;
+use App\Http\Controllers\Penyewa\RiwayatPembayaranController;
 use App\Models\PengajuanSewa;
 use App\Models\Pembayaran;
 use Illuminate\Support\Facades\Auth;
@@ -196,6 +197,7 @@ Route::middleware('auth')->group(function () {
 
     // punya penyewa
     Route::middleware('role:penyewa')->group(function () {
+
         Route::get(
             '/penyewa/dashboard',
             [
@@ -225,12 +227,21 @@ Route::middleware('auth')->group(function () {
             '/penyewa/bayar/{id}',
             [App\Http\Controllers\Penyewa\PembayaranController::class, 'store']
         )->name('penyewa.bayar');
-        // ================= RIWAYAT PEMBAYARAN =================
+        // ================= data PEMBAYARAN =================
         Route::get(
             '/penyewa/pembayaran',
             [PembayaranController::class, 'index']
         )->name('penyewa.pembayaran.index');
+        // ================= RIWAYAT PEMBAYARAN =================
+        Route::get(
+            '/penyewa/riwayat-pembayaran',
+            [RiwayatPembayaranController::class, 'index']
+        )->name('penyewa.riwayat.pembayaran');
 
+        Route::get(
+            '/penyewa/riwayat-pembayaran/{id}',
+            [RiwayatPembayaranController::class, 'show']
+        )->name('penyewa.riwayat.detail');
         // AJUKAN ULANG
         Route::post(
             '/penyewa/pembayaran/{id}/ajukan-ulang',

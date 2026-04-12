@@ -73,23 +73,30 @@
                 <i class="bi bi-credit-card me-2" style="font-size:18px;"></i>Pembayaran
             </a>
         </li>
-
+        {{-- 🔥 RIWAYAT PEMBAYARAN --}}
+        <li class="nav-item">
+            <a href="{{ route('penyewa.riwayat.pembayaran') }}"
+                class="nav-link d-flex align-items-center
+            {{ request()->routeIs('penyewa.riwayat.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+                <i class="bi bi-clock-history me-2" style="font-size:18px;"></i> Riwayat Pembayaran
+            </a>
+        </li>
     </ul>
 </div>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const overlay = document.getElementById("sidebarOverlay");
+    document.addEventListener("DOMContentLoaded", function() {
+        const overlay = document.getElementById("sidebarOverlay");
 
-    function updateOverlay() {
-        if (window.innerWidth <= 768) {
-            overlay.style.pointerEvents = "auto";
-        } else {
-            overlay.classList.add("d-none");
-            overlay.style.pointerEvents = "none";
+        function updateOverlay() {
+            if (window.innerWidth <= 768) {
+                overlay.style.pointerEvents = "auto";
+            } else {
+                overlay.classList.add("d-none");
+                overlay.style.pointerEvents = "none";
+            }
         }
-    }
 
-    updateOverlay();
-    window.addEventListener("resize", updateOverlay);
-});
+        updateOverlay();
+        window.addEventListener("resize", updateOverlay);
+    });
 </script>

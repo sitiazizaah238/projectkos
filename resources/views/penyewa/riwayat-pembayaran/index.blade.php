@@ -1,0 +1,202 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="d-flex">
+
+    {{-- SIDEBAR --}}
+    @include('components.sidebar-penyewa')
+
+    <div class="flex-grow-1">
+
+        {{-- ================= TOPBAR ================= --}}
+        <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+            <button class="btn text-white">
+                <i class="bi bi-bell fs-4"></i>
+            </button>
+
+            <button type="button" class="btn text-white d-flex align-items-center gap-2"
+                data-bs-toggle="modal" data-bs-target="#profileModal">
+
+                <span class="fw-semibold small">
+                    {{ Auth::user()->name }}
+                </span>
+
+                <i class="bi bi-person-circle fs-3"></i>
+            </button>
+        </div>
+
+        {{-- ================= CONTENT ================= --}}
+        <div class="p-4">
+
+            {{-- TITLE --}}
+            <div class="mb-2">
+                <h3 class="fw-bold mb-1" style="font-size:25px;">
+                    Riwayat Pembayaran
+                </h3>
+                <small class="text-muted">
+                    Histori pembayaran kos penyewa
+                </small>
+            </div>
+
+            {{-- SEARCH --}}
+            <div class="d-flex justify-content-end mb-3 mt-2">
+                <form method="GET">
+                    <div class="input-group" style="width:300px;">
+                        <input type="text" name="search"
+                            value="{{ request('search') }}"
+                            class="form-control"
+                            placeholder="Cari nama kos...">
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card shadow-sm">
+
+                {{-- HEADER --}}
+                <div class="card-header bg-dark text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock-history fs-5 me-2"></i>
+                        <span class="fw-semibold">Data Riwayat Pembayaran</span>
+                    </div>
+                </div>
+
+                {{-- BODY --}}
+                <div class="card-body p-0">
+                    <table class="table table-bordered mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th width="50">No</th>
+                                <th>Nama Kos</th>
+                                <th>Kamar</th>
+                                <th>Tanggal</th>
+                                <th>Nominal</th>
+                                <th>Metode Bayar</th>
+                                <th>Status Pembayaran</th>
+                                <th>Total</th>
+
+                                {{-- 🔧 DIPERKECIL --}}
+                                <th width="110">Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse($riwayat as $item)
+                                @php
+                                    $kos = $item->pengajuan->kos ?? null;
+                                    $kamar = $item->pengajuan->kamar ?? null;
+
+                                    $harga = $kamar->harga ?? 0;
+                                    $durasi = $item->pengajuan->durasi ?? 0;
+                                    $totalBayar = $harga * $durasi;
+
+                                    $metode = is_array($item->metode)
+                                        ? $item->metode
+                                        : json_decode($item->metode, true);
+                                @endphp
+
+                                <tr>
+                                    <td>
+                                        {{ ($riwayat->currentPage() - 1) * $riwayat->perPage() + $loop->iteration }}
+                                    </td>
+
+                                    <td>{{ $kos->nama_kos ?? '-' }}</td>
+                                    <td>{{ $kamar->nama_kamar ?? '-' }}</td>
+                                    <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
+
+                                    <td>
+                                        Rp {{ number_format($harga, 0, ',', '.') }}
+                                    </td>
+
+                                    <td>
+                                        <div class="fw-semibold">
+                                            {{ $metode['nama_metode'] ?? '-' }}
+                                        </div>
+                                        <small class="text-muted">
+                                            {{ $metode['no_rekening'] ?? '' }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        @if ($item->status == 'dikonfirmasi')
+                                            <span class="badge bg-success">Lunas</span>
+                                        @elseif($item->status == 'menunggu')
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        @else
+                                            <span class="badge bg-danger">Gagal</span>
+                                        @endif
+                                    </td>
+
+                                    <td class="fw-bold text-success">
+                                        Rp {{ number_format($totalBayar, 0, ',', '.') }}
+                                    </td>
+
+                                    {{-- 🔧 TOMBOL DIPERKECIL --}}
+                                    <td>
+                                        <a href="{{ route('penyewa.riwayat.detail', $item->id) }}"
+                                            class="btn btn-sm btn-info text-white px-2 py-1 d-flex align-items-center justify-content-center gap-1">
+                                            <i class="bi bi-eye-fill"></i>
+                                            <small>Detail</small>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="text-center py-4 text-muted">
+                                        @if(request('search'))
+                                            Data tidak ditemukan
+                                        @else
+                                            Belum ada riwayat pembayaran
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+
+                    </table>
+
+                    {{-- PAGINATION --}}
+                    @if ($riwayat->hasPages())
+                        <div class="p-3 d-flex justify-content-end">
+                            {{ $riwayat->appends(request()->query())->links() }}
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ================= PROFILE MODAL (FIX + TAMBAH PROFIL TANPA HAPUS APA PUN) ================= --}}
+<div class="modal fade" id="profileModal">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content p-3 text-center" style="border-radius:20px;">
+
+            <div class="fw-bold">{{ Auth::user()->name }}</div>
+            <small class="text-muted">{{ Auth::user()->email }}</small>
+
+            <hr>
+
+            {{-- 🔥 TAMBAHAN (SEPERTI INDEX) --}}
+            <a href="{{ route('penyewa.profile') }}" class="btn btn-primary w-100 mb-2">
+                Profil
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="btn btn-danger w-100">
+                    Logout
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@endsection
