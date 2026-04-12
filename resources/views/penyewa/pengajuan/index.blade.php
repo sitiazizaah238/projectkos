@@ -153,7 +153,19 @@
                 <small class="text-muted d-block mb-4">
                     Pengajuan Kos / Data Pengajuan
                 </small>
+                {{-- SEARCH --}}
+                <div class="d-flex justify-content-end mb-3 mt-2">
+                    <form method="GET">
+                        <div class="input-group" style="width:300px;">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="form-control rounded-start-pill" placeholder="Cari nama kos / kamar...">
 
+                            <button type="submit" class="btn btn-primary rounded-end-pill">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <div class="card shadow-sm rounded-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <span>
@@ -454,7 +466,7 @@
 
             alasanModal.addEventListener('hidden.bs.modal', function() {
                 if (lastTrigger && typeof lastTrigger.focus === 'function' && document.contains(
-                    lastTrigger)) {
+                        lastTrigger)) {
                     lastTrigger.focus();
                 } else {
                     document.body.focus();
