@@ -107,7 +107,7 @@
                 </h3>
 
                 <small class="text-muted d-block mb-4">
-                    Pembayaran Kos / Data Pembayaran Kos
+                    Verivikasi Kos / Data Pembayaran Kos
                 </small>
 
                 <div class="card shadow-sm rounded-4">

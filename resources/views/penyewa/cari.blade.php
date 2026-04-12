@@ -105,8 +105,8 @@
             {{-- CONTENT --}}
             <div class="p-4" style="background:#f5f7fb;min-height:100vh;">
 
-                <h3 class="fw-bold" style="font-size: 30px;">Kos Tersedia</h3>
-                <small class="text-muted">Penyewaan Kos / Mencari Kos</small>
+                <h3 class="fw-bold" style="font-size: 30px;">Pencarian Kos Tersedia</h3>
+                <small class="text-muted">Menampilkan/Mencari kos berdasarkan nama atau lokasi</small>
 
                 {{-- FORM SEARCH (terpisah dari form filter) --}}
                 <div class="mt-3 mb-4 d-flex gap-2 align-items-center flex-wrap">

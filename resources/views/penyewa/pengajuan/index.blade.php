@@ -149,9 +149,9 @@
 
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
-                <h3 class="fw-bold mb-1" style="font-size: 30px;">Data Pengajuan</h3>
+                <h3 class="fw-bold mb-1" style="font-size: 30px;">Data Pengajuan Sewa</h3>
                 <small class="text-muted d-block mb-4">
-                    Pengajuan Kos / Data Pengajuan
+                    Pengajuan Kos/ Data Pengajuan
                 </small>
                 {{-- SEARCH --}}
                 <div class="d-flex justify-content-end mb-3 mt-2">
