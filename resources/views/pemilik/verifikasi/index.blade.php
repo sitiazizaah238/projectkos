@@ -151,11 +151,11 @@
                     </script>
                 @endif
                 <h3 class="fw-bold mb-1 d-flex align-items-center" style="font-size: 30px;">
-                    Verifikasi Pembayaran
+                    Pembayaran Penyewa
                 </h3>
 
                 <small class="text-muted d-block mb-4">
-                    Pembayaran / Metode Bayar
+                    Verifikasi/Pembayaran Sewa
                 </small>
 
                 <div class="card shadow-sm rounded-4">
