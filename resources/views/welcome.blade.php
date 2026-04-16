@@ -301,35 +301,35 @@
     <section id="cara-kerja" class="container text-center mt-5">
         <h3 class="section-title">Cara Kerja Sistem</h3>
 
-        <div class="row text-center justify-content-center">
+        <div class="row text-center justify-content-center flex-nowrap">
 
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card-step">
-                    <img src="{{ asset('images/step1.png') }}" class="img-fluid step-img" alt="">
+            <div class="col-md-3 col-sm-6 mb-4 d-flex">
+                <div class="card-step w-100">
+                    <img src="{{ asset('images/step1.png') }}" class="img-fluid" alt="">
                     <h5>1. Daftar Akun</h5>
                     <p>Buat akun Anda terlebih dahulu</p>
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card-step">
-                    <img src="{{ asset('images/step2.png') }}" class="img-fluid step-img" alt="">
+            <div class="col-md-3 col-sm-6 mb-4 d-flex">
+                <div class="card-step w-100">
+                    <img src="{{ asset('images/step2.png') }}" class="img-fluid" alt="">
                     <h5>2. Isi Preferensi</h5>
                     <p>Pilih kriteria kos sesuai kebutuhan</p>
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card-step">
-                    <img src="{{ asset('images/step3.png') }}" class="img-fluid step-img" alt="">
+            <div class="col-md-3 col-sm-6 mb-4 d-flex">
+                <div class="card-step w-100">
+                    <img src="{{ asset('images/step3.png') }}" class="img-fluid" alt="">
                     <h5>3. Dapat Rekomendasi</h5>
                     <p>Temukan kos terbaik untuk Anda</p>
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="card-step">
-                    <img src="{{ asset('images/step4.png') }}" class="img-fluid step-img" alt="">
+            <div class="col-md-3 col-sm-6 mb-4 d-flex">
+                <div class="card-step w-100">
+                    <img src="{{ asset('images/step4.png') }}" class="img-fluid" alt="">
                     <h5>4. Pilih & Sewa Kos</h5>
                     <p>Pilih kos dan lakukan proses sewa</p>
                 </div>
