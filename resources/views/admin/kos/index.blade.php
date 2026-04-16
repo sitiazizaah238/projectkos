@@ -44,7 +44,7 @@
             <div class="p-3">
                 {{-- TITLE --}}
                 <div class="mb-3">
-                    <h3 class="fw-bold" style="font-size: 30px;">Manajemen Kos</h3>
+                    <h3 class="fw-bold" style="font-size: 30px;">Verifikasi Kos</h3>
                     <small class="text-muted">
                         Manajemen Kos / <span class="text-dark">Data Kos</span>
                     </small>

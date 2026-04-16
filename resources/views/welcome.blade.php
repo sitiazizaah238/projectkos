@@ -174,9 +174,9 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo">
-                <span class="ms-1 text-white fw-bold">FindKos</span>
+            <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
+                <img src="{{ asset('images/logo21.png') }}" alt="Logo"
+                    style="height: 130px; width: auto; object-fit: contain; margin-top: -10px;">
             </a>
 
             <div class="collapse navbar-collapse justify-content-end">
