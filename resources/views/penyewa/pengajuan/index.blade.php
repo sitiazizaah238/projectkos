@@ -182,6 +182,7 @@
                                     <th>Nama Kos</th>
                                     <th>Nama Kamar</th>
                                     <th>Tanggal Mulai</th>
+                                    <th>Tanggal Selesai</th>
                                     <th>Durasi Sewa</th>
                                     <th>Status Pengajuan</th>
                                     <th>Status Kamar</th>
@@ -205,6 +206,16 @@
                                             <td>{{ $item->kamar->nama_kamar ?? '-' }}</td>
 
                                             <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('Y-m-d') }}</td>
+
+                                            {{-- TAMBAHAN TANGGAL SELESAI --}}
+                                            <td>
+                                                @php
+                                                    $tanggalMulai = \Carbon\Carbon::parse($item->tanggal_mulai);
+                                                    $tanggalSelesai = $tanggalMulai->copy()->addMonths($item->durasi);
+                                                @endphp
+
+                                                {{ $tanggalSelesai->format('Y-m-d') }}
+                                            </td>
 
                                             <td>{{ $item->durasi }} Bulan</td>
 
@@ -275,14 +286,16 @@
                                                         Bayar Sekarang
                                                     </button>
                                                 @elseif($statusSaatIni == 'jatuh_tempo' && $pembayaranMenunggu)
-                                                    <button class="btn btn-sm btn-warning" disabled
-                                                        style="pointer-events:none; opacity:0.8;">
+                                                    {{-- TAMBAHAN: tetap bisa diklik --}}
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                                        data-bs-target="#modalSudahBayar">
                                                         Menunggu Verifikasi
                                                     </button>
                                                 @else
-                                                    {{-- Semua kondisi selain itu = disabled --}}
-                                                    <button class="btn btn-sm btn-secondary" disabled
-                                                        style="pointer-events:none; opacity:0.65;">
+                                                    {{-- TAMBAHAN: tetap bisa diklik --}}
+                                                    <button class="btn btn-sm btn-info text-white fw-semibold"
+                                                        data-bs-toggle="modal" data-bs-target="#modalSudahBayar"
+                                                        style="cursor:pointer;">
                                                         Bayar Sekarang
                                                     </button>
                                                 @endif
@@ -499,4 +512,48 @@
             </div>
         </div>
     </div>
+  <div class="modal fade" id="modalSudahBayar" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-4 p-4 text-center shadow">
+
+            {{-- ICON CEKLIS --}}
+            <div class="mb-3">
+                <i class="bi bi-check-circle-fill text-success"
+                    style="font-size: 60px;"></i>
+            </div>
+
+            {{-- JUDUL --}}
+            <h5 class="fw-bold text-success mb-2">
+                Pembayaran Berhasil
+            </h5>
+
+            {{-- DESKRIPSI --}}
+            <p class="mb-2">
+                Anda sudah melakukan pembayaran untuk sewa ini.
+            </p>
+
+            <small class="text-muted">
+                Silakan tunggu proses verifikasi dari pemilik kos.
+            </small>
+
+            {{-- BUTTON --}}
+            <div class="mt-4 d-flex justify-content-center gap-2">
+
+                {{-- KE RIWAYAT --}}
+                <a href="{{ route('penyewa.riwayat.pembayaran') }}"
+                    class="btn btn-success px-3">
+                    <i class="bi bi-clock-history"></i> Riwayat
+                </a>
+
+                {{-- TUTUP --}}
+                <button class="btn btn-outline-secondary px-3"
+                    data-bs-dismiss="modal">
+                    Tutup
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 @endsection
