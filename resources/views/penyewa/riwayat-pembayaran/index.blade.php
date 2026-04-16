@@ -74,7 +74,7 @@
                                     <th>Nama Kos</th>
                                     <th>Kamar</th>
                                     <th>Tanggal Sewa</th>
-                                    <th>Nominal</th>
+                                    <th>Tanggal Selesai</th>
                                     <th>Metode Bayar</th>
                                     <th>Status Pembayaran</th>
                                     <th>Total</th>
@@ -107,9 +107,16 @@
                                         <td>{{ $kos->nama_kos ?? '-' }}</td>
                                         <td>{{ $kamar->nama_kamar ?? '-' }}</td>
                                         <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
-
                                         <td>
-                                            Rp {{ number_format($harga, 0, ',', '.') }}
+                                            @php
+                                                $tanggalMulai = \Carbon\Carbon::parse(
+                                                    $item->pengajuan->tanggal_mulai ?? now(),
+                                                );
+                                                $durasi = $item->pengajuan->durasi ?? 0;
+                                                $tanggalSelesai = $tanggalMulai->copy()->addMonths($durasi);
+                                            @endphp
+
+                                            {{ $tanggalSelesai->format('d-m-Y') }}
                                         </td>
 
                                         <td>
@@ -147,7 +154,7 @@
 
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center py-4 text-muted">
+                                       <td colspan="8" class="text-center py-4 text-muted">
                                             @if (request('search'))
                                                 Data tidak ditemukan
                                             @else
