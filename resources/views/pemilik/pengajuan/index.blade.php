@@ -142,6 +142,7 @@
                                     <th>Nama Penyewa</th>
                                     <th>Kamar</th>
                                     <th>Tanggal Sewa</th>
+                                    <th>Tanggal Selesai</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -157,7 +158,17 @@
                                         <td>{{ $p->kos->nama_kos }}</td>
                                         <td>{{ $p->penyewa->name }}</td>
                                         <td>{{ $p->kamar->nama_kamar }}</td>
-                                      <td>{{ \Carbon\Carbon::parse($p->tanggal_mulai)->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($p->tanggal_mulai)->format('d-m-Y') }}</td>
+                                        <td>
+                                            @php
+                                                $tanggalMulai = \Carbon\Carbon::parse($p->tanggal_mulai);
+
+                                                // misal durasi 1 bulan (bisa kamu ubah nanti)
+                                                $tanggalSelesai = $tanggalMulai->copy()->addMonth(1);
+                                            @endphp
+
+                                            {{ $tanggalSelesai->format('d-m-Y') }}
+                                        </td>
                                         <td>
                                             @if ($statusSaatIni == 'menunggu')
                                                 <span class="badge bg-warning">Menunggu</span>
