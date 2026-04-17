@@ -49,15 +49,16 @@
 
                         @foreach ($notifKos as $n)
                             <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
-                                <strong>Kos Disetujui</strong><br>
-                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui
+                                <strong>Pembaruan Verifikasi Kos</strong><br>
+                                Terdapat pembaruan status untuk kos <strong>{{ $n->nama_kos }}</strong>.
                             </a>
                         @endforeach
 
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
-                                <strong>{{ $p->nama_penyewa }}</strong><br>
-                                Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
+                                <strong>Pengajuan Sewa Baru</strong><br>
+                                {{ optional($p->penyewa)->name ?? 'Penyewa' }} mengajukan sewa untuk kos
+                                <strong>{{ optional($p->kos)->nama_kos ?? '-' }}</strong>.
                             </a>
                         @endforeach
                         {{-- NOTIF PEMBAYARAN --}}
@@ -65,12 +66,12 @@
                             <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
                                 <strong>Pembayaran Baru</strong><br>
                                 Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
-                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
+                                telah mengirim pembayaran untuk kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>.
                             </a>
                         @endforeach
                         @if ($jumlahNotif == 0)
                             <div class="text-center text-muted small p-3">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </div>
                         @endif
                     </div>
@@ -173,11 +174,11 @@
                                         <td>{{ $laporan->firstItem() + $loop->index }}</td>
                                         <td>{{ optional($item->pengajuan->penyewa)->name }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
-                                        <td>{{ $item->pengajuan->durasi }} Bulan</td>
+                                        <td>{{ $item->durasi_tagihan ?? 1 }} Bulan</td>
                                         <td>{{ $item->created_at->format('d M Y') }}</td>
                                         <td>{{ $item->metode->nama_metode }}</td>
                                         <td class="fw-semibold text-success">
-                                            Rp {{ number_format($item->pengajuan->total_bayar, 0, ',', '.') }}
+                                            Rp {{ number_format($item->nominal_tagihan ?? 0, 0, ',', '.') }}
                                         </td>
                                     </tr>
                                 @empty
@@ -195,7 +196,7 @@
                                         </td>
                                         <td class="text-success">
                                             Rp
-                                            {{ number_format($laporan->sum(fn($i) => $i->pengajuan->total_bayar), 0, ',', '.') }}
+                                            {{ number_format($laporan->sum(fn($i) => $i->nominal_tagihan ?? 0), 0, ',', '.') }}
                                         </td>
                                     </tr>
                                 </tfoot>

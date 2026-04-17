@@ -21,7 +21,16 @@
     // 🔔 NOTIF SECTION
     // =====================
 
-    $notifKos = Kos::where('user_id', $userId)->where('status', 'disetujui')->where('is_read', false)->latest()->get();
+    $notifKos = Kos::where('user_id', $userId)
+        ->where('is_read', false)
+        ->where(function ($query) {
+            $query
+                ->whereIn('status', ['disetujui', 'nonaktif'])
+                ->orWhere('edit_request_status', 'ditolak')
+                ->orWhere('edit_request_status', 'disetujui');
+        })
+        ->latest()
+        ->get();
 
     $notifPengajuan = PengajuanSewa::whereIn('kos_id', $kosIds)->where('is_read', false)->latest()->get();
 
@@ -66,16 +75,29 @@
                         {{-- NOTIF KOS DISETUJUI --}}
                         @foreach ($notifKos as $n)
                             <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
-                                <strong>Kos Disetujui</strong><br>
-                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui admin
+                                @if ($n->status === 'nonaktif')
+                                    <strong>Status Kos Dinonaktifkan</strong><br>
+                                    Kos <strong>{{ $n->nama_kos }}</strong> dinonaktifkan oleh admin.
+                                    Alasan: {{ $n->alasan ?? '-' }}
+                                @elseif($n->edit_request_status === 'disetujui')
+                                    <strong>Pengajuan Perubahan Disetujui</strong><br>
+                                    Pengajuan perubahan data kos <strong>{{ $n->nama_kos }}</strong> telah disetujui admin.
+                                @elseif($n->edit_request_status === 'ditolak')
+                                    <strong>Pengajuan Perubahan Ditolak</strong><br>
+                                    Pengajuan perubahan data kos <strong>{{ $n->nama_kos }}</strong> ditolak admin.
+                                @else
+                                    <strong>Pembaruan Verifikasi Kos</strong><br>
+                                    Terdapat pembaruan status verifikasi untuk kos <strong>{{ $n->nama_kos }}</strong>.
+                                @endif
                             </a>
                         @endforeach
 
                         {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
-                                <strong>{{ $p->nama_penyewa }}</strong><br>
-                                Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
+                                <strong>Pengajuan Sewa Baru</strong><br>
+                                {{ optional($p->penyewa)->name ?? 'Penyewa' }} mengajukan sewa untuk kos
+                                <strong>{{ optional($p->kos)->nama_kos ?? '-' }}</strong>.
                             </a>
                         @endforeach
                         {{-- NOTIF PEMBAYARAN --}}
@@ -83,12 +105,12 @@
                             <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
                                 <strong>Pembayaran Baru</strong><br>
                                 Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
-                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
+                                telah mengirim pembayaran untuk kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>.
                             </a>
                         @endforeach
                         @if ($jumlahNotif == 0)
                             <div class="text-center text-muted small p-3">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </div>
                         @endif
 

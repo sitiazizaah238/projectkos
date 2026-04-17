@@ -46,14 +46,14 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
                 $item->pengajuan->kamar->nama_kamar ?? '-',
                 optional($item->created_at)->format('d/m/Y'),
                 $item->metode->nama_metode ?? '-',
-                $item->pengajuan->total_bayar ?? 0
+                $item->nominal_tagihan ?? 0
             ];
         }
 
         // TOTAL
         $total = $this->laporan->sum(
             fn($item) =>
-            $item->pengajuan->total_bayar ?? 0
+            $item->nominal_tagihan ?? 0
         );
 
         $data[] = ['', '', '', '', 'Total', $total];

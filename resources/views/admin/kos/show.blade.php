@@ -1,0 +1,242 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="d-flex">
+        @include('components.sidebar-admin')
+
+        <div class="flex-grow-1">
+            <div class="topbar d-flex justify-content-between align-items-center px-4 w-100">
+                <div></div>
+                <div class="d-flex align-items-center">
+                    @include('components.notif-admin')
+                    <button type="button" class="btn text-white d-flex align-items-center gap-3" data-bs-toggle="modal"
+                        data-bs-target="#profileModal">
+
+                        <span class="fw-semibold small">{{ Auth::user()->name }}</span>
+
+                        @if (Auth::user()->photo)
+                            <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                                style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+                        @else
+                            <i class="bi bi-person-circle fs-3"></i>
+                        @endif
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4" style="background:#f8fafc; min-height:100vh;">
+                <h3 class="fw-bold mb-1">Detail Kos</h3>
+                <small class="text-muted d-block mb-4">Manajemen Kos / Detail Verifikasi</small>
+
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-white border-0 pt-4 px-4">
+                                <h5 class="mb-0 fw-semibold">Foto Kos</h5>
+                            </div>
+                            <div class="card-body pt-3 px-4 pb-4">
+                                @if (is_array($kos->foto) && count($kos->foto) > 0)
+                                    <div id="carouselAdminKos" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner rounded-4 overflow-hidden">
+                                            @foreach ($kos->foto as $idx => $foto)
+                                                <div class="carousel-item {{ $idx === 0 ? 'active' : '' }}">
+                                                    <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
+                                                        style="height:360px; object-fit:cover;">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <button class="carousel-control-prev" type="button"
+                                            data-bs-target="#carouselAdminKos" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon"></span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button"
+                                            data-bs-target="#carouselAdminKos" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon"></span>
+                                        </button>
+                                    </div>
+
+                                    <div class="row g-2 mt-2">
+                                        @foreach ($kos->foto as $foto)
+                                            <div class="col-4">
+                                                <img src="{{ asset('storage/' . $foto) }}" class="w-100 rounded-3"
+                                                    style="height:90px; object-fit:cover;">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-light border text-muted mb-0">Belum ada foto kos.</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Informasi Utama</h5>
+                                <div class="mb-2"><span class="text-muted">Pemilik:</span> {{ $kos->user->name }}</div>
+                                <div class="mb-2"><span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}</div>
+                                <div class="mb-2"><span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}</div>
+                                <div class="mb-2"><span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}</div>
+                                <div class="mb-2">
+                                    <span class="text-muted">Status:</span>
+                                    @if ($kos->status === 'disetujui')
+                                        <span class="badge bg-success">Disetujui</span>
+                                    @elseif($kos->status === 'ditolak')
+                                        <span class="badge bg-danger">Ditolak</span>
+                                    @elseif($kos->status === 'nonaktif')
+                                        <span class="badge bg-dark">Nonaktif</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Menunggu</span>
+                                    @endif
+                                </div>
+                                <div class="mb-2">
+                                    <span class="text-muted">Tanggal Verifikasi:</span>
+                                    {{ $kos->tanggal_verifikasi ? $kos->tanggal_verifikasi->format('d-m-Y H:i') : '-' }}
+                                </div>
+                                @if ($kos->alasan)
+                                    <div class="alert alert-warning mt-3 mb-0">
+                                        <div class="fw-semibold mb-1">Catatan Admin</div>
+                                        {{ $kos->alasan }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
+                                @php
+                                    $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
+                                @endphp
+                                @if (count($fasilitas) > 0)
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($fasilitas as $f)
+                                            <span class="badge bg-light text-dark border">{{ $f }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-muted">Tidak ada fasilitas.</div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Ringkasan Harga Kamar</h5>
+                                @if ($kos->kamars->count() > 0)
+                                    <div class="mb-2">Total kamar: <strong>{{ $kos->kamars->count() }}</strong></div>
+                                    <div class="mb-2">Harga termurah:
+                                        <strong>Rp {{ number_format($kos->kamars->min('harga'), 0, ',', '.') }}</strong>
+                                    </div>
+                                    <div>Harga tertinggi:
+                                        <strong>Rp {{ number_format($kos->kamars->max('harga'), 0, ',', '.') }}</strong>
+                                    </div>
+                                @else
+                                    <div class="text-muted">Belum ada data kamar.</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 rounded-4 mt-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
+                        <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 rounded-4 mt-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3">Detail Harga Kamar</h5>
+                        @if ($kos->kamars->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nama Kamar</th>
+                                            <th>Harga</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($kos->kamars as $kamar)
+                                            <tr>
+                                                <td>{{ $kamar->nama_kamar }}</td>
+                                                <td>Rp {{ number_format((int) $kamar->harga, 0, ',', '.') }}</td>
+                                                <td>
+                                                    @if ($kamar->status === 'terisi')
+                                                        <span class="badge bg-danger">Terisi</span>
+                                                    @else
+                                                        <span class="badge bg-success">Tersedia</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-muted">Belum ada data kamar untuk ditampilkan.</div>
+                        @endif
+                    </div>
+                </div>
+
+                @if ($kos->edit_request_status === 'menunggu' && is_array($kos->edit_request_data))
+                    <div class="card shadow-sm rounded-4 mt-4 border border-warning">
+                        <div class="card-body p-4">
+                            <h5 class="fw-semibold mb-3 text-warning">Pengajuan Perubahan Data Dari Pemilik</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="small text-muted">Nama Kos Baru</div>
+                                    <div>{{ $kos->edit_request_data['nama_kos'] ?? '-' }}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="small text-muted">Lokasi Baru</div>
+                                    <div>{{ $kos->edit_request_data['lokasi'] ?? '-' }}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="small text-muted">Tipe Baru</div>
+                                    <div>{{ $kos->edit_request_data['tipe_kos'] ?? '-' }}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="small text-muted">Tanggal Pengajuan</div>
+                                    <div>{{ $kos->edit_requested_at ? $kos->edit_requested_at->format('d-m-Y H:i') : '-' }}
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="small text-muted">Deskripsi Baru</div>
+                                    <div style="white-space:pre-line;">{{ $kos->edit_request_data['deskripsi'] ?? '-' }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <div class="mt-4">
+                    <a href="{{ route('admin.kos.index') }}" class="btn btn-secondary">Kembali</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('admin.profile') }}" class="btn btn-primary w-100 mb-2">Profil</a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection

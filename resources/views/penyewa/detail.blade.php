@@ -58,8 +58,8 @@
                         {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Disetujui</strong><br>
-                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
+                                <strong>Pengajuan Sewa Disetujui</strong><br>
+                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
                             </a>
                         @endforeach
 
@@ -68,13 +68,13 @@
                             <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
                                 <strong>Status Pembayaran</strong><br>
                                 Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status }}
+                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
                             </a>
                         @endforeach
                         {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
                         @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
                             <li class="dropdown-item text-muted small">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </li>
                         @endif
 
@@ -441,7 +441,11 @@
                                                     <div class="mb-3">
                                                         <label class="fw-semibold">Tanggal Mulai</label>
                                                         <input type="date" name="tanggal_mulai" class="form-control"
-                                                            min="{{ date('Y-m-d') }}" required>
+                                                            required>
+                                                        <small class="text-muted d-block mt-1">
+                                                            Testing mode: batas tanggal mulai sementara dinonaktifkan. TODO:
+                                                            aktifkan kembali sebelum produksi.
+                                                        </small>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="fw-semibold">Durasi Sewa</label>

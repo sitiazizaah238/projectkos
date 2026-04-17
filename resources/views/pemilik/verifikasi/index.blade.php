@@ -87,16 +87,17 @@
                         {{-- NOTIF KOS DISETUJUI --}}
                         @foreach ($notifKos as $n)
                             <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
-                                <strong>Kos Disetujui</strong><br>
-                                Kos <strong>{{ $n->nama_kos }}</strong> telah disetujui admin
+                                <strong>Pembaruan Verifikasi Kos</strong><br>
+                                Terdapat pembaruan status untuk kos <strong>{{ $n->nama_kos }}</strong>.
                             </a>
                         @endforeach
 
                         {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
-                                <strong>{{ $p->nama_penyewa }}</strong><br>
-                                Mengajukan kos <strong>{{ $p->nama_kos }}</strong>
+                                <strong>Pengajuan Sewa Baru</strong><br>
+                                {{ optional($p->penyewa)->name ?? 'Penyewa' }} mengajukan sewa untuk kos
+                                <strong>{{ optional($p->kos)->nama_kos ?? '-' }}</strong>.
                             </a>
                         @endforeach
                         {{-- NOTIF PEMBAYARAN --}}
@@ -104,12 +105,12 @@
                             <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
                                 <strong>Pembayaran Baru</strong><br>
                                 Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
-                                mengirim pembayaran kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>
+                                telah mengirim pembayaran untuk kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>.
                             </a>
                         @endforeach
                         @if ($jumlahNotif == 0)
                             <div class="text-center text-muted small p-3">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </div>
                         @endif
 
@@ -191,7 +192,7 @@
 
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
 
-                                        <td>Rp {{ number_format($item->pengajuan->total_bayar, 0, ',', '.') }}</td>
+                                        <td>Rp {{ number_format($item->nominal_tagihan ?? 0, 0, ',', '.') }}</td>
 
                                         <td>{{ $item->metode->nama_metode }}</td>
 

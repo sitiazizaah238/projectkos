@@ -68,6 +68,14 @@ class PemilikController extends Controller
 
         $pemilik->update($data);
 
+        if ($request->status === 'nonaktif') {
+            $pemilik->kos()->update([
+                'status' => 'nonaktif',
+                'alasan' => 'Dinonaktifkan karena alamat kos tidak sesuai wilayah Lobener.',
+                'is_read' => false,
+            ]);
+        }
+
         return redirect()->route('admin.pemilik.index')
             ->with('success', 'Data berhasil diupdate');
     }

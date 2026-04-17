@@ -10,8 +10,15 @@ class Pembayaran extends Model
         'pengajuan_sewa_id',
         'metode_id',
         'bukti',
+        'durasi_tagihan',
+        'nominal_tagihan',
         'status',
         'alasan'
+    ];
+
+    protected $casts = [
+        'durasi_tagihan' => 'integer',
+        'nominal_tagihan' => 'integer',
     ];
 
     public function pengajuan()

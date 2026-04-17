@@ -18,11 +18,11 @@ class LaporanKeuanganController extends Controller
     private function getQuery(Request $request)
     {
         return Pembayaran::with([
-                'pengajuan.penyewa',
-                'pengajuan.kamar',
-                'pengajuan.kos',
-                'metode'
-            ])
+            'pengajuan.penyewa',
+            'pengajuan.kamar',
+            'pengajuan.kos',
+            'metode'
+        ])
             ->where('status', 'dikonfirmasi')
             ->whereHas('pengajuan.kos', function ($query) {
                 $query->where('user_id', Auth::id());
@@ -34,17 +34,15 @@ class LaporanKeuanganController extends Controller
                     $q->whereHas('penyewa', function ($p) use ($request) {
                         $p->where('name', 'like', '%' . $request->search . '%');
                     })
-                    ->orWhereHas('kamar', function ($k) use ($request) {
-                        $k->where('nama_kamar', 'like', '%' . $request->search . '%');
-                    });
+                        ->orWhereHas('kamar', function ($k) use ($request) {
+                            $k->where('nama_kamar', 'like', '%' . $request->search . '%');
+                        });
                 });
             })
 
             // 📅 FILTER DURASI
             ->when($request->durasi, function ($query) use ($request) {
-                $query->whereHas('pengajuan', function ($q) use ($request) {
-                    $q->where('durasi', $request->durasi);
-                });
+                $query->where('durasi_tagihan', $request->durasi);
             })
 
             // 📆 FILTER TANGGAL
@@ -64,15 +62,17 @@ class LaporanKeuanganController extends Controller
     public function index(Request $request)
     {
         $laporan = $this->getQuery($request)
-                        ->paginate(10)
-                        ->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
         $totalKeseluruhan = $laporan->sum(function ($item) {
-            return $item->pengajuan->total_bayar ?? 0;
+            return $item->nominal_tagihan ?? 0;
         });
 
-        return view('pemilik.laporan.index',
-            compact('laporan', 'totalKeseluruhan'));
+        return view(
+            'pemilik.laporan.index',
+            compact('laporan', 'totalKeseluruhan')
+        );
     }
 
     /**
@@ -83,12 +83,14 @@ class LaporanKeuanganController extends Controller
         $laporan = $this->getQuery($request)->get();
 
         $totalKeseluruhan = $laporan->sum(function ($item) {
-            return $item->pengajuan->total_bayar ?? 0;
+            return $item->nominal_tagihan ?? 0;
         });
 
-        $pdf = Pdf::loadView('pemilik.laporan.pdf',
-                compact('laporan', 'totalKeseluruhan'))
-                ->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView(
+            'pemilik.laporan.pdf',
+            compact('laporan', 'totalKeseluruhan')
+        )
+            ->setPaper('a4', 'portrait');
 
         return $pdf->download('laporan-keuangan.pdf');
     }

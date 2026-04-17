@@ -34,7 +34,23 @@
                         ->where('status_notif', 0)
                         ->count();
 
-                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
+                    $notifSewaHabis = \App\Models\PengajuanSewa::with('kos')
+                        ->where('user_id', $userId)
+                        ->where('status', 'aktif')
+                        ->get()
+                        ->map(function ($item) {
+                            return [
+                                'id' => $item->id,
+                                'nama_kos' => $item->kos->nama_kos ?? '-',
+                                'sisa_hari' => $item->sisaHariSewa(),
+                                'bisa_perpanjang' => $item->bisaAjukanPerpanjangan(),
+                            ];
+                        })
+                        ->filter(function ($item) {
+                            return $item['bisa_perpanjang'] === true;
+                        });
+
+                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread + $notifSewaHabis->count();
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
                 <div class="dropdown position-relative">
@@ -43,7 +59,8 @@
                         <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+                                style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -56,8 +73,8 @@
                         {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Disetujui</strong><br>
-                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
+                                <strong>Pengajuan Sewa Disetujui</strong><br>
+                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
                             </a>
                         @endforeach
 
@@ -66,13 +83,23 @@
                             <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
                                 <strong>Status Pembayaran</strong><br>
                                 Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status }}
+                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
+                            </a>
+                        @endforeach
+
+                        {{-- NOTIF MASA SEWA HAMPIR HABIS --}}
+                        @foreach ($notifSewaHabis as $sewa)
+                            <a href="{{ route('penyewa.pengajuan.index', ['focus_perpanjang' => $sewa['id']]) }}"
+                                class="dropdown-item small py-2">
+                                <strong>Masa Sewa Akan Berakhir</strong><br>
+                                Sewa kos <strong>{{ $sewa['nama_kos'] }}</strong>
+                                tersisa {{ $sewa['sisa_hari'] }} hari. Silakan ajukan perpanjangan sewa.
                             </a>
                         @endforeach
                         {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
-                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
+                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty() && $notifSewaHabis->isEmpty())
                             <li class="dropdown-item text-muted small">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </li>
                         @endif
 
@@ -142,8 +169,8 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->pengajuan->kos->nama_kos }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
-                                        <td>Rp {{ number_format($item->pengajuan->total_bayar ?? 0, 0, ',', '.') }}</td>
-                                        <td>{{ $item->pengajuan->durasi }} Bulan</td>
+                                        <td>Rp {{ number_format($item->nominal_tagihan ?? 0, 0, ',', '.') }}</td>
+                                        <td>{{ $item->durasi_tagihan ?? 1 }} Bulan</td>
 
                                         <td>
                                             @if ($statusPengajuan == 'menunggu')
@@ -186,14 +213,20 @@
 
                                         {{-- AKSI --}}
                                         <td>
+                                            @php
+                                                $aksiModal = '#modalMenungguVerifikasi';
+
+                                                if ($item->status == 'ditolak') {
+                                                    $aksiModal = "#modalUlang{$item->id}";
+                                                } elseif ($item->status == 'dikonfirmasi') {
+                                                    $aksiModal = '#modalSudahDikonfirmasi';
+                                                }
+                                            @endphp
+
                                             <button
-                                                class="btn btn-sm
-        {{ $item->status == 'ditolak' ? 'btn-warning' : 'btn-secondary' }}"
-                                                @if ($item->status == 'ditolak') data-bs-toggle="modal"
-            data-bs-target="#modalUlang{{ $item->id }}"
-        @else
-            disabled @endif>
-                                                Ajukan Ulang
+                                                class="btn btn-sm {{ $item->status == 'ditolak' ? 'btn-warning' : 'btn-secondary' }}"
+                                                data-bs-toggle="modal" data-bs-target="{{ $aksiModal }}">
+                                                {{ $item->status == 'ditolak' ? 'Ajukan Ulang' : 'Lihat Status' }}
                                             </button>
                                         </td>
                                     </tr>
@@ -253,6 +286,28 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalMenungguVerifikasi" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 p-4 text-center">
+                <i class="bi bi-hourglass-split text-warning" style="font-size:60px;"></i>
+                <h5 class="fw-bold text-warning mt-2">Menunggu Verifikasi</h5>
+                <p class="mb-0">Pembayaran Anda sudah diterima sistem dan sedang diverifikasi pemilik kos.</p>
+                <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSudahDikonfirmasi" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 p-4 text-center">
+                <i class="bi bi-check-circle-fill text-success" style="font-size:60px;"></i>
+                <h5 class="fw-bold text-success mt-2">Pembayaran Sudah Dikonfirmasi</h5>
+                <p class="mb-0">Pembayaran ini telah dikonfirmasi. Anda tidak perlu mengirim ulang bukti pembayaran.</p>
+                <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>

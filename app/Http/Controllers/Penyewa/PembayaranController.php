@@ -36,7 +36,7 @@ class PembayaranController extends Controller
             'alasan' => null
         ]);
 
-        return back()->with('success', 'Pembayaran berhasil diajukan ulang.');
+        return back()->with('success', 'Pengajuan ulang pembayaran berhasil dikirim.');
     }
     public function store(Request $request, $id)
     {
@@ -50,12 +50,21 @@ class PembayaranController extends Controller
         $statusSaatIni = $pengajuan->statusSaatIni();
 
         if (!in_array($statusSaatIni, ['disetujui', 'jatuh_tempo'], true)) {
-            return back()->with('error', 'Tagihan belum tersedia untuk dibayar.');
+            return back()->with('error', 'Tagihan belum tersedia untuk diproses pembayaran.');
         }
 
         if ($pengajuan->adaPembayaranMenunggu()) {
-            return back()->with('error', 'Masih ada pembayaran menunggu verifikasi.');
+            return back()->with('error', 'Masih ada pembayaran yang sedang menunggu verifikasi pemilik.');
         }
+
+        $durasiTagihan = $pengajuan->durasiBelumTerbayar();
+        if ($durasiTagihan <= 0) {
+            return redirect()
+                ->route('penyewa.pengajuan.index')
+                ->with('error', 'Tidak ada tagihan yang perlu dibayar saat ini.');
+        }
+
+        $nominalTagihan = (int) optional($pengajuan->kamar)->harga * $durasiTagihan;
 
         $buktiPath = $request->file('bukti')
             ->store('bukti', 'public');
@@ -65,9 +74,13 @@ class PembayaranController extends Controller
             'pengajuan_sewa_id' => $pengajuan->id,
             'metode_id' => $request->metode_id,
             'bukti' => $buktiPath,
+            'durasi_tagihan' => $durasiTagihan,
+            'nominal_tagihan' => $nominalTagihan,
             'status' => 'menunggu'
         ]);
 
-        return back()->with('success', 'Pembayaran berhasil dikirim!');
+        return redirect()
+            ->route('penyewa.pengajuan.index')
+            ->with('success', 'Pembayaran berhasil dikirim dan menunggu verifikasi pemilik.');
     }
 }
