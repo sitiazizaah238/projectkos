@@ -264,6 +264,7 @@
                                             </td>
 
                                             {{-- AKSI --}}
+                                            {{-- AKSI --}}
                                             <td>
                                                 @php
                                                     $pembayaranTerakhir = DB::table('pembayarans')
@@ -275,30 +276,30 @@
                                                         ->where('pengajuan_sewa_id', $item->id)
                                                         ->where('status', 'menunggu')
                                                         ->exists();
+
+                                                    // default semua tombol selalu bisa diklik
+                                                    $modalTarget = '#modalSudahBayar';
+
+                                                    if ($statusSaatIni == 'menunggu') {
+                                                        $modalTarget = '#modalMenungguPengajuan';
+                                                    } elseif ($statusSaatIni == 'ditolak') {
+                                                        $modalTarget = '#modalDitolak';
+                                                    } elseif ($statusSaatIni == 'disetujui') {
+                                                        $modalTarget = "#modalBayar{$item->id}";
+                                                    } elseif ($statusSaatIni == 'jatuh_tempo') {
+                                                        if ($pembayaranMenunggu) {
+                                                            $modalTarget = '#modalSudahBayar';
+                                                        } else {
+                                                            $modalTarget = "#modalBayar{$item->id}";
+                                                        }
+                                                    }
                                                 @endphp
 
-                                                @if (
-                                                    ($statusSaatIni == 'disetujui' && !$pembayaranTerakhir) ||
-                                                        ($statusSaatIni == 'jatuh_tempo' && !$pembayaranMenunggu))
-                                                    {{-- Bisa bayar --}}
-                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#modalBayar{{ $item->id }}">
-                                                        Bayar Sekarang
-                                                    </button>
-                                                @elseif($statusSaatIni == 'jatuh_tempo' && $pembayaranMenunggu)
-                                                    {{-- TAMBAHAN: tetap bisa diklik --}}
-                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                        data-bs-target="#modalSudahBayar">
-                                                        Menunggu Verifikasi
-                                                    </button>
-                                                @else
-                                                    {{-- TAMBAHAN: tetap bisa diklik --}}
-                                                    <button class="btn btn-sm btn-info text-white fw-semibold"
-                                                        data-bs-toggle="modal" data-bs-target="#modalSudahBayar"
-                                                        style="cursor:pointer;">
-                                                        Bayar Sekarang
-                                                    </button>
-                                                @endif
+                                                {{-- SELALU BUTTON SAMA (KONSISTEN) --}}
+                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="{{ $modalTarget }}">
+                                                    Bayar Sekarang
+                                                </button>
                                             </td>
 
                                         </tr>
@@ -512,46 +513,77 @@
             </div>
         </div>
     </div>
-  <div class="modal fade" id="modalSudahBayar" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content rounded-4 p-4 text-center shadow">
+    <div class="modal fade" id="modalSudahBayar" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 p-4 text-center shadow">
 
-            {{-- ICON CEKLIS --}}
-            <div class="mb-3">
-                <i class="bi bi-check-circle-fill text-success"
-                    style="font-size: 60px;"></i>
+                {{-- ICON CEKLIS --}}
+                <div class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 60px;"></i>
+                </div>
+
+                {{-- JUDUL --}}
+                <h5 class="fw-bold text-success mb-2">
+                    Pembayaran Berhasil
+                </h5>
+
+                {{-- DESKRIPSI --}}
+                <p class="mb-2">
+                    Anda sudah melakukan pembayaran untuk sewa ini.
+                </p>
+
+                <small class="text-muted">
+                    Silakan tunggu proses verifikasi dari pemilik kos.
+                </small>
+
+                {{-- BUTTON --}}
+                <div class="mt-4 d-flex justify-content-center gap-2">
+
+                    {{-- KE RIWAYAT --}}
+                    <a href="{{ route('penyewa.riwayat.pembayaran') }}" class="btn btn-success px-3">
+                        <i class="bi bi-clock-history"></i> Riwayat
+                    </a>
+
+                    {{-- TUTUP --}}
+                    <button class="btn btn-outline-secondary px-3" data-bs-dismiss="modal">
+                        Tutup
+                    </button>
+
+                </div>
+
             </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalMenungguPengajuan" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-4 p-4 text-center">
 
-            {{-- JUDUL --}}
-            <h5 class="fw-bold text-success mb-2">
-                Pembayaran Berhasil
-            </h5>
+            <i class="bi bi-hourglass-split text-warning" style="font-size:60px;"></i>
 
-            {{-- DESKRIPSI --}}
-            <p class="mb-2">
-                Anda sudah melakukan pembayaran untuk sewa ini.
-            </p>
+            <h5 class="fw-bold text-warning mt-2">Menunggu Persetujuan</h5>
 
-            <small class="text-muted">
-                Silakan tunggu proses verifikasi dari pemilik kos.
-            </small>
+            <p>Pengajuan masih diproses pemilik kos.</p>
 
-            {{-- BUTTON --}}
-            <div class="mt-4 d-flex justify-content-center gap-2">
+            <button class="btn btn-secondary mt-2" data-bs-dismiss="modal">
+                Tutup
+            </button>
 
-                {{-- KE RIWAYAT --}}
-                <a href="{{ route('penyewa.riwayat.pembayaran') }}"
-                    class="btn btn-success px-3">
-                    <i class="bi bi-clock-history"></i> Riwayat
-                </a>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalDitolak" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-4 p-4 text-center">
 
-                {{-- TUTUP --}}
-                <button class="btn btn-outline-secondary px-3"
-                    data-bs-dismiss="modal">
-                    Tutup
-                </button>
+            <i class="bi bi-x-circle-fill text-danger" style="font-size:60px;"></i>
 
-            </div>
+            <h5 class="fw-bold text-danger mt-2">Pengajuan Ditolak</h5>
+
+            <p>Anda tidak bisa melakukan pembayaran karena ditolak.</p>
+
+            <button class="btn btn-secondary mt-2" data-bs-dismiss="modal">
+                Tutup
+            </button>
 
         </div>
     </div>
