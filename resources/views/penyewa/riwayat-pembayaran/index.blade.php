@@ -10,9 +10,7 @@
 
             {{-- ================= TOPBAR ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
-                <button class="btn text-white">
-                    <i class="bi bi-bell fs-4"></i>
-                </button>
+                @include('components.notif-penyewa')
 
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -55,6 +53,16 @@
                 </div>
 
                 <div class="card shadow-sm">
+                    @php
+                        $riwayatCollection = is_iterable($riwayat ?? null) ? $riwayat : collect();
+                        $riwayatObj = is_object($riwayat ?? null) ? $riwayat : null;
+                        $riwayatPage = is_callable([$riwayatObj, 'currentPage']) ? call_user_func([$riwayatObj, 'currentPage']) : 1;
+                        $riwayatPerPage = is_callable([$riwayatObj, 'perPage']) ? call_user_func([$riwayatObj, 'perPage']) : count($riwayatCollection);
+                        $riwayatHasPages = is_callable([$riwayatObj, 'hasPages']) ? call_user_func([$riwayatObj, 'hasPages']) : false;
+                        $riwayatLinks = is_callable([$riwayatObj, 'appends'])
+                            ? call_user_func([call_user_func([$riwayatObj, 'appends'], request()->query()), 'links'])
+                            : null;
+                    @endphp
 
                     {{-- HEADER --}}
                     <div class="card-header bg-dark text-white">
@@ -85,7 +93,7 @@
                             </thead>
 
                             <tbody>
-                                @forelse($riwayat as $item)
+                                @forelse($riwayatCollection as $item)
                                     @php
                                         $kos = $item->pengajuan->kos ?? null;
                                         $kamar = $item->pengajuan->kamar ?? null;
@@ -101,7 +109,7 @@
 
                                     <tr>
                                         <td>
-                                            {{ ($riwayat->currentPage() - 1) * $riwayat->perPage() + $loop->iteration }}
+                                            {{ ($riwayatPage - 1) * $riwayatPerPage + $loop->iteration }}
                                         </td>
 
                                         <td>{{ $kos->nama_kos ?? '-' }}</td>
@@ -168,9 +176,9 @@
                         </table>
 
                         {{-- PAGINATION --}}
-                        @if ($riwayat->hasPages())
+                        @if ($riwayatHasPages)
                             <div class="p-3 d-flex justify-content-end">
-                                {{ $riwayat->appends(request()->query())->links() }}
+                                {!! $riwayatLinks !!}
                             </div>
                         @endif
 

@@ -11,7 +11,6 @@ class KosController extends Controller
     // LIST SEMUA KOS DARI PEMILIK
     public function index(Request $request)
     {
-        session()->put('notif_dibaca', true);
         $search = $request->search;
 
         $kos = Kos::with(['user', 'kamars'])

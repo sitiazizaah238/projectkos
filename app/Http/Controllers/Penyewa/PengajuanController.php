@@ -69,6 +69,7 @@ class PengajuanController extends Controller
             'kamar_id' => $request->kamar_id,
             'tanggal_mulai' => $request->tanggal_mulai,
             'durasi' => $request->durasi,
+            'jenis_pengajuan' => 'sewa_baru',
             'total_bayar' => $totalBayar,
             'status' => 'menunggu'
         ]);
@@ -87,11 +88,18 @@ class PengajuanController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
-        if (!in_array($pengajuan->statusSaatIni(), ['aktif', 'jatuh_tempo'], true)) {
-            return back()->with('error', 'Perpanjangan hanya tersedia untuk data sewa aktif atau yang sudah jatuh tempo.');
+        $statusSaatIni = $pengajuan->statusSaatIni();
+        $kamarTersedia = optional($pengajuan->kamar)->status === 'tersedia';
+
+        if (!in_array($statusSaatIni, ['aktif', 'jatuh_tempo', 'selesai'], true)) {
+            return back()->with('error', 'Perpanjangan hanya tersedia untuk sewa aktif, jatuh tempo, atau sewa selesai yang kamarnya masih tersedia.');
         }
 
-        if ($pengajuan->sisaHariSewa() > 5) {
+        if ($statusSaatIni === 'selesai' && ! $kamarTersedia) {
+            return back()->with('error', 'Perpanjangan tidak bisa diproses karena kamar sudah tidak tersedia.');
+        }
+
+        if (in_array($statusSaatIni, ['aktif', 'jatuh_tempo'], true) && $pengajuan->sisaHariSewa() > 5) {
             return back()->with('error', 'Perpanjangan dapat diajukan saat masa sewa mendekati berakhir (H-5 atau H-3).');
         }
 
@@ -100,12 +108,13 @@ class PengajuanController extends Controller
 
         $pengajuan->update([
             'durasi' => (int) $pengajuan->durasi + $durasiTambahan,
+            'jenis_pengajuan' => 'perpanjang',
             'total_bayar' => (int) $pengajuan->total_bayar + ($hargaKamar * $durasiTambahan),
             'status' => 'jatuh_tempo',
         ]);
 
         return redirect()
-            ->route('penyewa.pengajuan.index', ['focus_bayar' => $pengajuan->id])
-            ->with('success', 'Perpanjangan sewa berhasil diajukan. Silakan lanjutkan ke pembayaran.');
+            ->route('penyewa.pengajuan.index')
+            ->with('success', 'Perpanjangan sewa berhasil diajukan. Silakan klik Bayar Sekarang untuk melanjutkan pembayaran.');
     }
 }

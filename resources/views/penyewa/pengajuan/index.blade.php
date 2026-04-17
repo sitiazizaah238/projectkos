@@ -53,104 +53,7 @@
         <div class="flex-grow-1">
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
-                @php
-                    $userId = Auth::id();
-
-                    $notifPengajuan = \App\Models\PengajuanSewa::where('user_id', $userId)
-                        ->where('status', 'disetujui')
-                        ->latest()
-                        ->get();
-
-                    $notifPengajuanUnread = \App\Models\PengajuanSewa::where('user_id', $userId)
-                        ->where('status', 'disetujui')
-                        ->where('status_notif', 0)
-                        ->count();
-
-                    $notifPembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
-                        $q->where('user_id', $userId);
-                    })
-                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
-                        ->latest()
-                        ->get();
-
-                    $notifPembayaranUnread = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
-                        $q->where('user_id', $userId);
-                    })
-                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
-                        ->where('status_notif', 0)
-                        ->count();
-
-                    $notifSewaHabis = \App\Models\PengajuanSewa::with('kos')
-                        ->where('user_id', $userId)
-                        ->where('status', 'aktif')
-                        ->get()
-                        ->map(function ($item) {
-                            return [
-                                'id' => $item->id,
-                                'nama_kos' => $item->kos->nama_kos ?? '-',
-                                'sisa_hari' => $item->sisaHariSewa(),
-                                'bisa_perpanjang' => $item->bisaAjukanPerpanjangan(),
-                            ];
-                        })
-                        ->filter(function ($item) {
-                            return $item['bisa_perpanjang'] === true;
-                        });
-
-                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread + $notifSewaHabis->count();
-                @endphp
-                {{-- 🔔 NOTIFIKASI --}}
-                <div class="dropdown position-relative">
-
-                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4"></i>
-
-                        @if ($totalNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
-                                style="top:10px; font-size:10px;">
-                                {{ $totalNotif }}
-                            </span>
-                        @endif
-                    </button>
-
-                    <ul class="dropdown-menu dropdown-menu-end shadow" style="width:300px">
-
-                        <h6 class="dropdown-header">Notifikasi</h6>
-
-                        {{-- NOTIF PENGAJUAN --}}
-                        @foreach ($notifPengajuan as $p)
-                            <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Sewa Disetujui</strong><br>
-                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
-                            </a>
-                        @endforeach
-
-                        {{-- NOTIF PEMBAYARAN --}}
-                        @foreach ($notifPembayaran as $pb)
-                            <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
-                                <strong>Status Pembayaran</strong><br>
-                                Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
-                            </a>
-                        @endforeach
-
-                        {{-- NOTIF MASA SEWA HAMPIR HABIS --}}
-                        @foreach ($notifSewaHabis as $sewa)
-                            <a href="{{ route('penyewa.pengajuan.index', ['focus_perpanjang' => $sewa['id']]) }}"
-                                class="dropdown-item small py-2">
-                                <strong>Masa Sewa Akan Berakhir</strong><br>
-                                Sewa kos <strong>{{ $sewa['nama_kos'] }}</strong>
-                                tersisa {{ $sewa['sisa_hari'] }} hari. Silakan ajukan perpanjangan sewa.
-                            </a>
-                        @endforeach
-                        {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
-                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty() && $notifSewaHabis->isEmpty())
-                            <li class="dropdown-item text-muted small">
-                                Belum ada notifikasi baru
-                            </li>
-                        @endif
-
-                    </ul>
-                </div>
+                @include('components.notif-penyewa')
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -199,6 +102,19 @@
                         </span>
                     </div>
 
+                    @php
+                        $kamarIdsUser = $pengajuan->pluck('kamar_id')->filter()->unique();
+                        $kamarTerisiMap = collect();
+
+                        if ($kamarIdsUser->isNotEmpty()) {
+                            $kamarTerisiMap = \App\Models\PengajuanSewa::whereIn('kamar_id', $kamarIdsUser)
+                                ->whereIn('status', ['aktif', 'jatuh_tempo'])
+                                ->pluck('kamar_id')
+                                ->unique()
+                                ->flip();
+                        }
+                    @endphp
+
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0">
 
@@ -210,6 +126,7 @@
                                     <th>Tanggal Mulai</th>
                                     <th>Tanggal Selesai</th>
                                     <th>Durasi Sewa</th>
+                                    <th>Jenis Pengajuan</th>
                                     <th>Status Pengajuan</th>
                                     <th>Status Kamar</th>
                                     <th>Alasan</th>
@@ -223,6 +140,7 @@
                                     @foreach ($pengajuan as $item)
                                         @php
                                             $statusSaatIni = $item->statusSaatIni();
+                                            $kamarSedangTerisi = isset($kamarTerisiMap[$item->kamar_id]);
                                         @endphp
                                         <tr class="text-center align-middle">
                                             <td>{{ $loop->iteration }}</td>
@@ -245,6 +163,14 @@
 
                                             <td>{{ $item->durasi }} Bulan</td>
 
+                                            <td>
+                                                @if (($item->jenis_pengajuan ?? 'sewa_baru') === 'perpanjang')
+                                                    <span class="badge bg-info text-dark">Perpanjang</span>
+                                                @else
+                                                    <span class="badge bg-primary">Sewa Baru</span>
+                                                @endif
+                                            </td>
+
                                             {{-- STATUS --}}
                                             <td>
                                                 @if ($statusSaatIni == 'menunggu')
@@ -265,10 +191,8 @@
                                             </td>
                                             {{-- STATUS KAMAR --}}
                                             <td>
-                                                @if ($statusSaatIni === 'aktif' || $statusSaatIni === 'jatuh_tempo')
+                                                @if ($statusSaatIni === 'aktif' || $statusSaatIni === 'jatuh_tempo' || $kamarSedangTerisi)
                                                     <span class="badge bg-danger">Terisi</span>
-                                                @elseif($statusSaatIni === 'selesai')
-                                                    <span class="badge bg-success">Tersedia</span>
                                                 @else
                                                     <span class="badge bg-success">Tersedia</span>
                                                 @endif
@@ -293,61 +217,60 @@
                                             {{-- AKSI --}}
                                             <td>
                                                 @php
-                                                    $pembayaranTerakhir = DB::table('pembayarans')
-                                                        ->where('pengajuan_sewa_id', $item->id)
-                                                        ->latest()
-                                                        ->first();
-
                                                     $pembayaranMenunggu = DB::table('pembayarans')
                                                         ->where('pengajuan_sewa_id', $item->id)
                                                         ->where('status', 'menunggu')
                                                         ->exists();
 
-                                                    // default semua tombol selalu bisa diklik
-                                                    $modalTarget = '#modalSudahBayar';
+                                                    $labelAksi = 'Lihat Status';
+                                                    $modalTarget = '#modalSewaAktif';
+                                                    $isDisabled = false;
 
                                                     if ($statusSaatIni == 'menunggu') {
+                                                        $labelAksi = 'Lihat Status';
                                                         $modalTarget = '#modalMenungguPengajuan';
                                                     } elseif ($statusSaatIni == 'ditolak') {
+                                                        $labelAksi = 'Lihat Status';
                                                         $modalTarget = '#modalDitolak';
                                                     } elseif ($statusSaatIni == 'disetujui') {
-                                                        $modalTarget = $pembayaranMenunggu
-                                                            ? '#modalSudahBayar'
-                                                            : "#modalBayar{$item->id}";
+                                                        $labelAksi = $pembayaranMenunggu ? 'Cek Status' : 'Bayar Sekarang';
+                                                        $modalTarget = $pembayaranMenunggu ? '#modalSudahBayar' : "#modalBayar{$item->id}";
                                                     } elseif ($statusSaatIni == 'aktif') {
                                                         if ($item->bisaAjukanPerpanjangan()) {
+                                                            $labelAksi = 'Perpanjang Sewa';
                                                             $modalTarget = "#modalPerpanjang{$item->id}";
                                                         } else {
-                                                            $modalTarget = '#modalSudahBayar';
+                                                            $labelAksi = 'Lihat Status';
+                                                            $modalTarget = '#modalSewaAktif';
                                                         }
                                                     } elseif ($statusSaatIni == 'jatuh_tempo') {
-                                                        if ($pembayaranMenunggu) {
-                                                            $modalTarget = '#modalSudahBayar';
+                                                        $labelAksi = $pembayaranMenunggu ? 'Cek Status' : 'Bayar Sekarang';
+                                                        $modalTarget = $pembayaranMenunggu ? '#modalSudahBayar' : "#modalBayar{$item->id}";
+                                                    } elseif ($statusSaatIni == 'selesai') {
+                                                        if (! $kamarSedangTerisi) {
+                                                            $labelAksi = 'Perpanjang Sewa';
+                                                            $modalTarget = "#modalPerpanjang{$item->id}";
                                                         } else {
-                                                            $modalTarget = "#modalBayar{$item->id}";
+                                                            $labelAksi = 'Selesai';
+                                                            $modalTarget = '#';
+                                                            $isDisabled = true;
                                                         }
                                                     }
                                                 @endphp
 
-                                                {{-- SELALU BUTTON SAMA (KONSISTEN) --}}
-                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                    data-bs-target="{{ $modalTarget }}">
-                                                    Bayar Sekarang
-                                                </button>
-
-                                                @if ($statusSaatIni == 'aktif' && $item->bisaAjukanPerpanjangan())
-                                                    <button class="btn btn-sm btn-warning mt-1" data-bs-toggle="modal"
-                                                        data-bs-target="#modalPerpanjang{{ $item->id }}">
-                                                        Perpanjang Sewa
+                                                <div class="d-grid gap-1">
+                                                    <button class="btn btn-sm btn-primary" {{ $isDisabled ? 'disabled' : '' }}
+                                                        @if (!$isDisabled) data-bs-toggle="modal" data-bs-target="{{ $modalTarget }}" @endif>
+                                                        {{ $labelAksi }}
                                                     </button>
-                                                @endif
+                                                </div>
                                             </td>
 
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="8" class="text-center py-5">
+                                        <td colspan="11" class="text-center py-5">
                                             <div class="d-flex flex-column align-items-center text-muted">
                                                 <i class="bi bi-info-circle fs-1 mb-2"></i>
                                                 <span class="fw-semibold">
@@ -465,8 +388,13 @@
                             <div class="modal-content rounded-4 p-4">
                                 <h5 class="fw-bold mb-2">Perpanjang Sewa</h5>
                                 <p class="small text-muted mb-3">
-                                    Masa sewa tinggal {{ $item->sisaHariSewa() }} hari.
-                                    Pilih tambahan durasi untuk lanjut ke pembayaran.
+                                    @if ($item->statusSaatIni() === 'selesai')
+                                        Masa sewa sudah selesai, tetapi kamar masih tersedia.
+                                        Pilih tambahan durasi untuk melanjutkan sewa di kamar yang sama.
+                                    @else
+                                        Masa sewa tinggal {{ $item->sisaHariSewa() }} hari.
+                                        Pilih tambahan durasi untuk lanjut ke pembayaran.
+                                    @endif
                                 </p>
 
                                 <form action="{{ route('penyewa.pengajuan.perpanjang', $item->id) }}" method="POST">
@@ -657,6 +585,25 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalSewaAktif" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 p-4 text-center">
+
+                <i class="bi bi-info-circle-fill text-primary" style="font-size:60px;"></i>
+
+                <h5 class="fw-bold text-primary mt-2">Sewa Masih Aktif</h5>
+
+                <p class="mb-0">Belum ada tagihan yang perlu dibayar saat ini. Anda dapat mengajukan perpanjangan saat masa sewa mendekati habis.</p>
+
+                <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">
+                    Tutup
+                </button>
+
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalDitolak" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content rounded-4 p-4 text-center">

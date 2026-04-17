@@ -15,6 +15,7 @@ use App\Http\Controllers\Penyewa\RiwayatPembayaranController;
 use App\Models\PengajuanSewa;
 use App\Models\Pembayaran;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -90,6 +91,14 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/admin/kos/{id}/edit-request/reject', [App\Http\Controllers\Admin\KosController::class, 'rejectEditRequest'])
             ->name('admin.kos.edit-request.reject');
+
+        Route::get('/admin/notif/read/{id}', function ($id) {
+            $readIds = session('admin_notif_read_ids', []);
+            $readIds[(string) $id] = now()->toDateTimeString();
+            session(['admin_notif_read_ids' => $readIds]);
+
+            return redirect()->route('admin.kos.index');
+        })->name('admin.notif.read');
         // ================= LOG AKTIVITAS =================
         Route::get(
             '/admin/log-aktivitas',
@@ -200,6 +209,16 @@ Route::middleware('auth')->group(function () {
 
             return redirect()->route('pemilik.pengajuan.index');
         });
+
+        Route::get('/notif/pembayaran/{id}', function ($id) {
+            $pembayaran = \App\Models\Pembayaran::with('pengajuan.kos')->findOrFail($id);
+
+            if (optional(optional($pembayaran->pengajuan)->kos)->user_id === Auth::id()) {
+                $pembayaran->update(['is_read' => 1]);
+            }
+
+            return redirect()->route('pemilik.verifikasi.index');
+        })->name('pemilik.notif.pembayaran');
         // ================= LAPORAN KEUANGAN =================
         Route::get(
             '/pemilik/laporan-keuangan',
@@ -279,14 +298,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/penyewa/profile', [ProfilePenyewaController::class, 'update'])
             ->name('penyewa.profile.update');
         Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
+            $data = PengajuanSewa::findOrFail($id);
 
-            $userId = Auth::id();
-
-            // tandai SEMUA notif pengajuan sebagai terbaca
-            PengajuanSewa::where('user_id', $userId)
-                ->where('status', 'disetujui')
-                ->where('status_notif', 0)
-                ->update(['status_notif' => 1]);
+            if ($data->user_id == Auth::id()) {
+                $data->status_notif = 1;
+                $data->save();
+            }
 
             return redirect()->route('penyewa.pengajuan.index');
         })->name('penyewa.notif.pengajuan');
@@ -302,6 +319,35 @@ Route::middleware('auth')->group(function () {
 
             return redirect()->route('penyewa.pembayaran.index');
         })->name('penyewa.notif.pembayaran');
+
+        Route::get('/penyewa/notif/read', function (Request $request) {
+            $key = (string) $request->query('key', '');
+
+            if ($key !== '') {
+                $readKeys = session('penyewa_notif_read_keys', []);
+                $readKeys[$key] = now()->toDateTimeString();
+                session(['penyewa_notif_read_keys' => $readKeys]);
+            }
+
+            $target = (string) $request->query('target', 'pengajuan');
+            $allowedTargets = [
+                'pengajuan' => 'penyewa.pengajuan.index',
+                'pembayaran' => 'penyewa.pembayaran.index',
+            ];
+
+            $routeName = $allowedTargets[$target] ?? 'penyewa.pengajuan.index';
+            $params = [];
+
+            if ($request->filled('focus_bayar')) {
+                $params['focus_bayar'] = $request->query('focus_bayar');
+            }
+
+            if ($request->filled('focus_perpanjang')) {
+                $params['focus_perpanjang'] = $request->query('focus_perpanjang');
+            }
+
+            return redirect()->route($routeName, $params);
+        })->name('penyewa.notif.read');
     });
 });
 
