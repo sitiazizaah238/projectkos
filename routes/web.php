@@ -19,7 +19,17 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('welcome');
 });
+// ================= KONTAK =================
+Route::get('/kontak', function () {
+    return view('kontak');
+})->name('kontak');
 
+Route::post('/kontak/kirim', function (Illuminate\Http\Request $request) {
+
+    // sementara dummy dulu (nanti bisa simpan ke DB / email)
+    return back()->with('success', 'Pesan berhasil dikirim!');
+
+})->name('kontak.kirim');
 // GLOBAL DASHBOARD (redirect by role)
 Route::get('/dashboard', function () {
     $user = Auth::user();

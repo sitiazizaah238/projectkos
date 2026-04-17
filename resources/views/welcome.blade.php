@@ -201,6 +201,15 @@
                             <span>Cara Kerja</span>
                         </a>
                     </li>
+                  
+
+                    {{-- KONTAK --}}
+                    <li class="nav-item">
+                      <a class="nav-link d-flex align-items-center gap-2" href="{{ route('kontak') }}">
+                            <i class="bi bi-telephone"></i>
+                            <span>Kontak</span>
+                        </a>
+                    </li>
                 </ul>
 
             </div>
@@ -268,8 +277,9 @@
                         di <span>Lohbener</span> dengan Mudah
                     </h1>
 
-                    <p class="hero-sub">
-                        Sistem Rekomendasi Kos berbasis Web di wilayah Lohbener Indramayu
+                    <p class="hero-sub mt-4">
+                        Sistem Rekomendasi Kos berbasis Web <br>
+                        di wilayah Lohbener Indramayu
                     </p>
 
                     <div class="search-box mb-3 position-relative w-75">
@@ -280,13 +290,12 @@
                         <a href="{{ route('login') }}" class="btn btn-primary">
                             Cari Kos
                         </a>
-
                         <button @click="openModal = true" class="btn btn-outline-primary">
-                            Daftar
+                            <i class="bi bi-person-plus me-1"></i> Daftar
                         </button>
 
                         <a href="{{ route('login') }}" class="btn btn-outline-primary">
-                            Login
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
                         </a>
                     </div>
                 </div>
