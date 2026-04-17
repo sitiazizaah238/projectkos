@@ -68,7 +68,7 @@
                                         <th>Status Kos</th>
                                         <th>Status Ubah Data</th>
                                         <th>Tgl Verifikasi</th>
-                                        <th width="360" class="text-center">Aksi</th>
+                                        <th width="220" class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
 
@@ -109,57 +109,93 @@
                                             </td>
 
                                             <td>
-                                                <div
-                                                    class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                                                <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
                                                     <a href="{{ route('admin.kos.show', $k->id) }}"
                                                         class="btn btn-sm btn-info text-white">
                                                         Detail
                                                     </a>
 
-                                                    <form action="{{ route('admin.kos.approve', $k->id) }}" method="POST"
-                                                        class="approve-form m-0">
-                                                        @csrf
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-success btn-approve">Setujui</button>
-                                                    </form>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            Proses
+                                                        </button>
 
-                                                    <form action="{{ route('admin.kos.reject', $k->id) }}" method="POST"
-                                                        class="reject-form m-0">
-                                                        @csrf
-                                                        <input type="hidden" name="alasan">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-danger btn-reject">Tolak</button>
-                                                    </form>
+                                                        <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 190px;">
+                                                            @php
+                                                                $hasAction = false;
+                                                            @endphp
 
-                                                    <form action="{{ route('admin.kos.deactivate', $k->id) }}"
-                                                        method="POST" class="deactivate-form m-0">
-                                                        @csrf
-                                                        <input type="hidden" name="alasan">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-dark btn-deactivate">Nonaktifkan</button>
-                                                    </form>
+                                                            @if (in_array($k->status, ['menunggu', 'ditolak'], true))
+                                                                @php
+                                                                    $hasAction = true;
+                                                                @endphp
+                                                                <form action="{{ route('admin.kos.approve', $k->id) }}"
+                                                                    method="POST" class="approve-form m-0 mb-2">
+                                                                    @csrf
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-success w-100 btn-approve">Setujui
+                                                                        Verifikasi</button>
+                                                                </form>
+                                                            @endif
 
-                                                    @if ($k->edit_request_status === 'menunggu')
-                                                        <form
-                                                            action="{{ route('admin.kos.edit-request.approve', $k->id) }}"
-                                                            method="POST" class="approve-edit-form m-0">
-                                                            @csrf
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-primary btn-approve-edit">
-                                                                Setujui Ubah
-                                                            </button>
-                                                        </form>
+                                                            @if ($k->status === 'menunggu')
+                                                                @php
+                                                                    $hasAction = true;
+                                                                @endphp
+                                                                <form action="{{ route('admin.kos.reject', $k->id) }}"
+                                                                    method="POST" class="reject-form m-0 mb-2">
+                                                                    @csrf
+                                                                    <input type="hidden" name="alasan">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-danger w-100 btn-reject">Tolak
+                                                                        Verifikasi</button>
+                                                                </form>
+                                                            @endif
 
-                                                        <form action="{{ route('admin.kos.edit-request.reject', $k->id) }}"
-                                                            method="POST" class="reject-edit-form m-0">
-                                                            @csrf
-                                                            <input type="hidden" name="alasan">
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-outline-danger btn-reject-edit">
-                                                                Tolak Ubah
-                                                            </button>
-                                                        </form>
-                                                    @endif
+                                                            @if ($k->status === 'disetujui')
+                                                                @php
+                                                                    $hasAction = true;
+                                                                @endphp
+                                                                <form action="{{ route('admin.kos.deactivate', $k->id) }}"
+                                                                    method="POST" class="deactivate-form m-0 mb-2">
+                                                                    @csrf
+                                                                    <input type="hidden" name="alasan">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-dark w-100 btn-deactivate">Nonaktifkan</button>
+                                                                </form>
+                                                            @endif
+
+                                                            @if ($k->edit_request_status === 'menunggu')
+                                                                @php
+                                                                    $hasAction = true;
+                                                                @endphp
+                                                                <form
+                                                                    action="{{ route('admin.kos.edit-request.approve', $k->id) }}"
+                                                                    method="POST" class="approve-edit-form m-0 mb-2">
+                                                                    @csrf
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-primary w-100 btn-approve-edit">
+                                                                        Setujui Ubah Data
+                                                                    </button>
+                                                                </form>
+
+                                                                <form action="{{ route('admin.kos.edit-request.reject', $k->id) }}"
+                                                                    method="POST" class="reject-edit-form m-0">
+                                                                    @csrf
+                                                                    <input type="hidden" name="alasan">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-outline-danger w-100 btn-reject-edit">
+                                                                        Tolak Ubah Data
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+
+                                                            @if (!$hasAction)
+                                                                <div class="text-muted small px-2 py-1 text-center">Tidak ada aksi</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>

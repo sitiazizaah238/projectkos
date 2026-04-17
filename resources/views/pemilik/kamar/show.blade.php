@@ -36,51 +36,7 @@
 
             {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
-                <div class="dropdown position-relative">
-
-                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4"></i>
-
-                        @if ($jumlahNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
-                                style="top:10px; font-size:10px;">
-                                {{ $jumlahNotif }}
-                            </span>
-                        @endif
-                    </button>
-
-                    <div class="dropdown-menu dropdown-menu-end p-2" style="width:320px; max-height:300px; overflow-y:auto;">
-                        <h6 class="dropdown-header">Notifikasi</h6>
-
-                        @foreach ($notifKos as $n)
-                            <a href="{{ url('/notif/kos/' . $n->id) }}" class="dropdown-item small py-2">
-                                <strong>Pembaruan Verifikasi Kos</strong><br>
-                                Terdapat pembaruan status untuk kos <strong>{{ $n->nama_kos }}</strong>.
-                            </a>
-                        @endforeach
-
-                        @foreach ($notifPengajuan as $p)
-                            <a href="{{ url('/notif/pengajuan/' . $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Sewa Baru</strong><br>
-                                {{ optional($p->penyewa)->name ?? 'Penyewa' }} mengajukan sewa untuk kos <strong>{{ optional($p->kos)->nama_kos ?? '-' }}</strong>.
-                            </a>
-                        @endforeach
-                        {{-- NOTIF PEMBAYARAN --}}
-                        @foreach ($notifPembayaran as $pb)
-                            <a href="{{ url('/pemilik/verifikasi') }}" class="dropdown-item small py-2">
-                                <strong>Pembayaran Baru</strong><br>
-                                Penyewa <strong>{{ optional($pb->pengajuan->penyewa)->name }}</strong>
-                                telah mengirim pembayaran untuk kos <strong>{{ $pb->pengajuan->kos->nama_kos }}</strong>.
-                            </a>
-                        @endforeach
-                        @if ($jumlahNotif == 0)
-                            <div class="text-center text-muted small p-3">
-                                Belum ada notifikasi baru
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
+                @include('components.notif-pemilik')
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
@@ -221,9 +177,9 @@
                                     <div class="col-6 text-muted">Status Kamar</div>
                                     <div class="col-6">
                                         @if ($kamar->status === 'tersedia')
-                                            <span class="text-success fw-semibold">● Tersedia</span>
+                                            <span class="text-success fw-semibold"> Tersedia</span>
                                         @else
-                                            <span class="text-danger fw-semibold">● Terisi</span>
+                                            <span class="text-danger fw-semibold"> Terisi</span>
                                         @endif
                                     </div>
                                 </div>
@@ -296,3 +252,4 @@
         </div>
     </div>
 @endsection
+

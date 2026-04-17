@@ -8,12 +8,28 @@
         ->latest()
         ->get();
 
-    $jumlahNotif = $notifKos->count();
+    $readIds = session('admin_notif_read_ids', []);
+    $notifTimeline = collect();
 
-    // Kalau ada notif baru → reset status dibaca
-    if ($jumlahNotif > 0) {
-        session()->forget('notif_dibaca');
+    foreach ($notifKos as $n) {
+        $notifTimeline->push([
+            'judul' => $n->edit_request_status === 'menunggu' ? 'Pengajuan Perubahan Data' : 'Pengajuan Kos Baru',
+            'pesan' =>
+                ($n->user->name ?? 'Pemilik') .
+                ($n->edit_request_status === 'menunggu' ? ' mengajukan perubahan pada kos ' : ' mengajukan verifikasi kos ') .
+                ($n->nama_kos ?? '-') .
+                '.',
+            'url' => route('admin.notif.read', $n->id),
+            'id' => (string) $n->id,
+            'is_unread' => ! array_key_exists((string) $n->id, $readIds),
+            'created_at' => $n->updated_at ?? $n->created_at,
+        ]);
     }
+
+    $notifTimeline = $notifTimeline->sortByDesc('created_at')->values();
+
+    $jumlahNotif = $notifTimeline->count();
+    $jumlahNotifBaru = $notifTimeline->where('is_unread', true)->count();
 @endphp
 
 {{-- 🔔 NOTIF --}}
@@ -23,26 +39,26 @@
 
         <i class="bi bi-bell fs-4"></i>
 
-        @if ($jumlahNotif > 0 && !session('notif_dibaca'))
+        @if ($jumlahNotifBaru > 0)
             <span class="notif-badge">
-                {{ $jumlahNotif }}
+                {{ $jumlahNotifBaru }}
             </span>
         @endif
     </button>
 
-    <div class="dropdown-menu dropdown-menu-end p-2" style="width:300px; max-height:300px; overflow-y:auto;">
+    <div class="dropdown-menu dropdown-menu-end p-2 notif-dropdown-menu" style="max-height:300px; overflow-y:auto;">
 
         <h6 class="dropdown-header">Notifikasi Verifikasi Kos</h6>
 
-        @forelse($notifKos as $n)
-            <a href="{{ route('admin.kos.index') }}" class="dropdown-item small py-2">
-                @if ($n->edit_request_status === 'menunggu')
-                    <strong>Pengajuan Perubahan Data</strong><br>
-                    {{ $n->user->name }} mengajukan perubahan pada kos <strong>{{ $n->nama_kos }}</strong>.
-                @else
-                    <strong>Pengajuan Kos Baru</strong><br>
-                    {{ $n->user->name }} mengajukan verifikasi kos <strong>{{ $n->nama_kos }}</strong>.
-                @endif
+        @forelse($notifTimeline as $notif)
+            <a href="{{ data_get($notif, 'url') }}" class="dropdown-item small py-2 notif-item">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                    <strong class="notif-title">{{ data_get($notif, 'judul') }}</strong>
+                    <span class="badge {{ data_get($notif, 'is_unread') ? 'bg-primary' : 'bg-secondary' }} text-white notif-read-badge">
+                        {{ data_get($notif, 'is_unread') ? 'Baru' : 'Terbaca' }}
+                    </span>
+                </div>
+                <div class="notif-message">{{ data_get($notif, 'pesan') }}</div>
             </a>
         @empty
             <div class="text-center text-muted small p-3">

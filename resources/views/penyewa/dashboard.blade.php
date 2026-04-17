@@ -71,78 +71,7 @@
 
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
-                @php
-                    $userId = Auth::id();
-
-                    $notifPengajuan = \App\Models\PengajuanSewa::where('user_id', $userId)
-                        ->where('status', 'disetujui')
-                        ->latest()
-                        ->get();
-
-                    $notifPengajuanUnread = \App\Models\PengajuanSewa::where('user_id', $userId)
-                        ->where('status', 'disetujui')
-                        ->where('status_notif', 0)
-                        ->count();
-
-                    $notifPembayaran = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
-                        $q->where('user_id', $userId);
-                    })
-                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
-                        ->latest()
-                        ->get();
-
-                    $notifPembayaranUnread = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
-                        $q->where('user_id', $userId);
-                    })
-                        ->whereIn('status', ['dikonfirmasi', 'ditolak'])
-                        ->where('status_notif', 0)
-                        ->count();
-
-                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
-                @endphp
-                {{-- 🔔 NOTIFIKASI --}}
-                <div class="dropdown position-relative">
-
-                    <button class="btn text-white position-relative" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell fs-4"></i>
-
-                        @if ($totalNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
-                                style="top:10px; font-size:10px;">
-                                {{ $totalNotif }}
-                            </span>
-                        @endif
-                    </button>
-
-                    <ul class="dropdown-menu dropdown-menu-end shadow" style="width:300px">
-
-                        <h6 class="dropdown-header">Notifikasi</h6>
-
-                        {{-- NOTIF PENGAJUAN --}}
-                        @foreach ($notifPengajuan as $p)
-                            <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Sewa Disetujui</strong><br>
-                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
-                            </a>
-                        @endforeach
-
-                        {{-- NOTIF PEMBAYARAN --}}
-                        @foreach ($notifPembayaran as $pb)
-                            <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
-                                <strong>Status Pembayaran</strong><br>
-                                Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
-                            </a>
-                        @endforeach
-                        {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
-                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
-                            <li class="dropdown-item text-muted small">
-                                Belum ada notifikasi baru
-                            </li>
-                        @endif
-
-                    </ul>
-                </div>
+                @include('components.notif-penyewa')
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 

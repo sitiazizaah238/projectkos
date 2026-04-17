@@ -14,6 +14,7 @@ class PengajuanSewa extends Model
         'tanggal_mulai',
         'durasi',
         'status',
+        'jenis_pengajuan',
         'total_bayar',
         'alasan',
         'is_read',
@@ -55,6 +56,10 @@ class PengajuanSewa extends Model
 
     public function statusSaatIni(): string
     {
+        if ($this->isLewatBatasAkhirSewa()) {
+            return 'selesai';
+        }
+
         if ($this->status !== 'aktif') {
             return $this->status;
         }
@@ -145,7 +150,7 @@ class PengajuanSewa extends Model
 
     public function isJatuhTempo(): bool
     {
-        if ($this->status !== 'aktif') {
+        if (! in_array($this->status, ['aktif', 'jatuh_tempo'], true)) {
             return false;
         }
 
@@ -156,12 +161,25 @@ class PengajuanSewa extends Model
             && $sudahKonfirmasi < $targetKonfirmasi;
     }
 
+    public function isLewatBatasAkhirSewa(int $batasHari = 3): bool
+    {
+        if (! in_array($this->status, ['aktif', 'jatuh_tempo'], true)) {
+            return false;
+        }
+
+        // Grace period 3 hari setelah tanggal selesai sewa.
+        // Otomatis selesai di hari ke-4 jika belum ada pembayaran/perpanjangan.
+        $batasAkhir = $this->tanggalSelesai()->copy()->startOfDay()->addDays($batasHari);
+
+        return now()->startOfDay()->greaterThan($batasAkhir);
+    }
+
     public static function syncExpiredRentals(): int
     {
         $updatedCount = 0;
 
         static::with('kamar')
-            ->where('status', 'aktif')
+            ->whereIn('status', ['aktif', 'jatuh_tempo'])
             ->get()
             ->each(function (self $pengajuan) use (&$updatedCount) {
                 if (! $pengajuan->sudahSelesai()) {
@@ -171,7 +189,11 @@ class PengajuanSewa extends Model
                 $pengajuan->update(['status' => 'selesai']);
                 $updatedCount++;
 
-                if ($pengajuan->kamar && $pengajuan->kamar->status !== 'tersedia') {
+                if (
+                    $pengajuan->kamar
+                    && $pengajuan->kamar->status !== 'tersedia'
+                    && ! $pengajuan->kamarMasihTerisiOlehSewaLain()
+                ) {
                     $pengajuan->kamar->update(['status' => 'tersedia']);
                 }
             });
@@ -186,12 +208,32 @@ class PengajuanSewa extends Model
 
     public function bisaAjukanPerpanjangan(): bool
     {
-        if (!in_array($this->statusSaatIni(), ['aktif', 'jatuh_tempo'], true)) {
+        $statusSaatIni = $this->statusSaatIni();
+
+        if (in_array($statusSaatIni, ['aktif', 'jatuh_tempo'], true)) {
+            return $this->sisaHariSewa() <= 5;
+        }
+
+        if ($statusSaatIni === 'selesai') {
+            return ! $this->kamarMasihTerisiOlehSewaLain();
+        }
+
+        if (!in_array($statusSaatIni, ['aktif', 'jatuh_tempo', 'selesai'], true)) {
             return false;
         }
 
-        $sisaHari = $this->sisaHariSewa();
+        return false;
+    }
 
-        return $sisaHari <= 5;
+    public function kamarMasihTerisiOlehSewaLain(): bool
+    {
+        if (! $this->kamar_id) {
+            return false;
+        }
+
+        return static::where('kamar_id', $this->kamar_id)
+            ->where('id', '!=', $this->id)
+            ->whereIn('status', ['aktif', 'jatuh_tempo'])
+            ->exists();
     }
 }

@@ -76,7 +76,8 @@ class PembayaranController extends Controller
             'bukti' => $buktiPath,
             'durasi_tagihan' => $durasiTagihan,
             'nominal_tagihan' => $nominalTagihan,
-            'status' => 'menunggu'
+            'status' => 'menunggu',
+            'is_read' => false,
         ]);
 
         return redirect()

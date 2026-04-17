@@ -94,6 +94,50 @@
             overflow-x: hidden;
         }
 
+        .topbar .dropdown-menu.notif-dropdown-menu,
+        .topbar .dropdown-menu[style*='width:300px'],
+        .topbar .dropdown-menu[style*='width:320px'] {
+            width: min(92vw, 340px) !important;
+        }
+
+        .topbar .dropdown-menu .dropdown-item {
+            white-space: normal;
+        }
+
+        .topbar .dropdown-menu .notif-item {
+            border-bottom: 1px solid #eef0f3;
+        }
+
+        .topbar .dropdown-menu .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .topbar .dropdown-menu .notif-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+            max-width: 220px;
+        }
+
+        .topbar .dropdown-menu .notif-message {
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-word;
+        }
+
+        .topbar .dropdown-menu .notif-read-badge {
+            font-size: 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
         .card-stat {
             border-radius: 14px;
             border: none;

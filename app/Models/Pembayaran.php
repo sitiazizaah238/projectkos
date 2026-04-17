@@ -13,6 +13,8 @@ class Pembayaran extends Model
         'durasi_tagihan',
         'nominal_tagihan',
         'status',
+        'status_notif',
+        'is_read',
         'alasan'
     ];
 
