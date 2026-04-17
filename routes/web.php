@@ -86,6 +86,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/kos/{id}/nonaktif', [App\Http\Controllers\Admin\KosController::class, 'deactivate'])
             ->name('admin.kos.deactivate');
 
+        Route::post('/admin/kos/{id}/aktifkan', [App\Http\Controllers\Admin\KosController::class, 'activate'])
+            ->name('admin.kos.activate');
+
         Route::post('/admin/kos/{id}/edit-request/approve', [App\Http\Controllers\Admin\KosController::class, 'approveEditRequest'])
             ->name('admin.kos.edit-request.approve');
 
@@ -263,6 +266,10 @@ Route::middleware('auth')->group(function () {
             '/penyewa/pengajuan/{id}/perpanjang',
             [App\Http\Controllers\Penyewa\PengajuanController::class, 'perpanjang']
         )->name('penyewa.pengajuan.perpanjang');
+        Route::post(
+            '/penyewa/pengajuan/{id}/ajukan-ulang',
+            [App\Http\Controllers\Penyewa\PengajuanController::class, 'ajukanUlang']
+        )->name('penyewa.pengajuan.ajukan-ulang');
         Route::get(
             '/penyewa/pengajuan',
             [App\Http\Controllers\Penyewa\PengajuanController::class, 'index']

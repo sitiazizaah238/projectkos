@@ -66,9 +66,9 @@
                                         <th>Nama Kos</th>
                                         <th>Lokasi</th>
                                         <th>Status Kos</th>
-                                        <th>Status Ubah Data</th>
-                                        <th>Tgl Verifikasi</th>
-                                        <th width="220" class="text-center">Aksi</th>
+                                        <th>Pengajuan Perubahan kos</th>
+                                        <th>Tanggal Verifikasi</th>
+                                        <th width="150" class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
 
@@ -109,93 +109,11 @@
                                             </td>
 
                                             <td>
-                                                <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                                                <div class="d-flex justify-content-center align-items-center gap-2">
                                                     <a href="{{ route('admin.kos.show', $k->id) }}"
                                                         class="btn btn-sm btn-info text-white">
                                                         Detail
                                                     </a>
-
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                                                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            Proses
-                                                        </button>
-
-                                                        <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 190px;">
-                                                            @php
-                                                                $hasAction = false;
-                                                            @endphp
-
-                                                            @if (in_array($k->status, ['menunggu', 'ditolak'], true))
-                                                                @php
-                                                                    $hasAction = true;
-                                                                @endphp
-                                                                <form action="{{ route('admin.kos.approve', $k->id) }}"
-                                                                    method="POST" class="approve-form m-0 mb-2">
-                                                                    @csrf
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-success w-100 btn-approve">Setujui
-                                                                        Verifikasi</button>
-                                                                </form>
-                                                            @endif
-
-                                                            @if ($k->status === 'menunggu')
-                                                                @php
-                                                                    $hasAction = true;
-                                                                @endphp
-                                                                <form action="{{ route('admin.kos.reject', $k->id) }}"
-                                                                    method="POST" class="reject-form m-0 mb-2">
-                                                                    @csrf
-                                                                    <input type="hidden" name="alasan">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-danger w-100 btn-reject">Tolak
-                                                                        Verifikasi</button>
-                                                                </form>
-                                                            @endif
-
-                                                            @if ($k->status === 'disetujui')
-                                                                @php
-                                                                    $hasAction = true;
-                                                                @endphp
-                                                                <form action="{{ route('admin.kos.deactivate', $k->id) }}"
-                                                                    method="POST" class="deactivate-form m-0 mb-2">
-                                                                    @csrf
-                                                                    <input type="hidden" name="alasan">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-dark w-100 btn-deactivate">Nonaktifkan</button>
-                                                                </form>
-                                                            @endif
-
-                                                            @if ($k->edit_request_status === 'menunggu')
-                                                                @php
-                                                                    $hasAction = true;
-                                                                @endphp
-                                                                <form
-                                                                    action="{{ route('admin.kos.edit-request.approve', $k->id) }}"
-                                                                    method="POST" class="approve-edit-form m-0 mb-2">
-                                                                    @csrf
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-primary w-100 btn-approve-edit">
-                                                                        Setujui Ubah Data
-                                                                    </button>
-                                                                </form>
-
-                                                                <form action="{{ route('admin.kos.edit-request.reject', $k->id) }}"
-                                                                    method="POST" class="reject-edit-form m-0">
-                                                                    @csrf
-                                                                    <input type="hidden" name="alasan">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-outline-danger w-100 btn-reject-edit">
-                                                                        Tolak Ubah Data
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-
-                                                            @if (!$hasAction)
-                                                                <div class="text-muted small px-2 py-1 text-center">Tidak ada aksi</div>
-                                                            @endif
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -224,85 +142,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const askReasonThenSubmit = (buttonSelector, title, confirmText) => {
-                document.querySelectorAll(buttonSelector).forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        let form = this.closest('form');
-                        let input = form.querySelector('input[name="alasan"]');
-
-                        Swal.fire({
-                            title: title,
-                            input: 'textarea',
-                            inputLabel: 'Alasan',
-                            inputPlaceholder: 'Masukkan alasan...',
-                            showCancelButton: true,
-                            confirmButtonText: confirmText,
-                            cancelButtonText: 'Batal',
-                            inputValidator: (value) => {
-                                if (!value) {
-                                    return 'Alasan wajib diisi!';
-                                }
-                            }
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                if (input) {
-                                    input.value = result.value;
-                                }
-                                form.submit();
-                            }
-                        });
-                    });
-                });
-            };
-
-            document.querySelectorAll('.btn-approve').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let form = this.closest('form');
-
-                    Swal.fire({
-                        title: 'Setujui Verifikasi Kos?',
-                        text: 'Kos akan ditampilkan kepada penyewa selama akun pemilik berstatus aktif.',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, setujui',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-
-            document.querySelectorAll('.btn-approve-edit').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let form = this.closest('form');
-
-                    Swal.fire({
-                        title: 'Setujui Perubahan Data?',
-                        text: 'Data kos akan diperbarui sesuai pengajuan dari pemilik.',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, setujui',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-
-            askReasonThenSubmit('.btn-reject', 'Tolak Verifikasi Kos', 'Tolak');
-            askReasonThenSubmit('.btn-reject-edit', 'Tolak Pengajuan Perubahan Data', 'Tolak');
-            askReasonThenSubmit('.btn-deactivate', 'Nonaktifkan Kos', 'Nonaktifkan');
-        });
-    </script>
 
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">

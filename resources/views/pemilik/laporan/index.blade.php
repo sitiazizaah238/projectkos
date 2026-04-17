@@ -66,34 +66,38 @@
 
                         {{-- SEARCH DENGAN ICON --}}
                         <div class="col-md-4">
-                            <form method="GET" action="">
-                                <div class="input-group">
-                                    <input type="text" name="search" class="form-control border-secondary rounded-start"
-                                        placeholder="Cari penyewa / kamar..." value="{{ request('search') }}"
-                                        onkeyup="if(event.keyCode === 13){ this.form.submit(); }">
-                                    <button type="submit" class="btn btn-secondary rounded-end">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                </div>
-                            </form>
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control border-secondary rounded-start"
+                                    placeholder="Cari penyewa / kamar..." value="{{ request('search') }}"
+                                    onkeyup="if(event.keyCode === 13){ this.form.submit(); }">
+                                <button type="submit" class="btn btn-secondary rounded-end">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
                         </div>
 
                         {{-- FILTER TANGGAL DENGAN LABEL --}}
-                        <div class="col-md-3">
-                            <label for="dari" class="form-label small text-muted">Tanggal</label>
+                        <div class="col-md-2">
+                            <label for="dari" class="form-label small text-muted">Dari Tanggal</label>
                             <input type="date" name="dari" id="dari" class="form-control"
                                 value="{{ request('dari') }}" onchange="this.form.submit()">
                         </div>
 
+                        <div class="col-md-2">
+                            <label for="sampai" class="form-label small text-muted">Sampai Tanggal</label>
+                            <input type="date" name="sampai" id="sampai" class="form-control"
+                                value="{{ request('sampai') }}" onchange="this.form.submit()">
+                        </div>
+
                         {{-- EXPORT PDF & EXCEL --}}
-                        <div class="col-md-5 d-flex justify-content-end gap-2">
-                            <a href="{{ route('pemilik.laporan.print') }}" class="btn btn-danger" target="_blank"
-                                data-no-loader>
+                        <div class="col-md-4 d-flex justify-content-end gap-2">
+                            <a href="{{ route('pemilik.laporan.print', request()->query()) }}" class="btn btn-danger"
+                                target="_blank" data-no-loader>
                                 <i class="bi bi-file-pdf me-1"></i> Export PDF
                             </a>
 
-                            <a href="{{ route('pemilik.laporan.excel') }}" class="btn btn-success" target="_blank"
-                                data-no-loader>
+                            <a href="{{ route('pemilik.laporan.excel', request()->query()) }}" class="btn btn-success"
+                                target="_blank" data-no-loader>
                                 <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
                             </a>
                         </div>

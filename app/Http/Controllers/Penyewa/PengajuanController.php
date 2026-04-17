@@ -46,7 +46,7 @@ class PengajuanController extends Controller
         $request->validate([
             'kos_id' => 'required',
             'kamar_id' => 'required',
-            'tanggal_mulai' => 'required|date',
+            'tanggal_mulai' => 'required|date|after_or_equal:today',
             'durasi' => 'required|integer'
         ]);
 
@@ -116,5 +116,43 @@ class PengajuanController extends Controller
         return redirect()
             ->route('penyewa.pengajuan.index')
             ->with('success', 'Perpanjangan sewa berhasil diajukan. Silakan klik Bayar Sekarang untuk melanjutkan pembayaran.');
+    }
+
+    public function ajukanUlang($id)
+    {
+        $pengajuanLama = PengajuanSewa::with('kamar')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        if ($pengajuanLama->status !== 'ditolak') {
+            return back()->with('error', 'Pengajuan ini tidak dapat diajukan ulang.');
+        }
+
+        $cekAktif = PengajuanSewa::where('user_id', Auth::id())
+            ->where('kamar_id', $pengajuanLama->kamar_id)
+            ->whereIn('status', ['menunggu', 'disetujui', 'aktif', 'jatuh_tempo'])
+            ->exists();
+
+        if ($cekAktif) {
+            return back()->with('error', 'Masih ada pengajuan aktif/menunggu untuk kamar ini.');
+        }
+
+        PengajuanSewa::create([
+            'user_id' => Auth::id(),
+            'kos_id' => $pengajuanLama->kos_id,
+            'kamar_id' => $pengajuanLama->kamar_id,
+            'tanggal_mulai' => now()->toDateString(),
+            'durasi' => $pengajuanLama->durasi,
+            'jenis_pengajuan' => $pengajuanLama->jenis_pengajuan ?: 'sewa_baru',
+            'total_bayar' => (int) optional($pengajuanLama->kamar)->harga * (int) $pengajuanLama->durasi,
+            'status' => 'menunggu',
+            'alasan' => null,
+            'is_read' => false,
+            'status_notif' => 0,
+        ]);
+
+        return redirect()
+            ->route('penyewa.pengajuan.index')
+            ->with('success', 'Pengajuan berhasil diajukan ulang dan menunggu verifikasi pemilik.');
     }
 }

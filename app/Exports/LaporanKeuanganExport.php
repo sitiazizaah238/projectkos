@@ -15,10 +15,15 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
 {
     protected $laporan;
     protected $lastRow;
+    protected $periodeLabel;
+    protected $tanggalCetak;
+    protected $headerRow = 5;
 
-    public function __construct($laporan)
+    public function __construct($laporan, string $periodeLabel = 'Semua Periode', string $tanggalCetak = '')
     {
         $this->laporan = $laporan;
+        $this->periodeLabel = $periodeLabel;
+        $this->tanggalCetak = $tanggalCetak;
     }
 
     public function array(): array
@@ -27,8 +32,11 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
 
         // Judul
         $data[] = ['Laporan Keuangan'];
+        $data[] = ['Tanggal Cetak: ' . ($this->tanggalCetak ?: '-')];
+        $data[] = ['Periode: ' . $this->periodeLabel];
+        $data[] = [''];
 
-        // HEADER (langsung baris ke 2, TANPA spasi kosong)
+        // Header tabel
         $data[] = [
             'No',
             'Nama Penyewa',
@@ -69,6 +77,12 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
             1 => [
                 'font' => ['bold' => true, 'size' => 16],
             ],
+            2 => [
+                'font' => ['italic' => true],
+            ],
+            3 => [
+                'font' => ['italic' => true],
+            ],
         ];
     }
 
@@ -79,13 +93,17 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
 
                 $sheet = $event->sheet;
                 $lastRow = $this->lastRow;
+                $headerRow = $this->headerRow;
+                $firstDataRow = $headerRow + 1;
 
                 // Merge & Center Judul
                 $sheet->mergeCells('A1:F1');
                 $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
+                $sheet->mergeCells('A2:F2');
+                $sheet->mergeCells('A3:F3');
 
-                // 🔥 HEADER HIJAU (BARIS 2)
-                $sheet->getStyle('A2:F2')->applyFromArray([
+                // Header tabel
+                $sheet->getStyle("A{$headerRow}:F{$headerRow}")->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF'],
@@ -98,7 +116,7 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
 
                 // Format angka Total
                 // Format angka kolom Total jadi Rp
-                $sheet->getStyle("F3:F{$lastRow}")
+                $sheet->getStyle("F{$firstDataRow}:F{$lastRow}")
                     ->getNumberFormat()
                     ->setFormatCode('"Rp " #,##0');
                 // 🔥 BARIS TOTAL HIJAU MUDA
@@ -112,7 +130,7 @@ class LaporanKeuanganExport implements FromArray, WithStyles, ShouldAutoSize, Wi
                     ]);
 
                 // Border semua tabel
-                $sheet->getStyle("A2:F{$lastRow}")
+                $sheet->getStyle("A{$headerRow}:F{$lastRow}")
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [

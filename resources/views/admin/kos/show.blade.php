@@ -215,12 +215,129 @@
                     </div>
                 @endif
 
+                <div class="card shadow-sm border-0 rounded-4 mt-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3">Aksi Verifikasi</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (in_array($kos->status, ['menunggu', 'ditolak'], true))
+                                <form action="{{ route('admin.kos.approve', $kos->id) }}" method="POST"
+                                    class="m-0 approve-form">
+                                    @csrf
+                                    <button type="button" class="btn btn-success btn-approve">Setujui Verifikasi</button>
+                                </form>
+                            @endif
+
+                            @if ($kos->status === 'menunggu')
+                                <form action="{{ route('admin.kos.reject', $kos->id) }}" method="POST"
+                                    class="m-0 reject-form">
+                                    @csrf
+                                    <input type="hidden" name="alasan">
+                                    <button type="button" class="btn btn-danger btn-reject">Tolak Verifikasi</button>
+                                </form>
+                            @endif
+
+                            @if ($kos->status === 'disetujui')
+                                <form action="{{ route('admin.kos.deactivate', $kos->id) }}" method="POST"
+                                    class="m-0 deactivate-form">
+                                    @csrf
+                                    <input type="hidden" name="alasan">
+                                    <button type="button" class="btn btn-dark btn-deactivate">Nonaktifkan Kos</button>
+                                </form>
+                            @endif
+
+                            @if ($kos->status === 'nonaktif')
+                                <form action="{{ route('admin.kos.activate', $kos->id) }}" method="POST"
+                                    class="m-0 activate-form">
+                                    @csrf
+                                    <button type="button" class="btn btn-outline-success btn-activate">Aktifkan
+                                        Kembali</button>
+                                </form>
+                            @endif
+
+                            @if ($kos->edit_request_status === 'menunggu')
+                                <form action="{{ route('admin.kos.edit-request.approve', $kos->id) }}" method="POST"
+                                    class="m-0 approve-edit-form">
+                                    @csrf
+                                    <button type="button" class="btn btn-primary btn-approve-edit">Setujui Perubahan
+                                        Data</button>
+                                </form>
+
+                                <form action="{{ route('admin.kos.edit-request.reject', $kos->id) }}" method="POST"
+                                    class="m-0 reject-edit-form">
+                                    @csrf
+                                    <input type="hidden" name="alasan">
+                                    <button type="button" class="btn btn-outline-danger btn-reject-edit">Tolak Perubahan
+                                        Data</button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mt-4">
                     <a href="{{ route('admin.kos.index') }}" class="btn btn-secondary">Kembali</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const askReasonThenSubmit = (buttonSelector, title, confirmText) => {
+                document.querySelectorAll(buttonSelector).forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        let form = this.closest('form');
+                        let input = form.querySelector('input[name="alasan"]');
+
+                        Swal.fire({
+                            title: title,
+                            input: 'textarea',
+                            inputLabel: 'Alasan',
+                            inputPlaceholder: 'Masukkan alasan...',
+                            showCancelButton: true,
+                            confirmButtonText: confirmText,
+                            cancelButtonText: 'Batal',
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'Alasan wajib diisi!';
+                                }
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                if (input) {
+                                    input.value = result.value;
+                                }
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            };
+
+            document.querySelectorAll('.btn-approve, .btn-approve-edit, .btn-activate').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let form = this.closest('form');
+
+                    Swal.fire({
+                        title: 'Konfirmasi Aksi?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, lanjutkan',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            askReasonThenSubmit('.btn-reject', 'Tolak Verifikasi Kos', 'Tolak');
+            askReasonThenSubmit('.btn-reject-edit', 'Tolak Pengajuan Perubahan Data', 'Tolak');
+            askReasonThenSubmit('.btn-deactivate', 'Nonaktifkan Kos', 'Nonaktifkan');
+        });
+    </script>
 
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">

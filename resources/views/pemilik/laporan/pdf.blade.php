@@ -61,6 +61,11 @@
 
     <h2>LAPORAN KEUANGAN</h2>
 
+    <div style="margin-bottom: 12px; font-size: 13px;">
+        <div><strong>Tanggal Cetak:</strong> {{ $tanggalCetak ?? '-' }}</div>
+        <div><strong>Periode:</strong> {{ $periode['label'] ?? 'Semua Periode' }}</div>
+    </div>
+
     <table>
         <thead>
             <tr>
