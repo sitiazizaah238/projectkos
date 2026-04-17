@@ -80,7 +80,23 @@
                         ->where('status_notif', 0)
                         ->count();
 
-                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread;
+                    $notifSewaHabis = \App\Models\PengajuanSewa::with('kos')
+                        ->where('user_id', $userId)
+                        ->where('status', 'aktif')
+                        ->get()
+                        ->map(function ($item) {
+                            return [
+                                'id' => $item->id,
+                                'nama_kos' => $item->kos->nama_kos ?? '-',
+                                'sisa_hari' => $item->sisaHariSewa(),
+                                'bisa_perpanjang' => $item->bisaAjukanPerpanjangan(),
+                            ];
+                        })
+                        ->filter(function ($item) {
+                            return $item['bisa_perpanjang'] === true;
+                        });
+
+                    $totalNotif = $notifPengajuanUnread + $notifPembayaranUnread + $notifSewaHabis->count();
                 @endphp
                 {{-- 🔔 NOTIFIKASI --}}
                 <div class="dropdown position-relative">
@@ -103,8 +119,8 @@
                         {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Disetujui</strong><br>
-                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
+                                <strong>Pengajuan Sewa Disetujui</strong><br>
+                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
                             </a>
                         @endforeach
 
@@ -113,13 +129,23 @@
                             <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
                                 <strong>Status Pembayaran</strong><br>
                                 Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status }}
+                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
+                            </a>
+                        @endforeach
+
+                        {{-- NOTIF MASA SEWA HAMPIR HABIS --}}
+                        @foreach ($notifSewaHabis as $sewa)
+                            <a href="{{ route('penyewa.pengajuan.index', ['focus_perpanjang' => $sewa['id']]) }}"
+                                class="dropdown-item small py-2">
+                                <strong>Masa Sewa Akan Berakhir</strong><br>
+                                Sewa kos <strong>{{ $sewa['nama_kos'] }}</strong>
+                                tersisa {{ $sewa['sisa_hari'] }} hari. Silakan ajukan perpanjangan sewa.
                             </a>
                         @endforeach
                         {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
-                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
+                        @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty() && $notifSewaHabis->isEmpty())
                             <li class="dropdown-item text-muted small">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </li>
                         @endif
 
@@ -285,7 +311,15 @@
                                                     } elseif ($statusSaatIni == 'ditolak') {
                                                         $modalTarget = '#modalDitolak';
                                                     } elseif ($statusSaatIni == 'disetujui') {
-                                                        $modalTarget = "#modalBayar{$item->id}";
+                                                        $modalTarget = $pembayaranMenunggu
+                                                            ? '#modalSudahBayar'
+                                                            : "#modalBayar{$item->id}";
+                                                    } elseif ($statusSaatIni == 'aktif') {
+                                                        if ($item->bisaAjukanPerpanjangan()) {
+                                                            $modalTarget = "#modalPerpanjang{$item->id}";
+                                                        } else {
+                                                            $modalTarget = '#modalSudahBayar';
+                                                        }
                                                     } elseif ($statusSaatIni == 'jatuh_tempo') {
                                                         if ($pembayaranMenunggu) {
                                                             $modalTarget = '#modalSudahBayar';
@@ -300,109 +334,16 @@
                                                     data-bs-target="{{ $modalTarget }}">
                                                     Bayar Sekarang
                                                 </button>
+
+                                                @if ($statusSaatIni == 'aktif' && $item->bisaAjukanPerpanjangan())
+                                                    <button class="btn btn-sm btn-warning mt-1" data-bs-toggle="modal"
+                                                        data-bs-target="#modalPerpanjang{{ $item->id }}">
+                                                        Perpanjang Sewa
+                                                    </button>
+                                                @endif
                                             </td>
 
                                         </tr>
-                                        {{-- ================= MODAL PEMBAYARAN ================= --}}
-                                        <div class="modal fade" id="modalBayar{{ $item->id }}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content rounded-4 p-4">
-
-                                                    <h5 class="fw-bold mb-3">Pembayaran Sewa Kamar</h5>
-
-                                                    {{-- Informasi Sewa --}}
-                                                    <div class="border rounded-4 p-3 mb-3">
-                                                        <div class="fw-semibold mb-2">Informasi Sewa</div>
-
-                                                        <div class="row text-center">
-                                                            <div class="col">
-                                                                <small>Nama Kos</small>
-                                                                <div>{{ $item->kos->nama_kos }}</div>
-                                                            </div>
-
-                                                            <div class="col">
-                                                                <small>Durasi Sewa</small>
-                                                                <div>{{ $item->durasi }} Bulan</div>
-                                                            </div>
-
-                                                            <div class="col">
-                                                                <small>Nama Kamar</small>
-                                                                <div>{{ $item->kamar->nama_kamar }}</div>
-                                                            </div>
-
-                                                            <div class="col">
-                                                                <small>Total Bayar</small>
-                                                                <div class="fw-bold text-success">
-                                                                    Rp
-                                                                    {{ number_format($item->kamar->harga, 0, ',', '.') }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        @if ($statusSaatIni == 'jatuh_tempo')
-                                                            <div class="mt-2 alert alert-warning py-2 small mb-0">
-                                                                Tagihan bulanan jatuh tempo. Silakan bayar untuk
-                                                                mengaktifkan status sewa kembali.
-                                                            </div>
-                                                        @endif
-                                                    </div>
-
-                                                    {{-- Form Pembayaran --}}
-                                                    <form action="{{ route('penyewa.bayar', $item->id) }}" method="POST"
-                                                        enctype="multipart/form-data">
-                                                        @csrf
-
-                                                        {{-- Pilih Metode --}}
-                                                        <div class="mb-3">
-                                                            <label class="fw-semibold mb-2">Pilih Metode Pembayaran</label>
-
-                                                            @forelse($item->kos->user->metodePembayaran ?? [] as $metode)
-                                                                <label
-                                                                    class="payment-method-option rounded-3 p-2 mb-2 d-flex justify-content-between align-items-center w-100">
-                                                                    <div class="d-flex gap-2 align-items-start">
-                                                                        <input class="form-check-input payment-method-radio"
-                                                                            type="radio" name="metode_id"
-                                                                            value="{{ $metode->id }}" required>
-                                                                        <div>
-                                                                            <div class="fw-semibold">
-                                                                                {{ $metode->nama_metode }}
-                                                                            </div>
-                                                                            <small>{{ $metode->no_rekening }}</small>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    @if ($metode->gambar)
-                                                                        <img src="{{ asset('storage/' . $metode->gambar) }}"
-                                                                            width="70">
-                                                                    @endif
-                                                                </label>
-                                                            @empty
-                                                                <div class="text-muted small">
-                                                                    Metode pembayaran belum tersedia
-                                                                </div>
-                                                            @endforelse
-                                                            {{-- Upload Bukti --}}
-                                                            <div class="mb-3">
-                                                                <label class="fw-semibold">Upload Bukti Transfer</label>
-                                                                <input type="file" name="bukti" class="form-control"
-                                                                    required>
-                                                            </div>
-
-                                                            <div class="d-flex justify-content-end gap-2">
-                                                                <button type="button" class="btn btn-danger"
-                                                                    data-bs-dismiss="modal">
-                                                                    Batal
-                                                                </button>
-
-                                                                <button class="btn btn-primary">
-                                                                    Bayar
-                                                                </button>
-                                                            </div>
-
-                                                    </form>
-
-                                                </div>
-                                            </div>
-                                        </div>
                                     @endforeach
                                 @else
                                     <tr>
@@ -424,6 +365,134 @@
                 </div>
 
             </div>
+
+            {{-- ================= MODAL DINAMIS PEMBAYARAN/PERPANJANG ================= --}}
+            @if ($pengajuan->count() > 0)
+                @foreach ($pengajuan as $item)
+                    @php
+                        $statusSaatIni = $item->statusSaatIni();
+                        $durasiTagihanBerjalan = max($item->durasiBelumTerbayar(), 1);
+                        $nominalTagihanBerjalan = (int) optional($item->kamar)->harga * $durasiTagihanBerjalan;
+                    @endphp
+
+                    <div class="modal fade" id="modalBayar{{ $item->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content rounded-4 p-4">
+
+                                <h5 class="fw-bold mb-3">Pembayaran Sewa Kamar</h5>
+
+                                <div class="border rounded-4 p-3 mb-3">
+                                    <div class="fw-semibold mb-2">Informasi Sewa</div>
+
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <small>Nama Kos</small>
+                                            <div>{{ $item->kos->nama_kos }}</div>
+                                        </div>
+
+                                        <div class="col">
+                                            <small>Durasi Tagihan</small>
+                                            <div>{{ $durasiTagihanBerjalan }} Bulan</div>
+                                        </div>
+
+                                        <div class="col">
+                                            <small>Nama Kamar</small>
+                                            <div>{{ $item->kamar->nama_kamar }}</div>
+                                        </div>
+
+                                        <div class="col">
+                                            <small>Total Bayar</small>
+                                            <div class="fw-bold text-success">
+                                                Rp {{ number_format($nominalTagihanBerjalan, 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if ($statusSaatIni == 'jatuh_tempo')
+                                        <div class="mt-2 alert alert-warning py-2 small mb-0">
+                                            Tagihan bulanan jatuh tempo. Silakan bayar untuk
+                                            mengaktifkan status sewa kembali.
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <form action="{{ route('penyewa.bayar', $item->id) }}" method="POST"
+                                    enctype="multipart/form-data">
+                                    @csrf
+
+                                    <div class="mb-3">
+                                        <label class="fw-semibold mb-2">Pilih Metode Pembayaran</label>
+
+                                        @forelse($item->kos->user->metodePembayaran ?? [] as $metode)
+                                            <label
+                                                class="payment-method-option rounded-3 p-2 mb-2 d-flex justify-content-between align-items-center w-100">
+                                                <div class="d-flex gap-2 align-items-start">
+                                                    <input class="form-check-input payment-method-radio" type="radio"
+                                                        name="metode_id" value="{{ $metode->id }}" required>
+                                                    <div>
+                                                        <div class="fw-semibold">{{ $metode->nama_metode }}</div>
+                                                        <small>{{ $metode->no_rekening }}</small>
+                                                    </div>
+                                                </div>
+
+                                                @if ($metode->gambar)
+                                                    <img src="{{ asset('storage/' . $metode->gambar) }}" width="70">
+                                                @endif
+                                            </label>
+                                        @empty
+                                            <div class="text-muted small">Metode pembayaran belum tersedia</div>
+                                        @endforelse
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="fw-semibold">Upload Bukti Transfer</label>
+                                        <input type="file" name="bukti" class="form-control" required>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-danger"
+                                            data-bs-dismiss="modal">Batal</button>
+                                        <button class="btn btn-primary">Bayar</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="modalPerpanjang{{ $item->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content rounded-4 p-4">
+                                <h5 class="fw-bold mb-2">Perpanjang Sewa</h5>
+                                <p class="small text-muted mb-3">
+                                    Masa sewa tinggal {{ $item->sisaHariSewa() }} hari.
+                                    Pilih tambahan durasi untuk lanjut ke pembayaran.
+                                </p>
+
+                                <form action="{{ route('penyewa.pengajuan.perpanjang', $item->id) }}" method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label class="fw-semibold mb-1">Durasi Tambahan</label>
+                                        <select name="durasi_tambahan" class="form-control" required>
+                                            <option value="1">1 Bulan</option>
+                                            <option value="2">2 Bulan</option>
+                                            <option value="3">3 Bulan</option>
+                                            <option value="6">6 Bulan</option>
+                                            <option value="12">12 Bulan</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Batal</button>
+                                        <button class="btn btn-primary">Lanjut Bayar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </div>
 
@@ -486,6 +555,23 @@
                     document.body.focus();
                 }
             });
+
+            @if (request('focus_bayar'))
+                const bayarModal = document.getElementById('modalBayar{{ (int) request('focus_bayar') }}');
+                if (bayarModal) {
+                    const instance = new bootstrap.Modal(bayarModal);
+                    instance.show();
+                }
+            @endif
+
+            @if (request('focus_perpanjang'))
+                const perpanjangModal = document.getElementById(
+                    'modalPerpanjang{{ (int) request('focus_perpanjang') }}');
+                if (perpanjangModal) {
+                    const instance = new bootstrap.Modal(perpanjangModal);
+                    instance.show();
+                }
+            @endif
         });
     </script>
 
@@ -524,16 +610,16 @@
 
                 {{-- JUDUL --}}
                 <h5 class="fw-bold text-success mb-2">
-                    Pembayaran Berhasil
+                    Pembayaran Sudah Terkirim
                 </h5>
 
                 {{-- DESKRIPSI --}}
                 <p class="mb-2">
-                    Anda sudah melakukan pembayaran untuk sewa ini.
+                    Anda sudah mengirim pembayaran untuk tagihan ini.
                 </p>
 
                 <small class="text-muted">
-                    Silakan tunggu proses verifikasi dari pemilik kos.
+                    Silakan menunggu proses verifikasi dari pemilik kos.
                 </small>
 
                 {{-- BUTTON --}}
@@ -555,37 +641,37 @@
         </div>
     </div>
     <div class="modal fade" id="modalMenungguPengajuan" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content rounded-4 p-4 text-center">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 p-4 text-center">
 
-            <i class="bi bi-hourglass-split text-warning" style="font-size:60px;"></i>
+                <i class="bi bi-hourglass-split text-warning" style="font-size:60px;"></i>
 
-            <h5 class="fw-bold text-warning mt-2">Menunggu Persetujuan</h5>
+                <h5 class="fw-bold text-warning mt-2">Menunggu Persetujuan</h5>
 
-            <p>Pengajuan masih diproses pemilik kos.</p>
+                <p>Pengajuan sewa Anda sedang diproses oleh pemilik kos.</p>
 
-            <button class="btn btn-secondary mt-2" data-bs-dismiss="modal">
-                Tutup
-            </button>
+                <button class="btn btn-secondary mt-2" data-bs-dismiss="modal">
+                    Tutup
+                </button>
 
+            </div>
         </div>
     </div>
-</div>
-<div class="modal fade" id="modalDitolak" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content rounded-4 p-4 text-center">
+    <div class="modal fade" id="modalDitolak" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 p-4 text-center">
 
-            <i class="bi bi-x-circle-fill text-danger" style="font-size:60px;"></i>
+                <i class="bi bi-x-circle-fill text-danger" style="font-size:60px;"></i>
 
-            <h5 class="fw-bold text-danger mt-2">Pengajuan Ditolak</h5>
+                <h5 class="fw-bold text-danger mt-2">Pengajuan Ditolak</h5>
 
-            <p>Anda tidak bisa melakukan pembayaran karena ditolak.</p>
+                <p>Pembayaran belum dapat dilakukan karena pengajuan sewa ditolak.</p>
 
-            <button class="btn btn-secondary mt-2" data-bs-dismiss="modal">
-                Tutup
-            </button>
+                <button class="btn btn-secondary mt-2" data-bs-dismiss="modal">
+                    Tutup
+                </button>
 
+            </div>
         </div>
     </div>
-</div>
 @endsection

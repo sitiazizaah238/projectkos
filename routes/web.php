@@ -28,7 +28,6 @@ Route::post('/kontak/kirim', function (Illuminate\Http\Request $request) {
 
     // sementara dummy dulu (nanti bisa simpan ke DB / email)
     return back()->with('success', 'Pesan berhasil dikirim!');
-
 })->name('kontak.kirim');
 // GLOBAL DASHBOARD (redirect by role)
 Route::get('/dashboard', function () {
@@ -74,11 +73,23 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/kos', [App\Http\Controllers\Admin\KosController::class, 'index'])
             ->name('admin.kos.index');
 
+        Route::get('/admin/kos/{id}', [App\Http\Controllers\Admin\KosController::class, 'show'])
+            ->name('admin.kos.show');
+
         Route::post('/admin/kos/{id}/approve', [App\Http\Controllers\Admin\KosController::class, 'approve'])
             ->name('admin.kos.approve');
 
         Route::post('/admin/kos/{id}/reject', [App\Http\Controllers\Admin\KosController::class, 'reject'])
             ->name('admin.kos.reject');
+
+        Route::post('/admin/kos/{id}/nonaktif', [App\Http\Controllers\Admin\KosController::class, 'deactivate'])
+            ->name('admin.kos.deactivate');
+
+        Route::post('/admin/kos/{id}/edit-request/approve', [App\Http\Controllers\Admin\KosController::class, 'approveEditRequest'])
+            ->name('admin.kos.edit-request.approve');
+
+        Route::post('/admin/kos/{id}/edit-request/reject', [App\Http\Controllers\Admin\KosController::class, 'rejectEditRequest'])
+            ->name('admin.kos.edit-request.reject');
         // ================= LOG AKTIVITAS =================
         Route::get(
             '/admin/log-aktivitas',
@@ -229,6 +240,10 @@ Route::middleware('auth')->group(function () {
             '/penyewa/pengajuan',
             [App\Http\Controllers\Penyewa\PengajuanController::class, 'store']
         )->name('penyewa.pengajuan.store');
+        Route::post(
+            '/penyewa/pengajuan/{id}/perpanjang',
+            [App\Http\Controllers\Penyewa\PengajuanController::class, 'perpanjang']
+        )->name('penyewa.pengajuan.perpanjang');
         Route::get(
             '/penyewa/pengajuan',
             [App\Http\Controllers\Penyewa\PengajuanController::class, 'index']

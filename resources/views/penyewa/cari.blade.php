@@ -46,7 +46,8 @@
                         <i class="bi bi-bell fs-4"></i>
 
                         @if ($totalNotif > 0)
-                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger" style="top:10px; font-size:10px;">
+                            <span class="position-absolute start-50 translate-middle badge rounded-pill bg-danger"
+                                style="top:10px; font-size:10px;">
                                 {{ $totalNotif }}
                             </span>
                         @endif
@@ -59,8 +60,8 @@
                         {{-- NOTIF PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="{{ route('penyewa.notif.pengajuan', $p->id) }}" class="dropdown-item small py-2">
-                                <strong>Pengajuan Disetujui</strong><br>
-                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
+                                <strong>Pengajuan Sewa Disetujui</strong><br>
+                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
                             </a>
                         @endforeach
 
@@ -69,13 +70,13 @@
                             <a href="{{ route('penyewa.notif.pembayaran', $pb->id) }}" class="dropdown-item small py-2">
                                 <strong>Status Pembayaran</strong><br>
                                 Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status }}
+                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
                             </a>
                         @endforeach
                         {{-- TAMPILKAN JIKA SEMUA NOTIF KOSONG --}}
                         @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
                             <li class="dropdown-item text-muted small">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </li>
                         @endif
 

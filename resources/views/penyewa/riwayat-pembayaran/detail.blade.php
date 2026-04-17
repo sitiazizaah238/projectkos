@@ -62,8 +62,8 @@
                         {{-- PENGAJUAN --}}
                         @foreach ($notifPengajuan as $p)
                             <a href="#" class="dropdown-item small py-2">
-                                <strong>Pengajuan Disetujui</strong><br>
-                                Kos <strong>{{ $p->nama_kos }}</strong> telah disetujui Pemilik
+                                <strong>Pengajuan Sewa Disetujui</strong><br>
+                                Pengajuan sewa untuk kos <strong>{{ $p->nama_kos }}</strong> telah disetujui pemilik.
                             </a>
                         @endforeach
 
@@ -72,13 +72,13 @@
                             <a href="#" class="dropdown-item small py-2">
                                 <strong>Status Pembayaran</strong><br>
                                 Pembayaran kos <strong>{{ $pb->nama_kos }}</strong>
-                                {{ $pb->status }}
+                                {{ $pb->status === 'dikonfirmasi' ? 'telah dikonfirmasi.' : 'ditolak. Silakan periksa alasan penolakan.' }}
                             </a>
                         @endforeach
 
                         @if ($notifPengajuan->isEmpty() && $notifPembayaran->isEmpty())
                             <li class="dropdown-item text-muted small">
-                                Tidak ada notifikasi
+                                Belum ada notifikasi baru
                             </li>
                         @endif
 

@@ -32,7 +32,7 @@ class VerifikasiPembayaranController extends Controller
             ->findOrFail($id);
 
         if ($pembayaran->status !== 'menunggu') {
-            return back()->with('error', 'Pembayaran sudah diproses');
+            return back()->with('error', 'Pembayaran ini sudah diproses sebelumnya.');
         }
 
         // Update status pembayaran
@@ -52,7 +52,7 @@ class VerifikasiPembayaranController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Pembayaran dikonfirmasi & kamar terisi');
+        return back()->with('success', 'Pembayaran berhasil dikonfirmasi dan status kamar telah diperbarui.');
     }
     public function tolak(Request $request, $id)
     {
@@ -74,6 +74,6 @@ class VerifikasiPembayaranController extends Controller
             'status' => $statusPengajuanSebelumTolak === 'aktif' ? 'aktif' : 'disetujui'
         ]);
 
-        return back()->with('success', 'Pembayaran ditolak');
+        return back()->with('success', 'Pembayaran berhasil ditolak sesuai alasan yang diberikan.');
     }
 }

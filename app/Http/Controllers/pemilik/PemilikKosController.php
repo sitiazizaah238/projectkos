@@ -13,22 +13,22 @@ use Illuminate\Support\Facades\Storage;
 class PemilikKosController extends Controller
 {
     // ================= LIST DATA =================
-   public function index(Request $request)
-{
-    $query = Kos::where('user_id', Auth::id());
+    public function index(Request $request)
+    {
+        $query = Kos::where('user_id', Auth::id());
 
-    if ($request->search) {
-        $query->where(function($q) use ($request) {
-            $q->where('nama_kos', 'like', '%' . $request->search . '%')
-              ->orWhere('lokasi', 'like', '%' . $request->search . '%')
-              ->orWhere('tipe_kos', 'like', '%' . $request->search . '%');
-        });
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_kos', 'like', '%' . $request->search . '%')
+                    ->orWhere('lokasi', 'like', '%' . $request->search . '%')
+                    ->orWhere('tipe_kos', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $kos = $query->latest()->get();
+
+        return view('pemilik.kos.index', compact('kos'));
     }
-
-    $kos = $query->latest()->get();
-
-    return view('pemilik.kos.index', compact('kos'));
-}
     // ================= FORM TAMBAH =================
     public function create()
     {
@@ -38,25 +38,25 @@ class PemilikKosController extends Controller
     // ================= SIMPAN =================
     public function store(Request $request)
     {
-   $request->validate([
-    'nama_kos' => 'required',
-    'lokasi' => 'required',
-    'tipe_kos' => 'required',
-    'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048'
-]);
+        $request->validate([
+            'nama_kos' => 'required',
+            'lokasi' => 'required',
+            'tipe_kos' => 'required',
+            'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048'
+        ]);
 
-$fotoPaths = [];
+        $fotoPaths = [];
 
-if ($request->hasFile('foto')) {
+        if ($request->hasFile('foto')) {
 
-    if (count($request->file('foto')) > 3) {
-        return back()->withErrors(['foto' => 'Maksimal 3 foto']);
-    }
+            if (count($request->file('foto')) > 3) {
+                return back()->withErrors(['foto' => 'Maksimal 3 foto']);
+            }
 
-    foreach ($request->file('foto') as $file) {
-        $fotoPaths[] = $file->store('kos', 'public');
-    }
-}
+            foreach ($request->file('foto') as $file) {
+                $fotoPaths[] = $file->store('kos', 'public');
+            }
+        }
 
         $kos = Kos::create([
             'user_id' => auth()->id(),
@@ -97,67 +97,90 @@ if ($request->hasFile('foto')) {
     }
 
 
-public function update(Request $request, $id)
-{
-    $kos = Kos::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $kos = Kos::where('user_id', auth()->id())->findOrFail($id);
 
-    $request->validate([
-        'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048'
-    ]);
+        $request->validate([
+            'nama_kos' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
+            'tipe_kos' => 'required|string|max:255',
+            'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    $data = $request->only([
-        'nama_kos',
-        'lokasi',
-        'tipe_kos',
-        'deskripsi'
-    ]);
+        $data = $request->only([
+            'nama_kos',
+            'lokasi',
+            'tipe_kos',
+            'deskripsi',
+        ]);
 
-    $data['fasilitas'] = $request->fasilitas ?? [];
+        $data['fasilitas'] = $request->fasilitas ?? [];
 
-    // Ambil foto lama
-    $existingPhotos = $kos->foto ?? [];
+        $existingPhotos = $kos->foto ?? [];
 
-    // =========================
-    // HAPUS FOTO YANG DIPILIH
-    // =========================
-    if ($request->deleted_photos) {
-        $deleted = explode(',', $request->deleted_photos);
+        if ($request->deleted_photos) {
+            $deleted = array_filter(explode(',', $request->deleted_photos));
 
-        foreach ($deleted as $photo) {
-            Storage::disk('public')->delete($photo);
+            foreach ($deleted as $photo) {
+                Storage::disk('public')->delete($photo);
+            }
+
+            $existingPhotos = array_values(array_diff($existingPhotos, $deleted));
         }
 
-        $existingPhotos = array_diff($existingPhotos, $deleted);
-        $existingPhotos = array_values($existingPhotos);
-    }
+        if ($request->hasFile('foto')) {
+            foreach ($request->file('foto') as $file) {
+                if (count($existingPhotos) >= 3) {
+                    break;
+                }
 
-    // =========================
-    // TAMBAH FOTO BARU
-    // =========================
-    if ($request->hasFile('foto')) {
-        foreach ($request->file('foto') as $file) {
-
-            if (count($existingPhotos) >= 3) break;
-
-            $existingPhotos[] = $file->store('kos', 'public');
+                $existingPhotos[] = $file->store('kos', 'public');
+            }
         }
+
+        $data['foto'] = $existingPhotos;
+
+        if ($kos->status === 'disetujui') {
+            if ($kos->punyaPengajuanEditAktif()) {
+                return redirect()
+                    ->route('pemilik.kos.index')
+                    ->with('error', 'Masih ada pengajuan perubahan data yang sedang menunggu persetujuan admin.');
+            }
+
+            $kos->update([
+                'edit_request_status' => 'menunggu',
+                'edit_request_data' => $data,
+                'edit_request_alasan' => null,
+                'edit_requested_at' => now(),
+                'is_read' => false,
+            ]);
+
+            LogAktivitas::create([
+                'user_id' => auth()->id(),
+                'kos_id' => $kos->id,
+                'aktivitas' => 'Ajukan Perubahan Data Kos',
+                'keterangan' => $kos->nama_kos,
+            ]);
+
+            return redirect()
+                ->route('pemilik.kos.index')
+                ->with('success', 'Pengajuan perubahan data berhasil dikirim ke admin untuk diverifikasi.');
+        }
+
+        $kos->update($data);
+
+        LogAktivitas::create([
+            'user_id' => auth()->id(),
+            'kos_id' => $kos->id,
+            'aktivitas' => 'Update Data Kos',
+            'keterangan' => $kos->nama_kos,
+        ]);
+
+        return redirect()
+            ->route('pemilik.kos.index')
+            ->with('success', 'Data kos berhasil diperbarui.');
     }
-
-    $data['foto'] = $existingPhotos;
-
-    $kos->update($data);
-
-    LogAktivitas::create([
-        'user_id' => auth()->id(),
-        'kos_id' => $kos->id,
-        'aktivitas' => 'Update Data Kos',
-        'keterangan' => $kos->nama_kos
-    ]);
-
-    return redirect()
-        ->route('pemilik.kos.index')
-        ->with('success','Data kos berhasil diperbarui');
-}
 
     // ================= DELETE =================
     public function destroy($id)

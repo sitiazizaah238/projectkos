@@ -40,6 +40,7 @@
         body {
             background: #f5f7fb;
             font-family: 'Figtree', sans-serif;
+            overflow-x: hidden;
         }
 
         .sidebar {
@@ -83,6 +84,14 @@
             position: sticky;
             top: 0;
             z-index: 900;
+            overflow: visible;
+        }
+
+        .topbar .dropdown-menu {
+            z-index: 1200;
+            max-height: calc(100vh - 88px) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden;
         }
 
         .card-stat {

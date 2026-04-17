@@ -17,6 +17,7 @@ class PengajuanSewa extends Model
         'total_bayar',
         'alasan',
         'is_read',
+        'status_notif',
     ];
 
     protected $casts = [
@@ -54,15 +55,22 @@ class PengajuanSewa extends Model
 
     public function statusSaatIni(): string
     {
-        if ($this->status === 'aktif' && now()->greaterThan($this->tanggalSelesai())) {
-            return 'selesai';
+        if ($this->status !== 'aktif') {
+            return $this->status;
         }
 
-        if ($this->status === 'aktif' && $this->isJatuhTempo()) {
+        if ($this->isJatuhTempo()) {
             return 'jatuh_tempo';
         }
 
-        return $this->status;
+        if (
+            now()->greaterThan($this->tanggalSelesai())
+            && $this->jumlahPembayaranTerkonfirmasi() >= max((int) $this->durasi, 1)
+        ) {
+            return 'selesai';
+        }
+
+        return 'aktif';
     }
 
     public function sudahSelesai(): bool
@@ -97,10 +105,33 @@ class PengajuanSewa extends Model
     public function jumlahPembayaranTerkonfirmasi(): int
     {
         if ($this->relationLoaded('pembayarans')) {
-            return $this->pembayarans->where('status', 'dikonfirmasi')->count();
+            $durasi = $this->pembayarans
+                ->where('status', 'dikonfirmasi')
+                ->pluck('durasi_tagihan')
+                ->map(function ($value) {
+                    return (int) ($value ?: 1);
+                })
+                ->sum();
+
+            return (int) $durasi;
         }
 
-        return $this->pembayarans()->where('status', 'dikonfirmasi')->count();
+        return (int) $this->pembayarans()
+            ->where('status', 'dikonfirmasi')
+            ->sum('durasi_tagihan');
+    }
+
+    public function durasiBelumTerbayar(): int
+    {
+        return max((int) $this->durasi - $this->jumlahPembayaranTerkonfirmasi(), 0);
+    }
+
+    public function nominalTagihanBerjalan(): int
+    {
+        $hargaKamar = (int) optional($this->kamar)->harga;
+        $durasiTagihan = max($this->durasiBelumTerbayar(), 1);
+
+        return $hargaKamar * $durasiTagihan;
     }
 
     public function adaPembayaranMenunggu(): bool
@@ -115,10 +146,6 @@ class PengajuanSewa extends Model
     public function isJatuhTempo(): bool
     {
         if ($this->status !== 'aktif') {
-            return false;
-        }
-
-        if (now()->greaterThan($this->tanggalSelesai())) {
             return false;
         }
 
@@ -150,5 +177,21 @@ class PengajuanSewa extends Model
             });
 
         return $updatedCount;
+    }
+
+    public function sisaHariSewa(): int
+    {
+        return now()->startOfDay()->diffInDays($this->tanggalSelesai()->startOfDay(), false);
+    }
+
+    public function bisaAjukanPerpanjangan(): bool
+    {
+        if (!in_array($this->statusSaatIni(), ['aktif', 'jatuh_tempo'], true)) {
+            return false;
+        }
+
+        $sisaHari = $this->sisaHariSewa();
+
+        return $sisaHari <= 5;
     }
 }

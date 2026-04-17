@@ -25,6 +25,9 @@ class KosController extends Controller
             $q->where('status', 'tersedia');
         }])
             ->where('status', 'disetujui')
+            ->whereHas('user', function ($q) {
+                $q->where('status', 'aktif');
+            })
             ->whereHas('kamars', function ($q) {
                 $q->where('status', 'tersedia');
             })
@@ -55,6 +58,9 @@ class KosController extends Controller
 
         $kos = Kos::with('kamars')
             ->where('status', 'disetujui')
+            ->whereHas('user', function ($q) {
+                $q->where('status', 'aktif');
+            })
             // Filter Search (Nama & Lokasi)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
@@ -171,6 +177,9 @@ class KosController extends Controller
             $query->where('status', 'tersedia');
         }])
             ->where('status', 'disetujui')
+            ->whereHas('user', function ($q) {
+                $q->where('status', 'aktif');
+            })
             ->findOrFail($id);
 
         $pref = UserPreference::firstOrNew(['user_id' => Auth::id()]);
