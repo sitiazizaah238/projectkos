@@ -235,107 +235,108 @@
                     // Menunggu Persetujuan
                     $menunggu = PengajuanSewa::where('user_id', $userId)->where('status', 'menunggu')->count();
 
-                    // Riwayat (selesai)
-                    $riwayat = PengajuanSewa::where('user_id', $userId)->where('status', 'selesai')->count();
+                    $riwayat = \App\Models\Pembayaran::whereHas('pengajuan', function ($q) use ($userId) {
+                        $q->where('user_id', $userId);
+                    })
+                        ->where('status', 'dikonfirmasi')
+                        ->count();
 
                 @endphp
-                {{-- ================= CARD STATISTIK ================= --}}
-                {{-- ================= CARD STATISTIK MODERN ================= --}}
-<style>
-    .stat-card {
-        transition: all 0.3s ease;
-    }
+                <style>
+                    .stat-card {
+                        transition: all 0.3s ease;
+                    }
 
-    .stat-card:hover {
-        transform: translateY(-6px) scale(1.02);
-        filter: brightness(1.05);
-        box-shadow: 0 18px 35px rgba(0,0,0,0.18) !important;
-    }
-</style>
+                    .stat-card:hover {
+                        transform: translateY(-6px) scale(1.02);
+                        filter: brightness(1.05);
+                        box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18) !important;
+                    }
+                </style>
 
-<div class="row mt-4 g-4">
+                <div class="row mt-4 g-4">
 
-    {{-- TOTAL KOS --}}
-    <div class="col-md-3">
-        <a href="{{ route('penyewa.pengajuan.index') }}" class="text-decoration-none">
-            <div class="card stat-card border-0 rounded-4 text-white h-100"
-                style="background: linear-gradient(135deg, #3B82F6, #2563EB);
+                    {{-- TOTAL KOS --}}
+                    <div class="col-md-3">
+                        <a href="{{ route('penyewa.pengajuan.index') }}" class="text-decoration-none">
+                            <div class="card stat-card border-0 rounded-4 text-white h-100"
+                                style="background: linear-gradient(135deg, #3B82F6, #2563EB);
                        box-shadow: 0 10px 25px rgba(59,130,246,0.25);">
-                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="fw-bold mb-1">{{ $totalKos }}</h2>
-                        <small class="fw-medium">Total Kos Disewa</small>
+                                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h2 class="fw-bold mb-1">{{ $totalKos }}</h2>
+                                        <small class="fw-medium">Total Kos Disewa</small>
+                                    </div>
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
+                                        <i class="bi bi-house-fill fs-4 text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center"
-                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
-                        <i class="bi bi-house-fill fs-4 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
 
-    {{-- SEWA AKTIF --}}
-    <div class="col-md-3">
-        <a href="{{ route('penyewa.pengajuan.index') }}" class="text-decoration-none">
-            <div class="card stat-card border-0 rounded-4 text-white h-100"
-                style="background: linear-gradient(135deg, #10B981, #059669);
+                    {{-- SEWA AKTIF --}}
+                    <div class="col-md-3">
+                        <a href="{{ route('penyewa.pengajuan.index') }}" class="text-decoration-none">
+                            <div class="card stat-card border-0 rounded-4 text-white h-100"
+                                style="background: linear-gradient(135deg, #10B981, #059669);
                        box-shadow: 0 10px 25px rgba(16,185,129,0.25);">
-                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="fw-bold mb-1">{{ $sewaAktif }}</h2>
-                        <small class="fw-medium">Sewa Aktif</small>
+                                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h2 class="fw-bold mb-1">{{ $sewaAktif }}</h2>
+                                        <small class="fw-medium">Sewa Aktif</small>
+                                    </div>
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
+                                        <i class="bi bi-check-circle-fill fs-4 text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center"
-                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
-                        <i class="bi bi-check-circle-fill fs-4 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
 
-    {{-- MENUNGGU --}}
-    <div class="col-md-3">
-        <a href="{{ route('penyewa.pengajuan.index') }}" class="text-decoration-none">
-            <div class="card stat-card border-0 rounded-4 text-white h-100"
-                style="background: linear-gradient(135deg, #F59E0B, #D97706);
+                    {{-- MENUNGGU --}}
+                    <div class="col-md-3">
+                        <a href="{{ route('penyewa.pengajuan.index') }}" class="text-decoration-none">
+                            <div class="card stat-card border-0 rounded-4 text-white h-100"
+                                style="background: linear-gradient(135deg, #F59E0B, #D97706);
                        box-shadow: 0 10px 25px rgba(245,158,11,0.25);">
-                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="fw-bold mb-1">{{ $menunggu }}</h2>
-                        <small class="fw-medium">Menunggu Persetujuan</small>
+                                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h2 class="fw-bold mb-1">{{ $menunggu }}</h2>
+                                        <small class="fw-medium">Menunggu Persetujuan</small>
+                                    </div>
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
+                                        <i class="bi bi-hourglass-split fs-4 text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center"
-                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
-                        <i class="bi bi-hourglass-split fs-4 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
 
-    {{-- RIWAYAT --}}
-    <div class="col-md-3">
-        <a href="{{ route('penyewa.pembayaran.index') }}" class="text-decoration-none">
-            <div class="card stat-card border-0 rounded-4 text-white h-100"
-                style="background: linear-gradient(135deg, #EF4444, #DC2626);
+                    {{-- RIWAYAT --}}
+                    <div class="col-md-3">
+                        <a href="{{ route('penyewa.riwayat.pembayaran') }}" class="text-decoration-none">
+                            <div class="card stat-card border-0 rounded-4 text-white h-100"
+                                style="background: linear-gradient(135deg, #EF4444, #DC2626);
                        box-shadow: 0 10px 25px rgba(239,68,68,0.25);">
-                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="fw-bold mb-1">{{ $riwayat }}</h2>
-                        <small class="fw-medium">Riwayat Sewa</small>
+                                <div class="card-body px-4 py-4 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h2 class="fw-bold mb-1">{{ $riwayat }}</h2>
+                                        <small class="fw-medium">Riwayat Pembayaran</small>
+                                    </div>
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
+                                        <i class="bi bi-clock-history fs-4 text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center"
-                        style="width:60px;height:60px;background:rgba(255,255,255,0.18);">
-                        <i class="bi bi-clock-history fs-4 text-white"></i>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
 
-</div>
+                </div>
 
                 {{-- ================= KOS SAAT INI + STATUS ================= --}}
                 <div class="row mt-4 g-3 align-items-stretch">
