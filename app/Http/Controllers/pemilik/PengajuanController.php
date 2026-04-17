@@ -9,14 +9,34 @@ use Illuminate\Http\Request;
 
 class PengajuanController extends Controller
 {
-    public function index()
-    {
-        $pengajuan = PengajuanSewa::whereHas('kos', function ($q) {
-            $q->where('user_id', Auth::id());
-        })->with('penyewa', 'kos', 'kamar', 'pembayarans')->get();
+  public function index(Request $request)
+{
+    $search = $request->search;
 
-        return view('pemilik.pengajuan.index', compact('pengajuan'));
-    }
+    $pengajuan = PengajuanSewa::whereHas('kos', function ($q) {
+        $q->where('user_id', Auth::id());
+    })
+    ->when($search, function ($q) use ($search) {
+        $q->where(function ($sub) use ($search) {
+
+            $sub->whereHas('penyewa', function ($p) use ($search) {
+                    $p->where('name', 'like', "%$search%");
+                })
+                ->orWhereHas('kos', function ($k) use ($search) {
+                    $k->where('nama_kos', 'like', "%$search%");
+                })
+                ->orWhereHas('kamar', function ($km) use ($search) {
+                    $km->where('nama_kamar', 'like', "%$search%");
+                });
+
+        });
+    })
+    ->with('penyewa', 'kos', 'kamar', 'pembayarans')
+    ->latest()
+    ->paginate(10);
+
+    return view('pemilik.pengajuan.index', compact('pengajuan'));
+}
     public function show($id)
     {
         $pengajuan = PengajuanSewa::with('penyewa', 'kos', 'kamar', 'pembayarans')

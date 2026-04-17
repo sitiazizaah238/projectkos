@@ -126,13 +126,28 @@
                 <small class="text-muted d-block mb-4">
                     Data Pengajuan / Data Sewa
                 </small>
+
                 <div class="card shadow-sm rounded-4">
 
-                    <div class="card-header bg-dark text-white d-flex align-items-center">
-                        <i class="bi bi-receipt me-2"></i>
-                        <span class="fw-semibold">Data Penyewa</span>
-                    </div>
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
 
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-receipt me-2"></i>
+                            <span class="fw-semibold">Data Penyewa</span>
+                        </div>
+
+                        <form method="GET">
+                            <div class="input-group" style="width:250px;">
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                    placeholder="Cari penyewa / kos / kamar...">
+
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
                             <thead class="table-light">
@@ -149,7 +164,7 @@
                             </thead>
 
                             <tbody>
-                                @foreach ($pengajuan as $p)
+                                @forelse ($pengajuan as $p)
                                     @php
                                         $statusSaatIni = $p->statusSaatIni();
                                     @endphp
@@ -193,20 +208,28 @@
                                             </a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4 text-muted">
+                                            @if (request('search'))
+                                                Data tidak ditemukan
+                                            @else
+                                                Belum ada pengajuan kos
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
 
                         </table>
+                        @if ($pengajuan->hasPages())
+                            <div class="p-3 d-flex justify-content-end">
+                                {{ $pengajuan->appends(request()->query())->links() }}
+                            </div>
+                        @endif
                     </div>
 
-                    @if ($pengajuan->isEmpty())
-                        <div class="text-center py-4">
-                            <i class="bi bi-inbox fs-3 d-block mb-2 text-secondary"></i>
-                            <span class="text-muted fw-semibold">
-                                Belum ada pengajuan kos
-                            </span>
-                        </div>
-                    @endif
+                  
                 </div>
 
             </div>
