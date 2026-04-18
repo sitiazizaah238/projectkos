@@ -86,6 +86,20 @@ class KosController extends Controller
         return back()->with('success', 'Kos berhasil dinonaktifkan. Notifikasi telah dikirim ke pemilik.');
     }
 
+    public function activate($id)
+    {
+        $kos = Kos::findOrFail($id);
+
+        $kos->update([
+            'status' => 'disetujui',
+            'alasan' => null,
+            'tanggal_verifikasi' => now(),
+            'is_read' => false,
+        ]);
+
+        return back()->with('success', 'Kos berhasil diaktifkan kembali.');
+    }
+
     public function approveEditRequest($id)
     {
         $kos = Kos::findOrFail($id);

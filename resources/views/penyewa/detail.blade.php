@@ -370,11 +370,7 @@
                                                     <div class="mb-3">
                                                         <label class="fw-semibold">Tanggal Mulai</label>
                                                         <input type="date" name="tanggal_mulai" class="form-control"
-                                                            required>
-                                                        <small class="text-muted d-block mt-1">
-                                                            Testing mode: batas tanggal mulai sementara dinonaktifkan. TODO:
-                                                            aktifkan kembali sebelum produksi.
-                                                        </small>
+                                                            min="{{ now()->toDateString() }}" required>
                                                     </div>
                                                     <div class="mb-4">
                                                         <label class="fw-semibold">Durasi Sewa</label>

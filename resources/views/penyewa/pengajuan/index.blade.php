@@ -126,7 +126,6 @@
                                     <th>Tanggal Mulai</th>
                                     <th>Tanggal Selesai</th>
                                     <th>Durasi Sewa</th>
-                                    <th>Jenis Pengajuan</th>
                                     <th>Status Pengajuan</th>
                                     <th>Status Kamar</th>
                                     <th>Alasan</th>
@@ -162,14 +161,6 @@
                                             </td>
 
                                             <td>{{ $item->durasi }} Bulan</td>
-
-                                            <td>
-                                                @if (($item->jenis_pengajuan ?? 'sewa_baru') === 'perpanjang')
-                                                    <span class="badge bg-info text-dark">Perpanjang</span>
-                                                @else
-                                                    <span class="badge bg-primary">Sewa Baru</span>
-                                                @endif
-                                            </td>
 
                                             {{-- STATUS --}}
                                             <td>
@@ -214,56 +205,47 @@
                                             </td>
 
                                             {{-- AKSI --}}
-                                            {{-- AKSI --}}
                                             <td>
                                                 @php
                                                     $pembayaranMenunggu = DB::table('pembayarans')
                                                         ->where('pengajuan_sewa_id', $item->id)
                                                         ->where('status', 'menunggu')
                                                         ->exists();
-
-                                                    $labelAksi = 'Lihat Status';
-                                                    $modalTarget = '#modalSewaAktif';
-                                                    $isDisabled = false;
-
-                                                    if ($statusSaatIni == 'menunggu') {
-                                                        $labelAksi = 'Lihat Status';
-                                                        $modalTarget = '#modalMenungguPengajuan';
-                                                    } elseif ($statusSaatIni == 'ditolak') {
-                                                        $labelAksi = 'Lihat Status';
-                                                        $modalTarget = '#modalDitolak';
-                                                    } elseif ($statusSaatIni == 'disetujui') {
-                                                        $labelAksi = $pembayaranMenunggu ? 'Cek Status' : 'Bayar Sekarang';
-                                                        $modalTarget = $pembayaranMenunggu ? '#modalSudahBayar' : "#modalBayar{$item->id}";
-                                                    } elseif ($statusSaatIni == 'aktif') {
-                                                        if ($item->bisaAjukanPerpanjangan()) {
-                                                            $labelAksi = 'Perpanjang Sewa';
-                                                            $modalTarget = "#modalPerpanjang{$item->id}";
-                                                        } else {
-                                                            $labelAksi = 'Lihat Status';
-                                                            $modalTarget = '#modalSewaAktif';
-                                                        }
-                                                    } elseif ($statusSaatIni == 'jatuh_tempo') {
-                                                        $labelAksi = $pembayaranMenunggu ? 'Cek Status' : 'Bayar Sekarang';
-                                                        $modalTarget = $pembayaranMenunggu ? '#modalSudahBayar' : "#modalBayar{$item->id}";
-                                                    } elseif ($statusSaatIni == 'selesai') {
-                                                        if (! $kamarSedangTerisi) {
-                                                            $labelAksi = 'Perpanjang Sewa';
-                                                            $modalTarget = "#modalPerpanjang{$item->id}";
-                                                        } else {
-                                                            $labelAksi = 'Selesai';
-                                                            $modalTarget = '#';
-                                                            $isDisabled = true;
-                                                        }
-                                                    }
                                                 @endphp
 
-                                                <div class="d-grid gap-1">
-                                                    <button class="btn btn-sm btn-primary" {{ $isDisabled ? 'disabled' : '' }}
-                                                        @if (!$isDisabled) data-bs-toggle="modal" data-bs-target="{{ $modalTarget }}" @endif>
-                                                        {{ $labelAksi }}
+                                                @if ($statusSaatIni === 'ditolak')
+                                                    <form action="{{ route('penyewa.pengajuan.ajukan-ulang', $item->id) }}"
+                                                        method="POST" class="m-0 form-ajukan-ulang">
+                                                        @csrf
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-warning btn-ajukan-ulang">
+                                                            Ajukan Ulang
+                                                        </button>
+                                                    </form>
+                                                @elseif(in_array($statusSaatIni, ['disetujui', 'jatuh_tempo'], true))
+                                                    @if ($pembayaranMenunggu)
+                                                        <button class="btn btn-sm btn-secondary" disabled>
+                                                            -
+                                                        </button>
+                                                    @else
+                                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                            data-bs-target="#modalBayar{{ $item->id }}">
+                                                            Bayar Sekarang
+                                                        </button>
+                                                    @endif
+                                                @elseif($statusSaatIni === 'aktif' && $item->bisaAjukanPerpanjangan())
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#modalPerpanjang{{ $item->id }}">
+                                                        Perpanjang
                                                     </button>
-                                                </div>
+                                                @elseif($statusSaatIni === 'selesai' && !$kamarSedangTerisi)
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#modalPerpanjang{{ $item->id }}">
+                                                        Perpanjang
+                                                    </button>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
                                             </td>
 
                                         </tr>
@@ -446,6 +428,25 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.btn-ajukan-ulang').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const form = this.closest('form');
+
+                    Swal.fire({
+                        title: 'Ajukan ulang pengajuan?',
+                        text: 'Data pengajuan sebelumnya akan dibuat ulang dengan status menunggu.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, ajukan ulang',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
             const alasanModal = document.getElementById('modalAlasanPenolakan');
             if (!alasanModal) return;
             let lastTrigger = null;
@@ -594,7 +595,8 @@
 
                 <h5 class="fw-bold text-primary mt-2">Sewa Masih Aktif</h5>
 
-                <p class="mb-0">Belum ada tagihan yang perlu dibayar saat ini. Anda dapat mengajukan perpanjangan saat masa sewa mendekati habis.</p>
+                <p class="mb-0">Belum ada tagihan yang perlu dibayar saat ini. Anda dapat mengajukan perpanjangan saat
+                    masa sewa mendekati habis.</p>
 
                 <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">
                     Tutup

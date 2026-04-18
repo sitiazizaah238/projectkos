@@ -9,9 +9,35 @@ use App\Models\Pembayaran;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanKeuanganExport;
+use Carbon\Carbon;
 
 class LaporanKeuanganController extends Controller
 {
+    private function formatPeriode(Request $request): array
+    {
+        $dari = $request->filled('dari') ? Carbon::parse($request->dari) : null;
+        $sampai = $request->filled('sampai') ? Carbon::parse($request->sampai) : null;
+
+        if ($dari && $sampai) {
+            $label = $dari->translatedFormat('d M Y') . ' - ' . $sampai->translatedFormat('d M Y');
+            $slug = $dari->format('Ymd') . '-' . $sampai->format('Ymd');
+        } elseif ($dari) {
+            $label = 'Sejak ' . $dari->translatedFormat('d M Y');
+            $slug = $dari->format('Ymd') . '-sekarang';
+        } elseif ($sampai) {
+            $label = 'Sampai ' . $sampai->translatedFormat('d M Y');
+            $slug = 'awal-' . $sampai->format('Ymd');
+        } else {
+            $label = 'Semua Periode';
+            $slug = 'semua-periode';
+        }
+
+        return [
+            'label' => $label,
+            'slug' => $slug,
+        ];
+    }
+
     /**
      * Query dasar + filter
      */
@@ -81,6 +107,9 @@ class LaporanKeuanganController extends Controller
     public function print(Request $request)
     {
         $laporan = $this->getQuery($request)->get();
+        $periode = $this->formatPeriode($request);
+        $tanggalCetak = now()->translatedFormat('d M Y H:i');
+        $fileTanggal = now()->format('Ymd_His');
 
         $totalKeseluruhan = $laporan->sum(function ($item) {
             return $item->nominal_tagihan ?? 0;
@@ -88,11 +117,13 @@ class LaporanKeuanganController extends Controller
 
         $pdf = Pdf::loadView(
             'pemilik.laporan.pdf',
-            compact('laporan', 'totalKeseluruhan')
+            compact('laporan', 'totalKeseluruhan', 'tanggalCetak', 'periode')
         )
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download('laporan-keuangan.pdf');
+        $filename = 'laporan-keuangan_' . $periode['slug'] . '_cetak-' . $fileTanggal . '.pdf';
+
+        return $pdf->download($filename);
     }
 
     /**
@@ -101,10 +132,15 @@ class LaporanKeuanganController extends Controller
     public function excel(Request $request)
     {
         $laporan = $this->getQuery($request)->get();
+        $periode = $this->formatPeriode($request);
+        $tanggalCetak = now()->translatedFormat('d M Y H:i');
+        $fileTanggal = now()->format('Ymd_His');
+
+        $filename = 'laporan-keuangan_' . $periode['slug'] . '_cetak-' . $fileTanggal . '.xlsx';
 
         return Excel::download(
-            new LaporanKeuanganExport($laporan),
-            'laporan-keuangan.xlsx'
+            new LaporanKeuanganExport($laporan, $periode['label'], $tanggalCetak),
+            $filename
         );
     }
 }

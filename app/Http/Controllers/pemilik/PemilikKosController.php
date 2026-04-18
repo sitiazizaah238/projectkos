@@ -168,6 +168,13 @@ class PemilikKosController extends Controller
                 ->with('success', 'Pengajuan perubahan data berhasil dikirim ke admin untuk diverifikasi.');
         }
 
+        if ($kos->status === 'ditolak') {
+            $data['status'] = 'menunggu';
+            $data['alasan'] = null;
+            $data['tanggal_verifikasi'] = null;
+            $data['is_read'] = false;
+        }
+
         $kos->update($data);
 
         LogAktivitas::create([
