@@ -30,15 +30,15 @@
                 </div>
             </div>
 
-            <div class="p-3">
+            <div class="p-4">
                 <div class="mb-3">
-                    <h3 class="fw-bold" style="font-size: 30px;">Verifikasi Kos</h3>
+                    <h3 class="fw-bold" style="font-size: 30px;">Verifikasi Data Kos</h3>
                     <small class="text-muted">
                         Manajemen Kos / <span class="text-dark">Data Kos</span>
                     </small>
                 </div>
 
-                <div class="card shadow-sm">
+                <div class="card shadow-sm ms-1">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-house-fill fs-5 me-2"></i>
@@ -51,7 +51,7 @@
                                     <i class="bi bi-search"></i>
                                 </span>
                                 <input type="text" name="search" class="form-control"
-                                    placeholder="Cari nama kos/pemilik..." value="{{ request('search') }}">
+                                    placeholder="Cari nama kos/Lokasi..." value="{{ request('search') }}">
                             </div>
                         </form>
                     </div>
@@ -62,9 +62,9 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th width="50">No</th>
-                                        <th>Pemilik</th>
+
                                         <th>Nama Kos</th>
-                                        <th>Lokasi</th>
+                                        <th>Lokasi Kos</th>
                                         <th>Status Kos</th>
                                         <th>Pengajuan Perubahan kos</th>
                                         <th>Tanggal Verifikasi</th>
@@ -75,8 +75,8 @@
                                 <tbody>
                                     @forelse($kos as $k)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $k->user->name }}</td>
+                                            <td>{{ ($kos->currentPage() - 1) * $kos->perPage() + $loop->iteration }}</td>
+
                                             <td>{{ $k->nama_kos }}</td>
                                             <td>{{ $k->lokasi }}</td>
 
@@ -105,7 +105,7 @@
                                             </td>
 
                                             <td>
-                                                {{ $k->tanggal_verifikasi ? $k->tanggal_verifikasi->format('d-m-Y H:i') : '-' }}
+                                                {{ $k->tanggal_verifikasi ? $k->tanggal_verifikasi->format('d-m-Y') : '-' }}
                                             </td>
 
                                             <td>
@@ -119,7 +119,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center py-4">
+                                            <td colspan="7" class="text-center py-4">
                                                 @if (request('search'))
                                                     <div class="text-muted">
                                                         Data tidak ditemukan untuk
@@ -135,6 +135,9 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                            <div class="p-3 d-flex justify-content-end">
+                                {{ $kos->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>

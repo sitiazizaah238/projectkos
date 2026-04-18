@@ -24,7 +24,7 @@ class KosController extends Controller
                 });
             })
             ->latest()
-            ->get();
+            ->paginate(5);
 
         return view('admin.kos.index', compact('kos'));
     }

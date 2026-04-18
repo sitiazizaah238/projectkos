@@ -57,7 +57,7 @@
                 <a href="{{ route('admin.kos.index') }}"
                     class="nav-link d-flex align-items-center
                 {{ request()->routeIs('admin.kos.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                    <i class="bi bi-house me-2"></i> Data Kos
+                    <i class="bi bi-house me-2"></i> Verifikasi Kos
                 </a>
             </li>
 
