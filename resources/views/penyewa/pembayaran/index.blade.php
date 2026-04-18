@@ -98,7 +98,9 @@
                             <tbody>
                                 @forelse ($pembayaran as $item)
                                     @php
-                                        $statusPengajuan = $item->pengajuan->statusSaatIni();
+                                        $statusPengajuanAsli = $item->pengajuan->statusSaatIni();
+                                        $statusPengajuan =
+                                            $statusPengajuanAsli === 'jatuh_tempo' ? 'aktif' : $statusPengajuanAsli;
                                         $kamarSedangTerisi = isset($kamarTerisiMap[$item->pengajuan->kamar_id]);
                                     @endphp
                                     <tr>
