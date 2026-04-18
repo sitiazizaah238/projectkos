@@ -82,10 +82,29 @@
                 <small class="text-muted d-block mb-4">
                     Pengajuan Kos/ Data Pengajuan
                 </small>
+                @php
+                    $selectedPerPage = (int) request('per_page', 10);
+                    if (!in_array($selectedPerPage, [5, 10], true)) {
+                        $selectedPerPage = 10;
+                    }
+                @endphp
                 {{-- SEARCH --}}
-                <div class="d-flex justify-content-end mb-3 mt-2">
+                <div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+                    <form method="GET" class="d-flex align-items-center gap-2">
+                        @if (request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        <label for="per_page_pengajuan" class="small text-muted mb-0">Tampilkan</label>
+                        <select id="per_page_pengajuan" name="per_page" class="form-select form-select-sm"
+                            onchange="this.form.submit()" style="width:90px;">
+                            <option value="5" {{ $selectedPerPage === 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $selectedPerPage === 10 ? 'selected' : '' }}>10</option>
+                        </select>
+                    </form>
+
                     <form method="GET">
                         <div class="input-group" style="width:300px;">
+                            <input type="hidden" name="per_page" value="{{ $selectedPerPage }}">
                             <input type="text" name="search" value="{{ request('search') }}"
                                 class="form-control rounded-start-pill" placeholder="Cari nama kos / kamar...">
 
@@ -142,7 +161,7 @@
                                             $kamarSedangTerisi = isset($kamarTerisiMap[$item->kamar_id]);
                                         @endphp
                                         <tr class="text-center align-middle">
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $pengajuan->firstItem() + $loop->index }}</td>
 
                                             <td>{{ $item->kos->nama_kos ?? '-' }}</td>
 
@@ -213,26 +232,11 @@
                                                         ->exists();
                                                 @endphp
 
-                                                @if ($statusSaatIni === 'ditolak')
-                                                    <form action="{{ route('penyewa.pengajuan.ajukan-ulang', $item->id) }}"
-                                                        method="POST" class="m-0 form-ajukan-ulang">
-                                                        @csrf
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-warning btn-ajukan-ulang">
-                                                            Ajukan Ulang
-                                                        </button>
-                                                    </form>
-                                                @elseif(in_array($statusSaatIni, ['disetujui', 'jatuh_tempo'], true))
-                                                    @if ($pembayaranMenunggu)
-                                                        <button class="btn btn-sm btn-secondary" disabled>
-                                                            -
-                                                        </button>
-                                                    @else
-                                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                            data-bs-target="#modalBayar{{ $item->id }}">
-                                                            Bayar Sekarang
-                                                        </button>
-                                                    @endif
+                                                @if ($statusSaatIni === 'jatuh_tempo')
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#modalPerpanjang{{ $item->id }}">
+                                                        Perpanjang
+                                                    </button>
                                                 @elseif($statusSaatIni === 'aktif' && $item->bisaAjukanPerpanjangan())
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalPerpanjang{{ $item->id }}">
@@ -243,8 +247,30 @@
                                                         data-bs-target="#modalPerpanjang{{ $item->id }}">
                                                         Perpanjang
                                                     </button>
+                                                @elseif($statusSaatIni === 'disetujui')
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="{{ $pembayaranMenunggu ? '#modalSudahBayar' : '#modalBayar' . $item->id }}">
+                                                        Bayar Sekarang
+                                                    </button>
+                                                @elseif(in_array($statusSaatIni, ['aktif', 'menunggu', 'ditolak'], true))
+                                                    @php
+                                                        $targetModal = match ($statusSaatIni) {
+                                                            'menunggu' => '#modalMenungguPengajuan',
+                                                            'ditolak' => '#modalDitolak',
+                                                            'aktif' => '#modalSudahBayar',
+                                                            default => '#modalSudahBayar',
+                                                        };
+                                                    @endphp
+
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="{{ $targetModal }}">
+                                                        Bayar Sekarang
+                                                    </button>
                                                 @else
-                                                    <span class="text-muted">-</span>
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#modalSudahBayar">
+                                                        Bayar Sekarang
+                                                    </button>
                                                 @endif
                                             </td>
 
@@ -267,6 +293,10 @@
 
                         </table>
                     </div>
+                </div>
+
+                <div class="mt-3 d-flex justify-content-end">
+                    {{ $pengajuan->links() }}
                 </div>
 
             </div>
@@ -428,25 +458,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.btn-ajukan-ulang').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const form = this.closest('form');
-
-                    Swal.fire({
-                        title: 'Ajukan ulang pengajuan?',
-                        text: 'Data pengajuan sebelumnya akan dibuat ulang dengan status menunggu.',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, ajukan ulang',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-
             const alasanModal = document.getElementById('modalAlasanPenolakan');
             if (!alasanModal) return;
             let lastTrigger = null;

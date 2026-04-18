@@ -40,6 +40,24 @@
                     Verivikasi Kos / Data Pembayaran Kos
                 </small>
 
+                @php
+                    $selectedPerPage = (int) request('per_page', 10);
+                    if (!in_array($selectedPerPage, [5, 10], true)) {
+                        $selectedPerPage = 10;
+                    }
+                @endphp
+
+                <div class="d-flex justify-content-start mb-3 mt-2">
+                    <form method="GET" class="d-flex align-items-center gap-2">
+                        <label for="per_page_pembayaran" class="small text-muted mb-0">Tampilkan</label>
+                        <select id="per_page_pembayaran" name="per_page" class="form-select form-select-sm"
+                            onchange="this.form.submit()" style="width:90px;">
+                            <option value="5" {{ $selectedPerPage === 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $selectedPerPage === 10 ? 'selected' : '' }}>10</option>
+                        </select>
+                    </form>
+                </div>
+
                 <div class="card shadow-sm rounded-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between">
                         <span>
@@ -48,10 +66,7 @@
                     </div>
 
                     @php
-                        $kamarIdsPembayaran = $pembayaran
-                            ->pluck('pengajuan.kamar_id')
-                            ->filter()
-                            ->unique();
+                        $kamarIdsPembayaran = $pembayaran->pluck('pengajuan.kamar_id')->filter()->unique();
 
                         $kamarTerisiMap = collect();
 
@@ -87,7 +102,7 @@
                                         $kamarSedangTerisi = isset($kamarTerisiMap[$item->pengajuan->kamar_id]);
                                     @endphp
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $pembayaran->firstItem() + $loop->index }}</td>
                                         <td>{{ $item->pengajuan->kos->nama_kos }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
                                         <td>Rp {{ number_format($item->nominal_tagihan ?? 0, 0, ',', '.') }}</td>
@@ -206,6 +221,10 @@
                         </table>
                     </div>
 
+                </div>
+
+                <div class="mt-3 d-flex justify-content-end">
+                    {{ $pembayaran->links() }}
                 </div>
             </div>
         </div>

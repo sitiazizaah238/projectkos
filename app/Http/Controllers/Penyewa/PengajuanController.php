@@ -12,6 +12,11 @@ class PengajuanController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [5, 10], true)) {
+            $perPage = 10;
+        }
+
         // ================= QUERY DASAR =================
         $query = PengajuanSewa::with([
             'kos.user.metodePembayaran',
@@ -36,7 +41,7 @@ class PengajuanController extends Controller
 
         // ================= PAGINATION =================
         $pengajuan = $query->latest()
-            ->paginate(10)
+            ->paginate($perPage)
             ->withQueryString();
 
         return view('penyewa.pengajuan.index', compact('pengajuan'));
@@ -110,11 +115,11 @@ class PengajuanController extends Controller
             'durasi' => (int) $pengajuan->durasi + $durasiTambahan,
             'jenis_pengajuan' => 'perpanjang',
             'total_bayar' => (int) $pengajuan->total_bayar + ($hargaKamar * $durasiTambahan),
-            'status' => 'jatuh_tempo',
+            'status' => 'disetujui',
         ]);
 
         return redirect()
-            ->route('penyewa.pengajuan.index')
+            ->route('penyewa.pengajuan.index', ['focus_bayar' => $pengajuan->id])
             ->with('success', 'Perpanjangan sewa berhasil diajukan. Silakan klik Bayar Sekarang untuk melanjutkan pembayaran.');
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Penyewa;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pembayaran;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatPembayaranController extends Controller
 {
@@ -13,16 +14,20 @@ class RiwayatPembayaranController extends Controller
     // ======================
     public function index(Request $request)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [5, 10], true)) {
+            $perPage = 10;
+        }
 
         $query = Pembayaran::with([
             'pengajuan.kos',
             'pengajuan.kamar',
             'pengajuan.penyewa' // ✅ TAMBAH INI (biar aman)
         ])
-        ->whereHas('pengajuan', function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        });
+            ->whereHas('pengajuan', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            });
 
         // 🔍 SEARCH
         if ($request->search) {
@@ -35,7 +40,7 @@ class RiwayatPembayaranController extends Controller
         $query->whereIn('status', ['dikonfirmasi', 'menunggu', 'ditolak']);
 
         // 📄 PAGINATION
-        $riwayat = $query->latest()->paginate(5);
+        $riwayat = $query->latest()->paginate($perPage)->withQueryString();
 
         // 💰 TOTAL (AMAN, TIDAK ERROR)
         $total = (clone $query)->get()->sum(function ($item) {
