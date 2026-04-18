@@ -37,9 +37,29 @@
                 </div>
 
                 {{-- SEARCH --}}
-                <div class="d-flex justify-content-end mb-3 mt-2">
+                @php
+                    $selectedPerPage = (int) request('per_page', 10);
+                    if (!in_array($selectedPerPage, [5, 10], true)) {
+                        $selectedPerPage = 10;
+                    }
+                @endphp
+
+                <div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+                    <form method="GET" class="d-flex align-items-center gap-2">
+                        @if (request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        <label for="per_page_riwayat" class="small text-muted mb-0">Tampilkan</label>
+                        <select id="per_page_riwayat" name="per_page" class="form-select form-select-sm"
+                            onchange="this.form.submit()" style="width:90px;">
+                            <option value="5" {{ $selectedPerPage === 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $selectedPerPage === 10 ? 'selected' : '' }}>10</option>
+                        </select>
+                    </form>
+
                     <form method="GET">
                         <div class="input-group" style="width:300px;">
+                            <input type="hidden" name="per_page" value="{{ $selectedPerPage }}">
 
                             <input type="text" name="search" value="{{ request('search') }}"
                                 class="form-control rounded-start-pill" placeholder="Cari nama kos...">
@@ -53,17 +73,6 @@
                 </div>
 
                 <div class="card shadow-sm">
-                    @php
-                        $riwayatCollection = is_iterable($riwayat ?? null) ? $riwayat : collect();
-                        $riwayatObj = is_object($riwayat ?? null) ? $riwayat : null;
-                        $riwayatPage = is_callable([$riwayatObj, 'currentPage']) ? call_user_func([$riwayatObj, 'currentPage']) : 1;
-                        $riwayatPerPage = is_callable([$riwayatObj, 'perPage']) ? call_user_func([$riwayatObj, 'perPage']) : count($riwayatCollection);
-                        $riwayatHasPages = is_callable([$riwayatObj, 'hasPages']) ? call_user_func([$riwayatObj, 'hasPages']) : false;
-                        $riwayatLinks = is_callable([$riwayatObj, 'appends'])
-                            ? call_user_func([call_user_func([$riwayatObj, 'appends'], request()->query()), 'links'])
-                            : null;
-                    @endphp
-
                     {{-- HEADER --}}
                     <div class="card-header bg-dark text-white">
                         <div class="d-flex align-items-center">
@@ -93,7 +102,7 @@
                             </thead>
 
                             <tbody>
-                                @forelse($riwayatCollection as $item)
+                                @forelse($riwayat as $item)
                                     @php
                                         $kos = $item->pengajuan->kos ?? null;
                                         $kamar = $item->pengajuan->kamar ?? null;
@@ -109,7 +118,7 @@
 
                                     <tr>
                                         <td>
-                                            {{ ($riwayatPage - 1) * $riwayatPerPage + $loop->iteration }}
+                                            {{ $riwayat->firstItem() + $loop->index }}
                                         </td>
 
                                         <td>{{ $kos->nama_kos ?? '-' }}</td>
@@ -162,7 +171,7 @@
 
                                 @empty
                                     <tr>
-                                       <td colspan="8" class="text-center py-4 text-muted">
+                                        <td colspan="8" class="text-center py-4 text-muted">
                                             @if (request('search'))
                                                 Data tidak ditemukan
                                             @else
@@ -176,9 +185,9 @@
                         </table>
 
                         {{-- PAGINATION --}}
-                        @if ($riwayatHasPages)
+                        @if ($riwayat->hasPages())
                             <div class="p-3 d-flex justify-content-end">
-                                {!! $riwayatLinks !!}
+                                {{ $riwayat->links() }}
                             </div>
                         @endif
 

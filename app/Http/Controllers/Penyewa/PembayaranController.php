@@ -10,13 +10,19 @@ use Illuminate\Support\Facades\Auth;
 
 class PembayaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [5, 10], true)) {
+            $perPage = 10;
+        }
+
         $pembayaran = Pembayaran::whereHas('pengajuan', function ($q) {
             $q->where('user_id', Auth::id());
         })->with('pengajuan.kos', 'pengajuan.kamar', 'pengajuan.pembayarans')
             ->latest()
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
 
         return view('penyewa.pembayaran.index', compact('pembayaran'));
     }

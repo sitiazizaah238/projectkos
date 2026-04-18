@@ -64,6 +64,11 @@ class PengajuanSewa extends Model
             return $this->status;
         }
 
+        // H-5 sampai hari selesai sewa ditandai sebagai jatuh tempo agar notifikasi dan alur bayar aktif.
+        if ($this->sisaHariSewa() <= 5 && $this->sisaHariSewa() >= 0) {
+            return 'jatuh_tempo';
+        }
+
         if ($this->isJatuhTempo()) {
             return 'jatuh_tempo';
         }
