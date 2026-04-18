@@ -132,97 +132,105 @@
                         @endif
 
                         {{-- MAP --}}
-                        <div class="card shadow rounded-4">
+                        <div class="card shadow rounded-4 mt-3 border-0">
                             <div class="card-body p-0">
+
+                                {{-- HEADER BIAR LEBIH KESEPARATE --}}
+                                <div class="px-3 py-2 border-bottom bg-light rounded-top-4">
+                                    <small class="text-muted fw-semibold">
+                                        <i class="bi bi-geo-alt"></i> Lokasi Kos
+                                    </small>
+                                </div>
+
                                 <iframe src="https://www.google.com/maps?q={{ urlencode($kos->lokasi) }}&output=embed"
-                                    width="100%" height="200" style="border:0;" allowfullscreen loading="lazy">
+                                    width="100%" height="220" style="border:0;" class="rounded-bottom-4" allowfullscreen
+                                    loading="lazy">
                                 </iframe>
+
                             </div>
                         </div>
-
                     </div>
+                        {{-- KANAN --}}
+                        <div class="col-md-5">
 
-                    {{-- KANAN --}}
-                    <div class="col-md-5">
+                            {{-- INFORMASI --}}
+                            <div class="card shadow rounded-4 mb-3"
+                                style="background:linear-gradient(135deg,#f8f9fa,#ffffff);">
+                                <div class="card-body p-4">
 
-                        {{-- INFORMASI --}}
-                        <div class="card shadow rounded-4 mb-3" style="background:linear-gradient(135deg,#f8f9fa,#ffffff);">
-                            <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-4">
+                                        <i class="bi bi-info-circle"></i> Informasi Kos
+                                    </h5>
 
-                                <h5 class="fw-bold mb-4">
-                                    <i class="bi bi-info-circle"></i> Informasi Kos
-                                </h5>
+                                    <div class="row mb-3 fs-5">
+                                        <div class="col-5 text-muted">Nama</div>
+                                        <div class="col-7 fw-semibold">{{ $kos->nama_kos }}</div>
+                                    </div>
 
-                                <div class="row mb-3 fs-5">
-                                    <div class="col-5 text-muted">Nama</div>
-                                    <div class="col-7 fw-semibold">{{ $kos->nama_kos }}</div>
+                                    <div class="row mb-3 fs-5">
+                                        <div class="col-5 text-muted">Lokasi</div>
+                                        <div class="col-7 fw-semibold">{{ $kos->lokasi }}</div>
+                                    </div>
+
+                                    <div class="row mb-3 fs-5">
+                                        <div class="col-5 text-muted">Tipe</div>
+                                        <div class="col-7 fw-semibold">{{ $kos->tipe_kos }}</div>
+                                    </div>
+
+                                    <div class="row mb-3 fs-5">
+                                        <div class="col-5 text-muted">Status</div>
+                                        <div class="col-7">
+                                            @if ($kos->status == 'disetujui')
+                                                <span class="badge bg-success fs-6 px-3 py-2">Disetujui</span>
+                                            @elseif($kos->status == 'ditolak')
+                                                <span class="badge bg-danger fs-6 px-3 py-2">Ditolak</span>
+                                            @else
+                                                <span class="badge bg-warning text-dark fs-6 px-3 py-2">Menunggu</span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div>
+                                        <div class="text-muted mb-2 fs-6">Deskripsi</div>
+                                        <div class="fs-6" style="line-height:1.7;">
+                                            {{ $kos->deskripsi }}
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="row mb-3 fs-5">
-                                    <div class="col-5 text-muted">Lokasi</div>
-                                    <div class="col-7 fw-semibold">{{ $kos->lokasi }}</div>
-                                </div>
+                            {{-- FASILITAS --}}
+                            <div class="card shadow rounded-4 mb-3" style="background:#f8f9fc;">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-3">
+                                        <i class="bi bi-list-check"></i> Fasilitas Kos
+                                    </h5>
 
-                                <div class="row mb-3 fs-5">
-                                    <div class="col-5 text-muted">Tipe</div>
-                                    <div class="col-7 fw-semibold">{{ $kos->tipe_kos }}</div>
-                                </div>
-
-                                <div class="row mb-3 fs-5">
-                                    <div class="col-5 text-muted">Status</div>
-                                    <div class="col-7">
-                                        @if ($kos->status == 'disetujui')
-                                            <span class="badge bg-success fs-6 px-3 py-2">Disetujui</span>
-                                        @elseif($kos->status == 'ditolak')
-                                            <span class="badge bg-danger fs-6 px-3 py-2">Ditolak</span>
+                                    <div class="row fs-6">
+                                        @if ($kos->fasilitas)
+                                            @foreach ($kos->fasilitas as $f)
+                                                <div class="col-6 mb-2">
+                                                    <i class="bi bi-check-circle text-success"></i> {{ $f }}
+                                                </div>
+                                            @endforeach
                                         @else
-                                            <span class="badge bg-warning text-dark fs-6 px-3 py-2">Menunggu</span>
+                                            <div class="text-muted">Tidak ada fasilitas</div>
                                         @endif
                                     </div>
                                 </div>
-
-                                <hr>
-
-                                <div>
-                                    <div class="text-muted mb-2 fs-6">Deskripsi</div>
-                                    <div class="fs-6" style="line-height:1.7;">
-                                        {{ $kos->deskripsi }}
-                                    </div>
-                                </div>
                             </div>
+
+                            {{-- TOMBOL --}}
+                            <a href="{{ route('pemilik.kos.index') }}" class="btn btn-primary w-100 py-2 fs-5 rounded-3">
+                                <i class="bi bi-arrow-left"></i> Kembali
+                            </a>
+
                         </div>
-
-                        {{-- FASILITAS --}}
-                        <div class="card shadow rounded-4 mb-3" style="background:#f8f9fc;">
-                            <div class="card-body p-4">
-                                <h5 class="fw-bold mb-3">
-                                    <i class="bi bi-list-check"></i> Fasilitas Kos
-                                </h5>
-
-                                <div class="row fs-6">
-                                    @if ($kos->fasilitas)
-                                        @foreach ($kos->fasilitas as $f)
-                                            <div class="col-6 mb-2">
-                                                <i class="bi bi-check-circle text-success"></i> {{ $f }}
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="text-muted">Tidak ada fasilitas</div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- TOMBOL --}}
-                        <a href="{{ route('pemilik.kos.index') }}" class="btn btn-primary w-100 py-2 fs-5 rounded-3">
-                            <i class="bi bi-arrow-left"></i> Kembali
-                        </a>
-
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
-@endsection
-
+    @endsection

@@ -162,7 +162,7 @@
                                             @endphp
 
                                             <button
-                                                class="btn btn-sm {{ $item->status == 'ditolak' ? 'btn-warning' : 'btn-secondary' }}"
+                                                class="btn btn-sm {{ $item->status == 'ditolak' ? 'btn-warning' : 'btn-warning' }}"
                                                 data-bs-toggle="modal" data-bs-target="{{ $aksiModal }}">
                                                 {{ $item->status == 'ditolak' ? 'Ajukan Ulang' : 'Lihat Status' }}
                                             </button>

@@ -83,8 +83,8 @@
                 {{-- PAGE TITLE --}}
                 <div class="mb-2">
                     <h3 class="fw-bold" style="font-size:25px;">
-                        Manajemen Kos</h3>
-                    <small class="text-muted">Manajemen Kos / Data Kos</small>
+                         Kelola Data Kos</h3>
+                    <small class="text-muted"> Kos / Data Kos</small>
                 </div>
 
                 {{-- TOMBOL TAMBAH (KANAN + ICON) --}}
@@ -127,13 +127,13 @@
                             <thead class="table-light">
                                 <tr>
                                     <th width="50">No</th>
-                                    <th width="100">Foto Kos</th>
+
                                     <th>Nama Kos</th>
                                     <th>Lokasi Kos</th>
                                     <th>Tipe Kos</th>
-                                    <th width="120">Status</th>
-                                    <th width="150">Status Ubah Data</th>
-                                    <th>Alasan</th>
+                                    <th width="120">Status Verifikasi</th>
+                                    <th width="150">Status Perubahan Data</th>
+                                    <th>Alasan Penolakan</th>
                                     <th width="180">Aksi</th>
                                 </tr>
                             </thead>
@@ -146,16 +146,6 @@
                                         <td>{{ $loop->iteration }}</td>
 
 
-
-                                        {{-- FOTO --}}
-                                        <td style="width:110px;"> {{-- kolom dikit dilebarkan --}}
-                                            @if ($k->foto && count($k->foto) > 0)
-                                                <img src="{{ asset('storage/' . $k->foto[0]) }}"
-                                                    style="width:80px; height:60px; border-radius:8px; object-fit:cover;">
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
                                         <td>{{ $k->nama_kos }}</td>
                                         <td>{{ $k->lokasi }}</td>
                                         <td>{{ $k->tipe_kos }}</td>
@@ -163,7 +153,7 @@
                                         {{-- STATUS (badge kaya admin) --}}
                                         <td>
                                             @if ($k->status == 'disetujui')
-                                                <span class="badge bg-success">Disetujui</span>
+                                                <span class="badge bg-success">Disetujui admin</span>
                                             @elseif($k->status == 'ditolak')
                                                 <span class="badge bg-danger">Ditolak</span>
                                             @elseif($k->status == 'nonaktif')
@@ -177,47 +167,49 @@
                                             @if ($k->edit_request_status === 'menunggu')
                                                 <span class="badge bg-warning text-dark">Menunggu Admin</span>
                                             @elseif($k->edit_request_status === 'disetujui')
-                                                <span class="badge bg-success">Disetujui Admin</span>
+                                                <span class="badge bg-success">Disetujui </span>
                                             @elseif($k->edit_request_status === 'ditolak')
                                                 <span class="badge bg-danger">Ditolak Admin</span>
                                             @else
-                                                <span class="badge bg-secondary">Tidak Ada</span>
+                                                <span class="badge bg-secondary">Tidak Ada Perubahan</span>
                                             @endif
                                         </td>
 
                                         <td>{{ $k->alasan ?? '-' }}</td>
 
                                         {{-- AKSI --}}
-                                        <td>
+                                       <td>
 
-                                            <a href="{{ route('pemilik.kos.show', $k->id) }}"
-                                                class="btn btn-sm btn-info text-white">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
+    {{-- LIHAT --}}
+    <a href="{{ route('pemilik.kos.show', $k->id) }}"
+        class="btn btn-sm btn-info text-white">
+        Detail
+    </a>
 
-                                            @if ($k->edit_request_status === 'menunggu')
-                                                <button class="btn btn-sm btn-secondary" disabled
-                                                    title="Menunggu persetujuan admin">
-                                                    <i class="bi bi-pencil-fill"></i>
-                                                </button>
-                                            @else
-                                                <a href="{{ route('pemilik.kos.edit', $k->id) }}"
-                                                    class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil-fill"></i>
-                                                </a>
-                                            @endif
+    {{-- EDIT --}}
+    @if ($k->edit_request_status === 'menunggu')
+        <button class="btn btn-sm btn-secondary"
+            disabled title="Menunggu persetujuan admin">
+            Edit
+        </button>
+    @else
+        <a href="{{ route('pemilik.kos.edit', $k->id) }}"
+            class="btn btn-sm btn-primary">
+            Edit
+        </a>
+    @endif
 
-                                            <form action="{{ route('pemilik.kos.destroy', $k->id) }}" method="POST"
-                                                class="d-inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </button>
-                                            </form>
+    {{-- HAPUS --}}
+    <form action="{{ route('pemilik.kos.destroy', $k->id) }}" method="POST"
+        class="d-inline delete-form">
+        @csrf
+        @method('DELETE')
+        <button type="button" class="btn btn-sm btn-danger btn-delete">
+            Hapus
+        </button>
+    </form>
 
-                                        </td>
-
+</td>
                                     </tr>
 
                                 @empty

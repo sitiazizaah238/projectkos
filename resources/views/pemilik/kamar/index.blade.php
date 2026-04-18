@@ -142,28 +142,34 @@
                                             @endif
                                         </td>
 
-                                        <td>
-                                            <a href="{{ route('pemilik.kamar.show', $k->id) }}"
-                                                class="btn btn-sm btn-info text-white">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
+                                        <td class="text-nowrap">
+                                            <div class="d-flex gap-1">
 
-                                            <a href="{{ route('pemilik.kamar.edit', $k->id) }}"
-                                                class="btn btn-sm btn-primary">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
+                                                {{-- LIHAT --}}
+                                                <a href="{{ route('pemilik.kamar.show', $k->id) }}"
+                                                    class="btn btn-sm btn-info text-white">
+                                                    Detail
+                                                </a>
 
-                                            <form action="{{ route('pemilik.kamar.destroy', $k->id) }}" method="POST"
-                                                class="d-inline delete-form">
+                                                {{-- EDIT --}}
+                                                <a href="{{ route('pemilik.kamar.edit', $k->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    Edit
+                                                </a>
 
-                                                @csrf
-                                                @method('DELETE')
+                                                {{-- HAPUS --}}
+                                                <form action="{{ route('pemilik.kamar.destroy', $k->id) }}" method="POST"
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
 
-                                                <button type="button" class="btn btn-sm btn-danger btn-delete"
-                                                    data-status="{{ $k->status }}">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </button>
-                                            </form>
+                                                    <button type="button" class="btn btn-sm btn-danger btn-delete"
+                                                        data-status="{{ $k->status }}">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -273,4 +279,3 @@
         </div>
     </div>
 @endsection
-
