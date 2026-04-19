@@ -153,11 +153,26 @@
 
                 <div class="card shadow-sm rounded-4">
 
-                    <div class="card-header bg-dark text-white d-flex align-items-center">
-                        <i class="bi bi-receipt me-2"></i>
-                        <span class="fw-semibold">Data Pembayaran</span>
-                    </div>
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
 
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-receipt me-2"></i>
+                            <span class="fw-semibold">Data Pembayaran</span>
+                        </div>
+
+                        {{-- SEARCH (SAMA KAYA KAMAR) --}}
+                        <form method="GET" action="">
+                            <div class="input-group" style="width:250px;">
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                    placeholder="Cari penyewa / kamar...">
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0 text-center">
 
@@ -178,7 +193,8 @@
                                 @forelse($pembayaran as $item)
                                     <tr class="align-middle">
 
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ ($pembayaran->currentPage() - 1) * $pembayaran->perPage() + $loop->iteration }}
+                                        </td>
 
                                         <td>{{ optional($item->pengajuan->penyewa)->name ?? '-' }}</td>
 
@@ -242,6 +258,9 @@
                             </tbody>
 
                         </table>
+                        <div class="p-3">
+                            {{ $pembayaran->links() }}
+                        </div>
                     </div>
 
                 </div>
@@ -319,4 +338,3 @@
         });
     </script>
 @endsection
-

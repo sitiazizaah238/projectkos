@@ -9,23 +9,43 @@ use Illuminate\Http\Request;
 
 class VerifikasiPembayaranController extends Controller
 {
-    public function index()
-    {
-        $pembayaran = Pembayaran::with([
-            'pengajuan.penyewa',
-            'pengajuan.kamar',
-            'pengajuan.kos',
-            'metode'
-        ])
-            ->whereHas('pengajuan.kos', function ($query) {
-                $query->where('user_id', Auth::id());
+  public function index(Request $request)
+{
+    $search = $request->search;
+
+    $pembayaran = Pembayaran::with([
+        'pengajuan.penyewa',
+        'pengajuan.kamar',
+        'pengajuan.kos',
+        'metode'
+    ])
+        ->whereHas('pengajuan.kos', function ($query) {
+            $query->where('user_id', Auth::id());
+        })
+
+        // 🔍 SEARCH (tanpa merusak query lama)
+        ->when($search, function ($query) use ($search) {
+            $query->whereHas('pengajuan.penyewa', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
             })
-            ->latest()
-            ->get();
+            ->orWhereHas('pengajuan.kamar', function ($q) use ($search) {
+                $q->where('nama_kamar', 'like', "%$search%");
+            })
+            ->orWhereHas('metode', function ($q) use ($search) {
+                $q->where('nama_metode', 'like', "%$search%");
+            });
+        })
 
-        return view('pemilik.verifikasi.index', compact('pembayaran'));
-    }
+        ->latest()
 
+        // 🔥 PAGINATION (ganti get jadi paginate)
+        ->paginate(5)
+
+        // biar search tetap kebawa
+        ->withQueryString();
+
+    return view('pemilik.verifikasi.index', compact('pembayaran'));
+}
     public function konfirmasi($id)
     {
         $pembayaran = Pembayaran::with('pengajuan.kamar')

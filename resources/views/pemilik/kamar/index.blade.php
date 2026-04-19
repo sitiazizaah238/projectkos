@@ -73,7 +73,7 @@
                 {{-- PAGE TITLE --}}
                 <div class="mb-2">
                     <h3 class="fw-bold" style="font-size:25px;">
-                        Manajemen Kamar</h3>
+                        Kelola Data Kamar</h3>
                     <small class="text-muted">Manajemen Kos / Data Kamar Kos</small>
                 </div>
 
