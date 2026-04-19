@@ -10,22 +10,34 @@ use Illuminate\Support\Facades\Auth;
 
 class PembayaranController extends Controller
 {
-    public function index(Request $request)
-    {
-        $perPage = (int) $request->input('per_page', 10);
-        if (!in_array($perPage, [5, 10], true)) {
-            $perPage = 10;
-        }
+   public function index(Request $request)
+{
+    $perPage = 4; // langsung fix 10, tanpa dropdown lagi
 
-        $pembayaran = Pembayaran::whereHas('pengajuan', function ($q) {
+    $search = $request->input('search');
+
+    $pembayaran = Pembayaran::whereHas('pengajuan', function ($q) {
             $q->where('user_id', Auth::id());
-        })->with('pengajuan.kos', 'pengajuan.kamar', 'pengajuan.pembayarans')
-            ->latest()
-            ->paginate($perPage)
-            ->withQueryString();
+        })
+        ->with('pengajuan.kos', 'pengajuan.kamar', 'pengajuan.pembayarans')
 
-        return view('penyewa.pembayaran.index', compact('pembayaran'));
-    }
+        // 🔍 SEARCH
+        ->when($search, function ($query) use ($search) {
+            $query->whereHas('pengajuan.kos', function ($q) use ($search) {
+                $q->where('nama_kos', 'like', "%$search%");
+            })
+            ->orWhereHas('pengajuan.kamar', function ($q) use ($search) {
+                $q->where('nama_kamar', 'like', "%$search%");
+            })
+            ->orWhere('status', 'like', "%$search%");
+        })
+
+        ->latest()
+        ->paginate($perPage)
+        ->withQueryString();
+
+    return view('penyewa.pembayaran.index', compact('pembayaran'));
+}
     public function ajukanUlang(Request $request, $id)
     {
         $request->validate([

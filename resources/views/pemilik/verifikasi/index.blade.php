@@ -226,10 +226,8 @@
                                                 action="{{ route('pemilik.verifikasi.konfirmasi', $item->id) }}"
                                                 method="POST" class="d-inline">
                                                 @csrf
-                                                <button type="button"
-                                                    class="btn btn-sm {{ $item->status == 'menunggu' ? 'btn-primary' : 'btn-secondary' }} btn-konfirmasi"
-                                                    data-id="{{ $item->id }}"
-                                                    {{ $item->status != 'menunggu' ? 'disabled' : '' }}>
+                                                <button type="button" class="btn btn-sm btn-primary btn-konfirmasi"
+                                                    data-id="{{ $item->id }}" data-status="{{ $item->status }}">
                                                     Konfirmasi
                                                 </button>
                                             </form>
@@ -238,10 +236,8 @@
                                                 action="{{ route('pemilik.verifikasi.tolak', $item->id) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
-                                                <button type="button"
-                                                    class="btn btn-sm {{ $item->status == 'menunggu' ? 'btn-danger' : 'btn-secondary' }} btn-tolak"
-                                                    data-id="{{ $item->id }}"
-                                                    {{ $item->status != 'menunggu' ? 'disabled' : '' }}>
+                                                 <button type="button" class="btn btn-sm btn-danger btn-tolak"
+                                                    data-id="{{ $item->id }}" data-status="{{ $item->status }}">
                                                     Tolak
                                                 </button>
                                             </form>
@@ -273,68 +269,106 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            document.querySelectorAll('.btn-konfirmasi').forEach(button => {
-                button.addEventListener('click', function() {
+           document.querySelectorAll('.btn-konfirmasi').forEach(button => {
+    button.addEventListener('click', function() {
 
-                    let id = this.getAttribute('data-id');
+        let id = this.getAttribute('data-id');
+        let status = this.getAttribute('data-status');
 
-                    Swal.fire({
-                        title: 'Konfirmasi Pembayaran?',
-                        text: "Pembayaran akan disetujui dan kamar otomatis terisi!",
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Konfirmasi!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('form-konfirmasi-' + id).submit();
-                        }
-                    });
-
-                });
+        // 🚫 Kalau SUDAH DIKONFIRMASI
+        if (status === 'dikonfirmasi') {
+            Swal.fire({
+                icon: 'info',
+                title: 'Sudah Dikonfirmasi',
+                text: 'Pembayaran ini sudah dikonfirmasi sebelumnya.'
             });
+            return;
+        }
 
+        // 🚫 Kalau DITOLAK
+        if (status === 'ditolak') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Pembayaran Ditolak',
+                text: 'Pembayaran ini sudah ditolak.'
+            });
+            return;
+        }
+
+        // ✅ Kalau MENUNGGU
+        Swal.fire({
+            title: 'Konfirmasi Pembayaran?',
+            text: "Pembayaran akan disetujui dan kamar otomatis terisi!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Konfirmasi!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-konfirmasi-' + id).submit();
+            }
+        });
+
+    });
+});
             document.querySelectorAll('.btn-tolak').forEach(button => {
-                button.addEventListener('click', function() {
+    button.addEventListener('click', function() {
 
-                    let id = this.getAttribute('data-id');
+        let id = this.getAttribute('data-id');
+        let status = this.getAttribute('data-status');
 
-                    Swal.fire({
-                        title: 'Tolak Pembayaran',
-                        input: 'textarea',
-                        inputLabel: 'Masukkan alasan penolakan',
-                        inputPlaceholder: 'Contoh: Nominal pembayaran kurang / Bukti transfer tidak jelas / Data tidak valid',
-                        inputAttributes: {
-                            'aria-label': 'Masukkan alasan'
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: 'Tolak Pembayaran',
-                        cancelButtonText: 'Batal',
-                        inputValidator: (value) => {
-                            if (!value) {
-                                return 'Alasan wajib diisi!'
-                            }
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-
-                            let form = document.getElementById('form-tolak-' + id);
-
-                            // buat input hidden untuk alasan
-                            let input = document.createElement("input");
-                            input.type = "hidden";
-                            input.name = "alasan";
-                            input.value = result.value;
-
-                            form.appendChild(input);
-
-                            form.submit();
-                        }
-                    });
-
-                });
+        // 🚫 Kalau SUDAH DIKONFIRMASI
+        if (status === 'dikonfirmasi') {
+            Swal.fire({
+                icon: 'info',
+                title: 'Sudah Dikonfirmasi',
+                text: 'Tidak bisa menolak pembayaran yang sudah dikonfirmasi.'
             });
+            return;
+        }
 
+        // 🚫 Kalau SUDAH DITOLAK
+        if (status === 'ditolak') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sudah Ditolak',
+                text: 'Pembayaran ini sudah ditolak sebelumnya.'
+            });
+            return;
+        }
+
+        // ✅ Kalau MENUNGGU
+        Swal.fire({
+            title: 'Tolak Pembayaran',
+            input: 'textarea',
+            inputLabel: 'Masukkan alasan penolakan',
+            inputPlaceholder: 'Contoh: Nominal kurang / Bukti tidak jelas',
+            showCancelButton: true,
+            confirmButtonText: 'Tolak Pembayaran',
+            cancelButtonText: 'Batal',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Alasan wajib diisi!'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                let form = document.getElementById('form-tolak-' + id);
+
+                let input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "alasan";
+                input.value = result.value;
+
+                form.appendChild(input);
+
+                form.submit();
+            }
+        });
+
+    });
+});
         });
     </script>
 @endsection

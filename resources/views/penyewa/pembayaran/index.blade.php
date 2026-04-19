@@ -47,16 +47,23 @@
                     }
                 @endphp
 
-                <div class="d-flex justify-content-start mb-3 mt-2">
-                    <form method="GET" class="d-flex align-items-center gap-2">
-                        <label for="per_page_pembayaran" class="small text-muted mb-0">Tampilkan</label>
-                        <select id="per_page_pembayaran" name="per_page" class="form-select form-select-sm"
-                            onchange="this.form.submit()" style="width:90px;">
-                            <option value="5" {{ $selectedPerPage === 5 ? 'selected' : '' }}>5</option>
-                            <option value="10" {{ $selectedPerPage === 10 ? 'selected' : '' }}>10</option>
-                        </select>
-                    </form>
-                </div>
+              <div class="d-flex justify-content-end align-items-center mb-3 mt-2">
+
+    <form method="GET">
+        <div class="input-group" style="width:300px;">
+
+            <input type="text" name="search" value="{{ request('search') }}"
+                class="form-control rounded-start-pill"
+                placeholder="Cari nama kos / kamar / status...">
+
+            <button type="submit" class="btn btn-primary rounded-end-pill">
+                <i class="bi bi-search"></i>
+            </button>
+
+        </div>
+    </form>
+
+</div>
 
                 <div class="card shadow-sm rounded-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between">
@@ -87,7 +94,7 @@
                                     <th>Nama Kos</th>
                                     <th>Nama Kamar</th>
                                     <th>Total Bayar</th>
-                                    <th>Durasi</th>
+                                    <th>Durasi Sewa</th>
                                     <th>Status Pengajuan</th>
                                     <th>Status Kamar</th>
                                     <th>Status Pembayaran</th>
@@ -214,7 +221,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="9" class="text-center py-4 text-muted">
-                                            Tidak ada riwayat pembayaran
+                                            Tidak ada data pembayaran
                                         </td>
                                     </tr>
                                 @endforelse

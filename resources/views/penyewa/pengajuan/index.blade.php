@@ -235,7 +235,7 @@
                                                 @if ($statusSaatIni === 'jatuh_tempo')
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalPerpanjang{{ $item->id }}">
-                                                        Perpanjang
+                                                        Perpanjang Sewa
                                                     </button>
                                                 @elseif($statusSaatIni === 'aktif' && $item->bisaAjukanPerpanjangan())
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
@@ -245,7 +245,7 @@
                                                 @elseif($statusSaatIni === 'selesai' && !$kamarSedangTerisi)
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                                         data-bs-target="#modalPerpanjang{{ $item->id }}">
-                                                        Perpanjang
+                                                        Perpanjang Sewa
                                                     </button>
                                                 @elseif($statusSaatIni === 'disetujui')
                                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
