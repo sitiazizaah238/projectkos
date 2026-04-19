@@ -67,7 +67,7 @@
 
                                 {{-- FILTER WAKTU --}}
                                 <select name="filter" class="form-select form-select-sm" onchange="this.form.submit()">
-                                  
+
                                     <option value="7" {{ request('filter') == '7' ? 'selected' : '' }}>7 Hari</option>
                                     <option value="30" {{ request('filter') == '30' ? 'selected' : '' }}>30 Hari
                                     </option>
@@ -115,7 +115,7 @@
                         <table class="table table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="50">#</th>
+                                    <th width="50">No</th>
                                     <th>Nama Pemilik</th>
                                     <th>Nama Kos</th>
                                     <th>Aktivitas</th>

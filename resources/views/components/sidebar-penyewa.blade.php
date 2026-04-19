@@ -1,44 +1,78 @@
+{{-- Overlay --}}
 <div class="sidebar-overlay d-none" id="sidebarOverlay" onclick="toggleSidebar()" style="pointer-events:none;"></div>
-<div class="sidebar p-4" id="sidebar">
-    <h4 class="fw-bold text-primary mb-3 d-flex align-items-center"
-        style="
-        gap:10px;
-        font-size:clamp(18px,1.6vw,22px);
-        letter-spacing:0.3px;
-        font-weight:600;
-        margin-top:-6px;
-    ">
 
-        {{-- Logo jika ada --}}
-        <img src="{{ asset('images/logo.png') }}" alt="Logo"
-            style="
-            height:clamp(36px,4vw,48px);
-            width:auto;
-            object-fit:contain;
-         "
+<style>
+    /* SIDEBAR */
+    .sidebar {
+        min-height: 100vh;
+        width: 260px;
+        background: #eef2ff;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* BRAND (ADMINLTE STYLE) */
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #c0c1c4;
+    }
+
+    .sidebar-brand img {
+        height: 30px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .sidebar-brand-text {
+        font-weight: 600;
+        font-size: 18px;
+        letter-spacing: 0.3px;
+        color: #1f2937;
+    }
+
+    /* NAV STYLE */
+    .sidebar .nav {
+        margin-top: 25px;
+    }
+
+    .sidebar .nav-link {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+    .sidebar .nav-link i {
+        font-size: 17px;
+    }
+
+    .sidebar .nav-item {
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="sidebar p-4" id="sidebar">
+
+    {{-- ✅ GANTI HEADER LAMA JADI INI (LEBIH RAPI) --}}
+    <div class="sidebar-brand">
+        <img src="{{ asset('images/logo2.png') }}" alt="Logo"
             onerror="this.style.display='none'">
 
+        <span class="sidebar-brand-text">FindKos</span>
+    </div>
 
-        <span
-            style="
-        font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-        color:#1f2937;
-    ">
-            FindKos
-            <HR>
-            </HR>
-        </span>
-
-    </h4>
-
-
+    {{-- MENU --}}
     <ul class="nav flex-column">
 
         <li class="nav-item">
             <a href="{{ route('penyewa.dashboard') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('penyewa.dashboard') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                <i class="bi bi-grid me-2" style="font-size:18px;"></i> Dashboard
+                <i class="bi bi-grid me-2"></i> Dashboard
             </a>
         </li>
 
@@ -46,7 +80,7 @@
             <a href="{{ route('penyewa.cari.kos') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('penyewa.cari.kos') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                <i class="bi bi-compass me-2" style="font-size:18px;"></i> Cari Kos
+                <i class="bi bi-compass me-2"></i> Cari Kos
             </a>
         </li>
 
@@ -54,7 +88,7 @@
             <a href="{{ route('penyewa.rekomendasi') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('penyewa.rekomendasi') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                <i class="bi bi-stars me-3" style="font-size:18px;"></i>Rekomendasi Kos
+                <i class="bi bi-stars me-2"></i> Rekomendasi Kos
             </a>
         </li>
 
@@ -62,7 +96,7 @@
             <a href="{{ route('penyewa.pengajuan.index') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('penyewa.pengajuan.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                <i class="bi bi-clipboard-check me-2" style="font-size:18px;"></i> Pengajuan Sewa
+                <i class="bi bi-clipboard-check me-2"></i> Pengajuan Sewa
             </a>
         </li>
 
@@ -70,19 +104,21 @@
             <a href="{{ route('penyewa.pembayaran.index') }}"
                 class="nav-link d-flex align-items-center
                 {{ request()->routeIs('penyewa.pembayaran.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                <i class="bi bi-credit-card me-2" style="font-size:18px;"></i>Pembayaran
+                <i class="bi bi-credit-card me-2"></i> Pembayaran
             </a>
         </li>
-        {{-- 🔥 RIWAYAT PEMBAYARAN --}}
+
         <li class="nav-item">
             <a href="{{ route('penyewa.riwayat.pembayaran') }}"
                 class="nav-link d-flex align-items-center
-            {{ request()->routeIs('penyewa.riwayat.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                <i class="bi bi-clock-history me-2" style="font-size:18px;"></i> Riwayat Pembayaran
+                {{ request()->routeIs('penyewa.riwayat.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+                <i class="bi bi-clock-history me-2"></i> Riwayat Pembayaran
             </a>
         </li>
+
     </ul>
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const overlay = document.getElementById("sidebarOverlay");

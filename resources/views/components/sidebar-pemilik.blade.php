@@ -1,36 +1,83 @@
 {{-- Overlay --}}
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
+<style>
+    /* SIDEBAR */
+    .sidebar {
+        min-height: 100vh;
+        width: 260px;
+        background: #eef2ff;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+
+    /* BRAND / LOGO (STYLE ADMINLTE) */
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #c0c1c4;
+    }
+
+    .sidebar-brand img {
+        height: 30px;
+        /* ukuran khas AdminLTE */
+        width: auto;
+        object-fit: contain;
+    }
+
+  .sidebar-brand-text {
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    color: #1f2937;
+}
+
+    /* NAV STYLE */
+    .sidebar .nav-link {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+    .sidebar .nav-link i {
+        font-size: 17px;
+    }
+
+    .sidebar .nav-item {
+        margin-bottom: 5px;
+    }
+
+    .sidebar .nav {
+        margin-top: 25px;
+    }
+
+    /* SCROLL HILANG TAPI MASIH BISA DIGESER */
+    #menuKeuangan {
+        max-height: 200px;
+        overflow-y: auto;
+
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    #menuKeuangan::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Edge, Safari */
+    }
+</style>
+
 <div class="sidebar p-4" id="sidebar">
-    <h4 class="fw-bold text-primary mb-3 d-flex align-items-center"
-        style="
-        gap:10px;
-        font-size:clamp(18px,1.6vw,22px);
-        letter-spacing:0.3px;
-        font-weight:600;
-        margin-top:-6px;
-    ">
 
-        {{-- Logo jika ada --}}
-        <img src="{{ asset('images/logo.png') }}" alt="Logo"
-            style="
-            height:clamp(36px,4vw,48px);
-            width:auto;
-            object-fit:contain;
-         "
-            onerror="this.style.display='none'">
-
-
-        <span
-            style="
-        font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-        color:#1f2937;
-    ">
-            FindKos
-            <HR>
-            </HR>
-        </span>
-
+    {{-- LOGO + TEXT (ADMINLTE STYLE) --}}
+    <div class="sidebar-brand">
+        <img src="{{ asset('images/logo2.png') }}" alt="Logo" onerror="this.style.display='none'">
+        <span class="sidebar-brand-text">FindKos</span>
+    </div>
     </h4>
 
 
