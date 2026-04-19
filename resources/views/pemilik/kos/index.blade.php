@@ -84,7 +84,7 @@
                 <div class="mb-2">
                     <h3 class="fw-bold" style="font-size:25px;">
                         Kelola Data Kos</h3>
-                    <small class="text-muted"> Kos / Data Kos</small>
+                    <small class="text-muted"> Manajemen Kos / Data Kos</small>
                 </div>
 
                 {{-- TOMBOL TAMBAH (KANAN + ICON) --}}
