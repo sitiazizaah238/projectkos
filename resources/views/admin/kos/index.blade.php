@@ -65,8 +65,8 @@
 
                                         <th>Nama Kos</th>
                                         <th>Lokasi Kos</th>
-                                        <th>Status Kos</th>
-                                        <th>Pengajuan Perubahan kos</th>
+                                        <th>Status Verfikasi</th>
+                                        <th>Status Perubahan kos</th>
                                         <th>Tanggal Verifikasi</th>
                                         <th width="150" class="text-center">Aksi</th>
                                     </tr>
@@ -100,7 +100,7 @@
                                                 @elseif($k->edit_request_status === 'ditolak')
                                                     <span class="badge bg-danger">Ditolak</span>
                                                 @else
-                                                    <span class="badge bg-secondary">Tidak Ada</span>
+                                                    <span class="badge bg-secondary">Tidak Ada Perubahan</span>
                                                 @endif
                                             </td>
 

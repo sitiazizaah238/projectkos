@@ -83,7 +83,7 @@
                 {{-- PAGE TITLE --}}
                 <div class="mb-2">
                     <h3 class="fw-bold" style="font-size:25px;">
-                         Kelola Data Kos</h3>
+                        Kelola Data Kos</h3>
                     <small class="text-muted"> Kos / Data Kos</small>
                 </div>
 
@@ -175,43 +175,107 @@
                                             @endif
                                         </td>
 
-                                        <td>{{ $k->alasan ?? '-' }}</td>
+                                        <td>
+                                            @if ($k->status == 'ditolak' || $k->edit_request_status == 'ditolak')
+                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#modalAlasan{{ $k->id }}">
+                                                    Lihat
+                                                </button>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
 
                                         {{-- AKSI --}}
-                                       <td>
+                                        <td>
 
-    {{-- LIHAT --}}
-    <a href="{{ route('pemilik.kos.show', $k->id) }}"
-        class="btn btn-sm btn-info text-white">
-        Detail
-    </a>
+                                            {{-- LIHAT --}}
+                                            <a href="{{ route('pemilik.kos.show', $k->id) }}"
+                                                class="btn btn-sm btn-info text-white">
+                                                Detail
+                                            </a>
 
-    {{-- EDIT --}}
-    @if ($k->edit_request_status === 'menunggu')
-        <button class="btn btn-sm btn-secondary"
-            disabled title="Menunggu persetujuan admin">
-            Edit
-        </button>
-    @else
-        <a href="{{ route('pemilik.kos.edit', $k->id) }}"
-            class="btn btn-sm btn-primary">
-            Edit
-        </a>
-    @endif
+                                            {{-- EDIT --}}
+                                            @if ($k->edit_request_status === 'menunggu')
+                                                <button class="btn btn-sm btn-secondary" disabled
+                                                    title="Menunggu persetujuan admin">
+                                                    Edit
+                                                </button>
+                                            @else
+                                                <a href="{{ route('pemilik.kos.edit', $k->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    Edit
+                                                </a>
+                                            @endif
 
-    {{-- HAPUS --}}
-    <form action="{{ route('pemilik.kos.destroy', $k->id) }}" method="POST"
-        class="d-inline delete-form">
-        @csrf
-        @method('DELETE')
-        <button type="button" class="btn btn-sm btn-danger btn-delete">
-            Hapus
-        </button>
-    </form>
+                                            {{-- HAPUS --}}
+                                            <form action="{{ route('pemilik.kos.destroy', $k->id) }}" method="POST"
+                                                class="d-inline delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-sm btn-danger btn-delete">
+                                                    Hapus
+                                                </button>
+                                            </form>
 
-</td>
+                                        </td>
                                     </tr>
+                                    <!-- MODAL ALASAN (VERSI PROFESSIONAL) -->
+                                    <div class="modal fade" id="modalAlasan{{ $k->id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content shadow-lg border-0"
+                                                style="border-radius:18px; overflow:hidden;">
 
+                                                <!-- HEADER -->
+                                                <div class="modal-header border-0 text-white"
+                                                    style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                                                        <h5 class="modal-title mb-0 fw-semibold">
+                                                            Alasan Penolakan
+                                                        </h5>
+                                                    </div>
+
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+
+                                                <!-- BODY -->
+                                                <div class="modal-body p-4">
+
+                                                    <div class="p-3 rounded-3"
+                                                        style="background:#f9fafb; border:1px solid #e5e7eb;">
+
+                                                        @if ($k->status == 'ditolak' && $k->alasan)
+                                                            <div class="text-dark" style="line-height:1.6;">
+                                                                {{ $k->alasan }}
+                                                            </div>
+                                                        @elseif($k->edit_request_status == 'ditolak' && $k->edit_request_alasan)
+                                                            <div class="text-dark" style="line-height:1.6;">
+                                                                {{ $k->edit_request_alasan }}
+                                                            </div>
+                                                        @else
+                                                            <div class="text-muted text-center">
+                                                                Tidak ada alasan diberikan
+                                                            </div>
+                                                        @endif
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- FOOTER -->
+                                                <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                                                    <button type="button" class="btn btn-secondary px-4"
+                                                        data-bs-dismiss="modal">
+                                                        Tutup
+                                                    </button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 @empty
                                     <tr>
                                         <td colspan="9" class="text-center py-4">
@@ -281,4 +345,3 @@
         </div>
     </div>
 @endsection
-
