@@ -178,7 +178,7 @@
                                     </div>
 
                                     <div class="row mb-3 fs-5">
-                                        <div class="col-5 text-muted">Status</div>
+                                        <div class="col-5 text-muted">Status Verifikasi</div>
                                         <div class="col-7">
                                             @if ($kos->status == 'disetujui')
                                                 <span class="badge bg-success fs-6 px-3 py-2">Disetujui</span>

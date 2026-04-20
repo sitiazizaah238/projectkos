@@ -109,7 +109,7 @@
                                     <th>Kamar</th>
                                     <th>Tanggal Sewa</th>
                                     <th>Tanggal Selesai</th>
-                                    <th>Status</th>
+                                    <th>Status Pengajuan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>

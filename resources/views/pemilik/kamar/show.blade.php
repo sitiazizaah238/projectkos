@@ -109,12 +109,20 @@
 
                                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselFotoKamar"
                                         data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon"></span>
+
+                                        <span class="carousel-control-prev-icon"
+                                            style="filter: invert(1); background-color: rgba(0,0,0,0.5); border-radius:50%; padding:15px;">
+                                        </span>
+
                                     </button>
 
                                     <button class="carousel-control-next" type="button" data-bs-target="#carouselFotoKamar"
                                         data-bs-slide="next">
-                                        <span class="carousel-control-next-icon"></span>
+
+                                        <span class="carousel-control-next-icon"
+                                            style="filter: invert(1); background-color: rgba(0,0,0,0.5); border-radius:50%; padding:15px;">
+                                        </span>
+
                                     </button>
 
                                 </div>
@@ -252,4 +260,3 @@
         </div>
     </div>
 @endsection
-
