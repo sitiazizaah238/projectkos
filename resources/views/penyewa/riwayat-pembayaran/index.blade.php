@@ -49,12 +49,7 @@
                         @if (request('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
-                        <label for="per_page_riwayat" class="small text-muted mb-0">Tampilkan</label>
-                        <select id="per_page_riwayat" name="per_page" class="form-select form-select-sm"
-                            onchange="this.form.submit()" style="width:90px;">
-                            <option value="5" {{ $selectedPerPage === 5 ? 'selected' : '' }}>5</option>
-                            <option value="10" {{ $selectedPerPage === 10 ? 'selected' : '' }}>10</option>
-                        </select>
+                        
                     </form>
 
                     <form method="GET">

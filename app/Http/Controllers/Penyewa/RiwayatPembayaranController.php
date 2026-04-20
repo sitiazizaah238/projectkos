@@ -15,10 +15,7 @@ class RiwayatPembayaranController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
-        $perPage = (int) $request->input('per_page', 10);
-        if (!in_array($perPage, [5, 10], true)) {
-            $perPage = 10;
-        }
+
 
         $query = Pembayaran::with([
             'pengajuan.kos',
@@ -39,8 +36,9 @@ class RiwayatPembayaranController extends Controller
         // 📌 FILTER STATUS
         $query->whereIn('status', ['dikonfirmasi', 'menunggu', 'ditolak']);
 
-        // 📄 PAGINATION
-        $riwayat = $query->latest()->paginate($perPage)->withQueryString();
+        $riwayat = $query->latest()
+            ->paginate(4)
+            ->withQueryString();
 
         // 💰 TOTAL (AMAN, TIDAK ERROR)
         $total = (clone $query)->get()->sum(function ($item) {
