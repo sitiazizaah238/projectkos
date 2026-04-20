@@ -184,7 +184,7 @@
                                     <th>Total Bayar</th>
                                     <th>Metode Pembayaran</th>
                                     <th>Bukti</th>
-                                    <th>Status</th>
+                                    <th>Status Pembayaran</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
