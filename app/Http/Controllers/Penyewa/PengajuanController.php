@@ -12,10 +12,6 @@ class PengajuanController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = (int) $request->input('per_page', 10);
-        if (!in_array($perPage, [5, 10], true)) {
-            $perPage = 10;
-        }
 
         // ================= QUERY DASAR =================
         $query = PengajuanSewa::with([
@@ -41,9 +37,8 @@ class PengajuanController extends Controller
 
         // ================= PAGINATION =================
         $pengajuan = $query->latest()
-            ->paginate($perPage)
+            ->paginate(3)
             ->withQueryString();
-
         return view('penyewa.pengajuan.index', compact('pengajuan'));
     }
     public function store(Request $request)
