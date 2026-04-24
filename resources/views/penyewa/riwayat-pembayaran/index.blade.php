@@ -49,7 +49,7 @@
                         @if (request('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
-                        
+
                     </form>
 
                     <form method="GET">
@@ -142,7 +142,7 @@
 
                                         <td>
                                             @if ($item->status == 'dikonfirmasi')
-                                                <span class="badge bg-success">Lunas</span>
+                                                <span class="badge bg-success">Berhasil</span>
                                             @elseif($item->status == 'menunggu')
                                                 <span class="badge bg-warning text-dark">Pending</span>
                                             @else
