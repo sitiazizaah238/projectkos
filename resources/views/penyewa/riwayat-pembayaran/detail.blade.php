@@ -61,12 +61,12 @@
 
                             <div class="col-md-6">
                                 <p class="mb-2"><strong>ID:</strong> {{ $data->id }}</p>
-                                <p class="mb-2"><strong>Tanggal:</strong>
+                                <p class="mb-2"><strong>Tanggal Pembayaran:</strong>
                                     {{ $data->created_at ? $data->created_at->format('d-m-Y H:i') : '-' }}
                                 </p>
                                 <p class="mb-2"><strong>Status Pembayaran:</strong>
                                     @if ($data->status == 'dikonfirmasi')
-                                        <span class="badge bg-success">Lunas</span>
+                                        <span class="badge bg-success">Berhasil</span>
                                     @elseif($data->status == 'menunggu')
                                         <span class="badge bg-warning text-dark">Pending</span>
                                     @else
@@ -77,10 +77,10 @@
 
                             <div class="col-md-6">
                                 <p class="mb-2"><strong>Nama Kos:</strong> {{ $kos->nama_kos ?? '-' }}</p>
-                                <p class="mb-2"><strong>Alamat:</strong> {{ $kos->lokasi ?? '-' }}</p>
-                                <p class="mb-2"><strong>Kamar:</strong> {{ $kamar->nama_kamar ?? '-' }}</p>
-                                <p class="mb-2"><strong>Harga:</strong> Rp {{ number_format($harga, 0, ',', '.') }}</p>
-                                <p class="mb-2"><strong>Durasi:</strong> {{ $durasi }} bulan</p>
+                                <p class="mb-2"><strong>Alamat Kos:</strong> {{ $kos->lokasi ?? '-' }}</p>
+                                <p class="mb-2"><strong>Nama Kamar:</strong> {{ $kamar->nama_kamar ?? '-' }}</p>
+                                <p class="mb-2"><strong>Total Bayar:</strong> Rp {{ number_format($harga, 0, ',', '.') }}</p>
+                                <p class="mb-2"><strong>Durasi Sewa:</strong> {{ $durasi }} bulan</p>
                             </div>
 
                         </div>
@@ -93,8 +93,8 @@
                         👤 Penyewa & Rincian Pembayaran
                     </div>
                     <div class="card-body">
-                        <p><strong>Nama:</strong> {{ $penyewa->name ?? '-' }}</p>
-                        <p><strong>Total:</strong> Rp {{ number_format($total, 0, ',', '.') }}</p>
+                        <p><strong>NamaPenyewa:</strong> {{ $penyewa->name ?? '-' }}</p>
+                        <p><strong>Total Bayar:</strong> Rp {{ number_format($total, 0, ',', '.') }}</p>
                     </div>
                 </div>
 
@@ -108,7 +108,7 @@
                         <div class="row align-items-start">
 
                             <div class="col-md-6">
-                                <p class="mb-2"><strong>Metode:</strong> {{ $metode['nama_metode'] ?? '-' }}</p>
+                                <p class="mb-2"><strong>Metode Pembayaran:</strong> {{ $metode['nama_metode'] ?? '-' }}</p>
                                 <p class="mb-2"><strong>No Rekening:</strong> {{ $metode['no_rekening'] ?? '-' }}</p>
                                 <p class="mb-2"><strong>Atas Nama:</strong> {{ $metode['atas_nama'] ?? '-' }}</p>
                             </div>
