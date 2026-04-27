@@ -75,7 +75,9 @@
                 @php
                     $harga = $pengajuan->kamar->harga;
                     $durasi = $pengajuan->durasi;
-                    $total = $harga * $durasi;
+                    $tipeHarga = $pengajuan->kamar->tipe_harga ?? 'bulanan';
+                    // Gunakan total_bayar dari database yang sudah dihitung secara presisi oleh controller
+                    $total = $pengajuan->total_bayar;
                 @endphp
 
                 {{-- ================= INFORMASI PENYEWA ================= --}}
@@ -161,7 +163,7 @@
                         </div>
 
                         <div class="col-md-3">
-                            <small>Harga / Bulan</small>
+                            <small>Harga / {{ $tipeHarga === 'tahunan' ? 'Tahun' : 'Bulan' }}</small>
                             <div class="fw-semibold">
                                 Rp {{ number_format($harga, 0, ',', '.') }}
                             </div>
@@ -170,14 +172,14 @@
                         <div class="col-md-3">
                             <small>Durasi</small>
                             <div class="fw-semibold">
-                                {{ $durasi }} Bulan
+                                {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $durasi, $tipeHarga) }}
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <small>Tanggal Mulai</small>
                             <div class="fw-semibold">
-                              {{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->format('d-m-Y') }}
+                                {{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->format('d-m-Y') }}
                             </div>
                         </div>
 
@@ -308,4 +310,3 @@
         </script>
     @endif
 @endsection
-

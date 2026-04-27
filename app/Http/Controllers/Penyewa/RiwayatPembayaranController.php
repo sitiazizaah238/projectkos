@@ -37,15 +37,11 @@ class RiwayatPembayaranController extends Controller
         $query->whereIn('status', ['dikonfirmasi', 'menunggu', 'ditolak']);
 
         $riwayat = $query->latest()
-            ->paginate(4)
+            ->paginate(5)
             ->withQueryString();
-
-        // 💰 TOTAL (AMAN, TIDAK ERROR)
-        $total = (clone $query)->get()->sum(function ($item) {
-            $harga = $item->pengajuan->kamar->harga ?? 0;
-            $durasi = $item->pengajuan->durasi ?? 0;
-            return $harga * $durasi;
-        });
+ 
+        // 💰 TOTAL (Mengambil dari nominal_tagihan yang sudah tersimpan di DB)
+        $total = (clone $query)->where('status', 'dikonfirmasi')->sum('nominal_tagihan');
 
         return view('penyewa.riwayat-pembayaran.index', compact('riwayat', 'total'));
     }

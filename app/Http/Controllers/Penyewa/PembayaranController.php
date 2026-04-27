@@ -10,34 +10,34 @@ use Illuminate\Support\Facades\Auth;
 
 class PembayaranController extends Controller
 {
-   public function index(Request $request)
-{
-    $perPage = 4; // langsung fix 10, tanpa dropdown lagi
+    public function index(Request $request)
+    {
+        $perPage = 5; 
 
-    $search = $request->input('search');
+        $search = $request->input('search');
 
-    $pembayaran = Pembayaran::whereHas('pengajuan', function ($q) {
+        $pembayaran = Pembayaran::whereHas('pengajuan', function ($q) {
             $q->where('user_id', Auth::id());
         })
-        ->with('pengajuan.kos', 'pengajuan.kamar', 'pengajuan.pembayarans')
+            ->with('pengajuan.kos', 'pengajuan.kamar', 'pengajuan.pembayarans')
 
-        // 🔍 SEARCH
-        ->when($search, function ($query) use ($search) {
-            $query->whereHas('pengajuan.kos', function ($q) use ($search) {
-                $q->where('nama_kos', 'like', "%$search%");
+            // 🔍 SEARCH
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('pengajuan.kos', function ($q) use ($search) {
+                    $q->where('nama_kos', 'like', "%$search%");
+                })
+                    ->orWhereHas('pengajuan.kamar', function ($q) use ($search) {
+                        $q->where('nama_kamar', 'like', "%$search%");
+                    })
+                    ->orWhere('status', 'like', "%$search%");
             })
-            ->orWhereHas('pengajuan.kamar', function ($q) use ($search) {
-                $q->where('nama_kamar', 'like', "%$search%");
-            })
-            ->orWhere('status', 'like', "%$search%");
-        })
 
-        ->latest()
-        ->paginate($perPage)
-        ->withQueryString();
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
 
-    return view('penyewa.pembayaran.index', compact('pembayaran'));
-}
+        return view('penyewa.pembayaran.index', compact('pembayaran'));
+    }
     public function ajukanUlang(Request $request, $id)
     {
         $request->validate([
@@ -82,7 +82,12 @@ class PembayaranController extends Controller
                 ->with('error', 'Tidak ada tagihan yang perlu dibayar saat ini.');
         }
 
-        $nominalTagihan = (int) optional($pengajuan->kamar)->harga * $durasiTagihan;
+        $kamar = $pengajuan->kamar;
+        if (optional($kamar)->tipe_harga === 'tahunan') {
+            $nominalTagihan = (int) (($kamar->harga / 12) * $durasiTagihan);
+        } else {
+            $nominalTagihan = (int) (optional($kamar)->harga * $durasiTagihan);
+        }
 
         $buktiPath = $request->file('bukti')
             ->store('bukti', 'public');

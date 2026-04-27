@@ -133,7 +133,9 @@
                                         <td>{{ $laporan->firstItem() + $loop->index }}</td>
                                         <td>{{ optional($item->pengajuan->penyewa)->name }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
-                                        <td>{{ $item->durasi_tagihan ?? 1 }} Bulan</td>
+                                        <td>
+                                            {{ PengajuanSewa::formatDurasiByTipe((int) ($item->durasi_tagihan ?? 1), optional($item->pengajuan->kamar)->tipe_harga) }}
+                                        </td>
                                         <td>{{ $item->created_at->format('d M Y') }}</td>
                                         <td>{{ $item->metode->nama_metode }}</td>
                                         <td class="fw-semibold text-success">

@@ -33,7 +33,7 @@ class PengajuanController extends Controller
     })
     ->with('penyewa', 'kos', 'kamar', 'pembayarans')
     ->latest()
-    ->paginate(10);
+    ->paginate(5);
 
     return view('pemilik.pengajuan.index', compact('pengajuan'));
 }
@@ -49,7 +49,13 @@ class PengajuanController extends Controller
     {
         $p = PengajuanSewa::with('kamar')->findOrFail($id);
 
-        $total = $p->kamar->harga * $p->durasi;
+        $kamar = $p->kamar;
+        // Hitung total bayar secara presisi (pro-rata jika tahunan)
+        if ($kamar && $kamar->tipe_harga === 'tahunan') {
+            $total = (int) (($kamar->harga / 12) * $p->durasi);
+        } else {
+            $total = (int) (($kamar->harga ?? 0) * $p->durasi);
+        }
 
         $p->update([
             'status' => 'disetujui',

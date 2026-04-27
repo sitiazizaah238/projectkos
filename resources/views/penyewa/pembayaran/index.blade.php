@@ -47,23 +47,22 @@
                     }
                 @endphp
 
-              <div class="d-flex justify-content-end align-items-center mb-3 mt-2">
+                <div class="d-flex justify-content-end align-items-center mb-3 mt-2">
 
-    <form method="GET">
-        <div class="input-group" style="width:300px;">
+                    <form method="GET">
+                        <div class="input-group" style="width:300px;">
 
-            <input type="text" name="search" value="{{ request('search') }}"
-                class="form-control rounded-start-pill"
-                placeholder="Cari nama kos / kamar / status...">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="form-control rounded-start-pill" placeholder="Cari nama kos / kamar / status...">
 
-            <button type="submit" class="btn btn-primary rounded-end-pill">
-                <i class="bi bi-search"></i>
-            </button>
+                            <button type="submit" class="btn btn-primary rounded-end-pill">
+                                <i class="bi bi-search"></i>
+                            </button>
 
-        </div>
-    </form>
+                        </div>
+                    </form>
 
-</div>
+                </div>
 
                 <div class="card shadow-sm rounded-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between">
@@ -115,7 +114,9 @@
                                         <td>{{ $item->pengajuan->kos->nama_kos }}</td>
                                         <td>{{ $item->pengajuan->kamar->nama_kamar }}</td>
                                         <td>Rp {{ number_format($item->nominal_tagihan ?? 0, 0, ',', '.') }}</td>
-                                        <td>{{ $item->durasi_tagihan ?? 1 }} Bulan</td>
+                                        <td>
+                                            {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) ($item->durasi_tagihan ?? 1), optional($item->pengajuan->kamar)->tipe_harga) }}
+                                        </td>
 
                                         <td>
                                             @if ($statusPengajuan == 'menunggu')

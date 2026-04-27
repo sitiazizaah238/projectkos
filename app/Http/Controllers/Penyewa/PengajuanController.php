@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PengajuanSewa;
 use App\Models\Kamar;
+use App\Services\RecommendationScoringService;
 use Illuminate\Support\Facades\Auth;
 
 class PengajuanController extends Controller
 {
+    public function __construct(private RecommendationScoringService $recommendationScoring) {}
+
     public function index(Request $request)
     {
 
@@ -37,7 +40,7 @@ class PengajuanController extends Controller
 
         // ================= PAGINATION =================
         $pengajuan = $query->latest()
-            ->paginate(3)
+            ->paginate(5)
             ->withQueryString();
         return view('penyewa.pengajuan.index', compact('pengajuan'));
     }
@@ -47,7 +50,8 @@ class PengajuanController extends Controller
             'kos_id' => 'required',
             'kamar_id' => 'required',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
-            'durasi' => 'required|integer'
+            'jenis_sewa' => 'required|in:bulanan,tahunan',
+            'durasi' => 'required|integer|min:1'
         ]);
 
         $cek = PengajuanSewa::where('user_id', Auth::id())
@@ -60,19 +64,36 @@ class PengajuanController extends Controller
         }
 
         $kamar = Kamar::findOrFail($request->kamar_id);
+        $durasi = (int) $request->durasi;
 
-        $totalBayar = $kamar->harga * $request->durasi;
+        // Hitung harga dasar per bulan
+        if ($kamar->tipe_harga === 'tahunan') {
+            // Jika tahunan, hitung harga per bulannya
+            $hargaPerBulan = (int) $kamar->harga / 12;
+            $totalBayar = (int) ($hargaPerBulan * $durasi);
+        } else {
+            // Jika bulanan, langsung dikalikan durasi
+            $totalBayar = (int) $kamar->harga * $durasi;
+        }
 
         PengajuanSewa::create([
             'user_id' => Auth::id(),
             'kos_id' => $request->kos_id,
             'kamar_id' => $request->kamar_id,
             'tanggal_mulai' => $request->tanggal_mulai,
-            'durasi' => $request->durasi,
+            'durasi' => $durasi,
             'jenis_pengajuan' => 'sewa_baru',
             'total_bayar' => $totalBayar,
             'status' => 'menunggu'
         ]);
+
+        if ($kamar->relationLoaded('kos') === false) {
+            $kamar->load('kos');
+        }
+
+        if ($kamar->kos) {
+            $this->recommendationScoring->learnFromConfirmedAction(Auth::user(), $kamar->kos, $kamar);
+        }
 
         return redirect()->route('penyewa.pengajuan.index')
             ->with('success', 'Pengajuan sewa berhasil dikirim. Silakan tunggu proses verifikasi pemilik.');
@@ -81,7 +102,7 @@ class PengajuanController extends Controller
     public function perpanjang(Request $request, $id)
     {
         $request->validate([
-            'durasi_tambahan' => 'required|integer|min:1|max:12',
+            'durasi_tambahan' => 'required|integer|min:1|max:36',
         ]);
 
         $pengajuan = PengajuanSewa::with('kamar')
@@ -105,13 +126,27 @@ class PengajuanController extends Controller
 
         $durasiTambahan = (int) $request->durasi_tambahan;
         $hargaKamar = (int) optional($pengajuan->kamar)->harga;
+        $tipeHargaKamar = optional($pengajuan->kamar)->tipe_harga;
+
+        // Hitung biaya tambahan secara presisi
+        if ($tipeHargaKamar === 'tahunan') {
+            $biayaTambahan = (int) (($hargaKamar / 12) * $durasiTambahan);
+        } else {
+            $biayaTambahan = (int) ($hargaKamar * $durasiTambahan);
+        }
 
         $pengajuan->update([
             'durasi' => (int) $pengajuan->durasi + $durasiTambahan,
             'jenis_pengajuan' => 'perpanjang',
-            'total_bayar' => (int) $pengajuan->total_bayar + ($hargaKamar * $durasiTambahan),
+            'total_bayar' => (int) $pengajuan->total_bayar + $biayaTambahan,
             'status' => 'disetujui',
         ]);
+
+        $pengajuan->loadMissing(['kos', 'kamar']);
+
+        if ($pengajuan->kos && $pengajuan->kamar) {
+            $this->recommendationScoring->learnFromConfirmedAction(Auth::user(), $pengajuan->kos, $pengajuan->kamar);
+        }
 
         return redirect()
             ->route('penyewa.pengajuan.index', ['focus_bayar' => $pengajuan->id])
@@ -137,14 +172,25 @@ class PengajuanController extends Controller
             return back()->with('error', 'Masih ada pengajuan aktif/menunggu untuk kamar ini.');
         }
 
+        $kamar = $pengajuanLama->kamar;
+        $hargaKamar = (int) optional($kamar)->harga;
+        $tipeHargaKamar = optional($kamar)->tipe_harga;
+        $durasi = (int) $pengajuanLama->durasi;
+
+        if ($tipeHargaKamar === 'tahunan') {
+            $totalBayar = (int) (($hargaKamar / 12) * $durasi);
+        } else {
+            $totalBayar = (int) ($hargaKamar * $durasi);
+        }
+
         PengajuanSewa::create([
             'user_id' => Auth::id(),
             'kos_id' => $pengajuanLama->kos_id,
             'kamar_id' => $pengajuanLama->kamar_id,
             'tanggal_mulai' => now()->toDateString(),
-            'durasi' => $pengajuanLama->durasi,
+            'durasi' => $durasi,
             'jenis_pengajuan' => $pengajuanLama->jenis_pengajuan ?: 'sewa_baru',
-            'total_bayar' => (int) optional($pengajuanLama->kamar)->harga * (int) $pengajuanLama->durasi,
+            'total_bayar' => $totalBayar,
             'status' => 'menunggu',
             'alasan' => null,
             'is_read' => false,

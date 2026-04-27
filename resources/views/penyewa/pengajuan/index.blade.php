@@ -94,7 +94,7 @@
                         @if (request('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
-                     
+
                     </form>
 
                     <form method="GET">
@@ -174,7 +174,9 @@
                                                 {{ $tanggalSelesai->format('Y-m-d') }}
                                             </td>
 
-                                            <td>{{ $item->durasi }} Bulan</td>
+                                            <td>
+                                                {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $item->durasi, optional($item->kamar)->tipe_harga) }}
+                                            </td>
 
                                             {{-- STATUS --}}
                                             <td>
@@ -302,7 +304,7 @@
                     @php
                         $statusSaatIni = $item->statusSaatIni();
                         $durasiTagihanBerjalan = max($item->durasiBelumTerbayar(), 1);
-                        $nominalTagihanBerjalan = (int) optional($item->kamar)->harga * $durasiTagihanBerjalan;
+                        $nominalTagihanBerjalan = $item->nominalTagihanBerjalan();
                     @endphp
 
                     <div class="modal fade" id="modalBayar{{ $item->id }}" tabindex="-1">
@@ -322,7 +324,9 @@
 
                                         <div class="col">
                                             <small>Durasi Tagihan</small>
-                                            <div>{{ $durasiTagihanBerjalan }} Bulan</div>
+                                            <div>
+                                                {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $durasiTagihanBerjalan, optional($item->kamar)->tipe_harga) }}
+                                            </div>
                                         </div>
 
                                         <div class="col">
@@ -340,7 +344,9 @@
 
                                     @if ($statusSaatIni == 'jatuh_tempo')
                                         <div class="mt-2 alert alert-warning py-2 small mb-0">
-                                            Tagihan bulanan jatuh tempo. Silakan bayar untuk
+                                            Tagihan
+                                            {{ optional($item->kamar)->tipe_harga === 'tahunan' ? 'tahunan' : 'bulanan' }}
+                                            jatuh tempo. Silakan bayar untuk
                                             mengaktifkan status sewa kembali.
                                         </div>
                                     @endif
@@ -407,13 +413,20 @@
                                 <form action="{{ route('penyewa.pengajuan.perpanjang', $item->id) }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
+                                        <label class="fw-semibold mb-1">Jenis Sewa</label>
+                                        <select name="jenis_sewa" class="form-select jenis-sewa-select"
+                                            data-target="#durasiExtContainer{{ $item->id }}"
+                                            data-select="#durasiExtSelect{{ $item->id }}" required>
+                                            <option value="" selected disabled>Pilih jenis sewa</option>
+                                            <option value="bulanan">Bulanan</option>
+                                            <option value="tahunan">Tahunan</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 d-none" id="durasiExtContainer{{ $item->id }}">
                                         <label class="fw-semibold mb-1">Durasi Tambahan</label>
-                                        <select name="durasi_tambahan" class="form-control" required>
-                                            <option value="1">1 Bulan</option>
-                                            <option value="2">2 Bulan</option>
-                                            <option value="3">3 Bulan</option>
-                                            <option value="6">6 Bulan</option>
-                                            <option value="12">12 Bulan</option>
+                                        <select name="durasi_tambahan" class="form-select"
+                                            id="durasiExtSelect{{ $item->id }}" required disabled>
+                                            <option value="" selected disabled>Pilih durasi sewa</option>
                                         </select>
                                     </div>
 
@@ -452,6 +465,72 @@
     </div>
 
     <script>
+        document.addEventListener('change', function(event) {
+            if (!event.target.classList.contains('jenis-sewa-select')) {
+                return;
+            }
+
+            const jenisSewa = event.target.value;
+            const targetSelector = event.target.getAttribute('data-target');
+            const selectSelector = event.target.getAttribute('data-select');
+
+            const durasiContainer = document.querySelector(targetSelector);
+            const durasiSelect = document.querySelector(selectSelector);
+
+            if (!durasiContainer || !durasiSelect) {
+                return;
+            }
+
+            const opsiBulanan = [{
+                    value: '1',
+                    label: '1 Bulan'
+                },
+                {
+                    value: '2',
+                    label: '2 Bulan'
+                },
+                {
+                    value: '3',
+                    label: '3 Bulan'
+                },
+                {
+                    value: '6',
+                    label: '6 Bulan'
+                },
+                {
+                    value: '12',
+                    label: '12 Bulan'
+                }
+            ];
+
+            const opsiTahunan = [{
+                    value: '12',
+                    label: '1 Tahun'
+                },
+                {
+                    value: '24',
+                    label: '2 Tahun'
+                },
+                {
+                    value: '36',
+                    label: '3 Tahun'
+                }
+            ];
+
+            const opsi = jenisSewa === 'tahunan' ? opsiTahunan : opsiBulanan;
+
+            durasiSelect.innerHTML = '<option value="" selected disabled>Pilih durasi sewa</option>';
+            opsi.forEach(function(item) {
+                const opt = document.createElement('option');
+                opt.value = item.value;
+                opt.textContent = item.label;
+                durasiSelect.appendChild(opt);
+            });
+
+            durasiContainer.classList.remove('d-none');
+            durasiSelect.disabled = false;
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const alasanModal = document.getElementById('modalAlasanPenolakan');
             if (!alasanModal) return;

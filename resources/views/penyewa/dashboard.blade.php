@@ -292,7 +292,8 @@
                                         <small>Kamar : {{ $sewaAktifData->kamar->nama_kamar }}</small><br>
 
                                         <small>
-                                            Durasi Sewa : {{ $jumlahBulan }} Bulan
+                                            Durasi Sewa :
+                                            {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $jumlahBulan, optional($sewaAktifData->kamar)->tipe_harga) }}
                                         </small>
                                         <br>
                                         <small>

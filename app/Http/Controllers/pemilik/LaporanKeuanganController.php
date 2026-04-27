@@ -88,7 +88,7 @@ class LaporanKeuanganController extends Controller
     public function index(Request $request)
     {
         $laporan = $this->getQuery($request)
-            ->paginate(10)
+            ->paginate(5)
             ->withQueryString();
 
         $totalKeseluruhan = $laporan->sum(function ($item) {
