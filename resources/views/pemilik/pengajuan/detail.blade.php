@@ -170,7 +170,7 @@
                         </div>
 
                         <div class="col-md-3">
-                            <small>Durasi</small>
+                            <small>Durasi Sewa</small>
                             <div class="fw-semibold">
                                 {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $durasi, $tipeHarga) }}
                             </div>
