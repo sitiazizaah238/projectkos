@@ -141,6 +141,10 @@ class PengajuanSewa extends Model
         $hargaKamar = (int) optional($this->kamar)->harga;
         $durasiTagihan = max($this->durasiBelumTerbayar(), 1);
 
+        if (optional($this->kamar)->tipe_harga === 'tahunan') {
+            return (int) (($hargaKamar / 12) * $durasiTagihan);
+        }
+
         return $hargaKamar * $durasiTagihan;
     }
 
@@ -240,5 +244,16 @@ class PengajuanSewa extends Model
             ->where('id', '!=', $this->id)
             ->whereIn('status', ['aktif', 'jatuh_tempo'])
             ->exists();
+    }
+
+    public static function formatDurasiByTipe(int $durasi, ?string $tipeHarga): string
+    {
+        $durasi = max($durasi, 1);
+
+        if ($tipeHarga === 'tahunan' && $durasi % 12 === 0) {
+            return intdiv($durasi, 12) . ' Tahun';
+        }
+
+        return $durasi . ' Bulan';
     }
 }

@@ -89,7 +89,7 @@
 
                     {{-- DURASI SEWA --}}
                     <td>
-                        {{ $item->durasi_tagihan ?? 1 }} Bulan
+                        {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) ($item->durasi_tagihan ?? 1), optional($item->pengajuan->kamar)->tipe_harga) }}
                     </td>
 
                     <td>{{ $item->metode->nama_metode }}</td>

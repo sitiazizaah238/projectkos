@@ -101,10 +101,7 @@
                                     @php
                                         $kos = $item->pengajuan->kos ?? null;
                                         $kamar = $item->pengajuan->kamar ?? null;
-
-                                        $harga = $kamar->harga ?? 0;
-                                        $durasi = $item->pengajuan->durasi ?? 0;
-                                        $totalBayar = $harga * $durasi;
+                                        $totalBayar = $item->nominal_tagihan;
 
                                         $metode = is_array($item->metode)
                                             ? $item->metode

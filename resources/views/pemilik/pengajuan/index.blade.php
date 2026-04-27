@@ -128,9 +128,7 @@
                                         <td>
                                             @php
                                                 $tanggalMulai = \Carbon\Carbon::parse($p->tanggal_mulai);
-
-                                                // misal durasi 1 bulan (bisa kamu ubah nanti)
-                                                $tanggalSelesai = $tanggalMulai->copy()->addMonths(1);
+                                                $tanggalSelesai = $tanggalMulai->copy()->addMonths((int) $p->durasi);
                                             @endphp
 
                                             {{ $tanggalSelesai->format('d-m-Y') }}
@@ -187,28 +185,27 @@
         </div>
     </div>
     {{-- PROFILE MODAL --}}
-<div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content p-3 text-center" style="border-radius:20px;">
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
 
-            <div class="mb-3">
-                <div class="fw-bold">{{ Auth::user()->name }}</div>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
+
             </div>
-
-            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Logout
-                </button>
-            </form>
-
         </div>
     </div>
-</div>
 @endsection
-

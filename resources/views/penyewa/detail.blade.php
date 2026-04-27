@@ -272,7 +272,7 @@
 
                                                 <div class="text-primary fw-bold">
                                                     Rp {{ number_format($kamar->harga, 0, ',', '.') }}
-                                                    <span class="text-muted fw-normal">/ bulan</span>
+                                                    <span class="text-muted fw-normal">/ {{ $kamar->tipe_harga === 'tahunan' ? 'tahun' : 'bulan' }}</span>
                                                 </div>
                                             </div>
 
@@ -372,26 +372,30 @@
                                                         <input type="date" name="tanggal_mulai" class="form-control"
                                                             min="{{ now()->toDateString() }}" required>
                                                     </div>
-                                                    <div class="mb-4">
+                                                    <div class="mb-3">
+                                                        <label class="fw-semibold">Jenis Sewa</label>
+                                                        <select name="jenis_sewa" class="form-select jenis-sewa-select"
+                                                            data-target="#durasiContainer{{ $kamar->id }}"
+                                                            data-select="#durasiSelect{{ $kamar->id }}" required>
+                                                            <option value="" selected disabled>Pilih jenis sewa
+                                                            </option>
+                                                            <option value="bulanan">Bulanan</option>
+                                                            <option value="tahunan">Tahunan</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-4 d-none" id="durasiContainer{{ $kamar->id }}">
                                                         <label class="fw-semibold">Durasi Sewa</label>
-                                                        <select name="durasi" class="form-select" required>
-                                                            <option value="1">1 Bulan</option>
-                                                            <option value="2">2 Bulan</option>
-                                                            <option value="3">3 Bulan</option>
-                                                            <option value="6">6 Bulan</option>
-                                                            <option value="12">12 Bulan</option>
+                                                        <select name="durasi" class="form-select"
+                                                            id="durasiSelect{{ $kamar->id }}" required disabled>
+                                                            <option value="" selected disabled>Pilih durasi sewa
+                                                            </option>
                                                         </select>
                                                     </div>
 
                                                     <div class="text-end">
-                                                        <form action="{{ route('penyewa.pengajuan.store') }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="btn btn-primary rounded-pill px-4">
-                                                                Ajukan Penyewaan
-                                                            </button>
-                                                        </form>
+                                                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                                            Ajukan Penyewaan
+                                                        </button>
                                                     </div>
 
                                                 </form>
@@ -424,6 +428,71 @@
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('change', function(event) {
+                if (!event.target.classList.contains('jenis-sewa-select')) {
+                    return;
+                }
 
+                const jenisSewa = event.target.value;
+                const targetSelector = event.target.getAttribute('data-target');
+                const selectSelector = event.target.getAttribute('data-select');
 
+                const durasiContainer = document.querySelector(targetSelector);
+                const durasiSelect = document.querySelector(selectSelector);
+
+                if (!durasiContainer || !durasiSelect) {
+                    return;
+                }
+
+                const opsiBulanan = [{
+                        value: '1',
+                        label: '1 Bulan'
+                    },
+                    {
+                        value: '2',
+                        label: '2 Bulan'
+                    },
+                    {
+                        value: '3',
+                        label: '3 Bulan'
+                    },
+                    {
+                        value: '6',
+                        label: '6 Bulan'
+                    },
+                    {
+                        value: '12',
+                        label: '12 Bulan'
+                    }
+                ];
+
+                const opsiTahunan = [{
+                        value: '12',
+                        label: '1 Tahun'
+                    },
+                    {
+                        value: '24',
+                        label: '2 Tahun'
+                    },
+                    {
+                        value: '36',
+                        label: '3 Tahun'
+                    }
+                ];
+
+                const opsi = jenisSewa === 'tahunan' ? opsiTahunan : opsiBulanan;
+
+                durasiSelect.innerHTML = '<option value="" selected disabled>Pilih durasi sewa</option>';
+                opsi.forEach(function(item) {
+                    const opt = document.createElement('option');
+                    opt.value = item.value;
+                    opt.textContent = item.label;
+                    durasiSelect.appendChild(opt);
+                });
+
+                durasiContainer.classList.remove('d-none');
+                durasiSelect.disabled = false;
+            });
+        </script>
     @endsection

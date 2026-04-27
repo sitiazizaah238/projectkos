@@ -32,7 +32,7 @@ public function index(Request $request)
         });
     }
 
-    $logs = $query->paginate(10)->withQueryString();
+    $logs = $query->paginate(5)->withQueryString();
 
     return view('admin.log.index', compact('logs', 'filter'));
 }

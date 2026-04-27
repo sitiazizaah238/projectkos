@@ -18,14 +18,28 @@ return new class extends Migration {
             }
         });
 
-        DB::table('pembayarans as p')
-            ->join('pengajuan_sewas as ps', 'ps.id', '=', 'p.pengajuan_sewa_id')
+        if (!Schema::hasTable('pengajuan_sewas')) {
+            return;
+        }
+
+        $hasDurasiColumn = Schema::hasColumn('pengajuan_sewas', 'durasi');
+        $hasTotalBayarColumn = Schema::hasColumn('pengajuan_sewas', 'total_bayar');
+
+        DB::table('pembayarans')
             ->where(function ($query) {
-                $query->whereNull('p.nominal_tagihan')->orWhere('p.nominal_tagihan', 0);
+                $query->whereNull('nominal_tagihan')->orWhere('nominal_tagihan', 0);
             })
             ->update([
-                'p.durasi_tagihan' => DB::raw('COALESCE(NULLIF(ps.durasi, 0), 1)'),
-                'p.nominal_tagihan' => DB::raw('COALESCE(ps.total_bayar, 0)'),
+                'durasi_tagihan' => DB::raw(
+                    $hasDurasiColumn
+                        ? 'COALESCE(NULLIF((SELECT ps.durasi FROM pengajuan_sewas ps WHERE ps.id = pembayarans.pengajuan_sewa_id), 0), 1)'
+                        : '1'
+                ),
+                'nominal_tagihan' => DB::raw(
+                    $hasTotalBayarColumn
+                        ? 'COALESCE((SELECT ps.total_bayar FROM pengajuan_sewas ps WHERE ps.id = pembayarans.pengajuan_sewa_id), 0)'
+                        : '0'
+                ),
             ]);
     }
 
