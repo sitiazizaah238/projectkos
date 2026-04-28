@@ -224,10 +224,21 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
-                <img src="{{ asset('images/logo21.png') }}" alt="Logo"
-                    style="height: 130px; width: auto; object-fit: contain; margin-top: -10px;">
-            </a>
+             <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                style="height: 60px; width: auto; object-fit: contain;">
+
+            <span style="
+                margin-left: 10px;
+                font-family: 'Poppins', sans-serif;
+                font-weight: 700;
+                font-size: 20px;
+                letter-spacing: 0.5px;
+                color: white;
+            ">
+                FindKos
+            </span>
+        </a>
 
             <!-- Hamburger Button -->
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
