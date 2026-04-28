@@ -79,7 +79,9 @@
         <li class="nav-item">
             <a href="{{ route('penyewa.cari.kos') }}"
                 class="nav-link d-flex align-items-center
-                {{ request()->routeIs('penyewa.cari.kos') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+               {{ request()->routeIs('penyewa.cari.kos') || request('from') == 'cari'
+    ? 'active bg-primary text-white rounded'
+    : 'text-dark' }}">
                 <i class="bi bi-compass me-2"></i> Cari Kos
             </a>
         </li>
@@ -87,7 +89,9 @@
         <li class="nav-item">
             <a href="{{ route('penyewa.rekomendasi') }}"
                 class="nav-link d-flex align-items-center
-                {{ request()->routeIs('penyewa.rekomendasi') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+               {{ request()->routeIs('penyewa.rekomendasi') || request('from') == 'rekomendasi'
+    ? 'active bg-primary text-white rounded'
+    : 'text-dark' }}">
                 <i class="bi bi-stars me-2"></i> Rekomendasi Kos
             </a>
         </li>
