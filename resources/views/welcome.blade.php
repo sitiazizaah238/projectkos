@@ -165,165 +165,56 @@
         [x-cloak] {
             display: none !important;
         }
-        /* ========================= */
-/* RESPONSIVE FIX (TAMBAHAN) */
-/* ========================= */
-
-@media (max-width: 991px) {
-
-    /* NAVBAR */
-    .navbar-nav {
-        margin-top: 15px;
-        gap: 5px !important;
-    }
-
-    .navbar-nav .nav-link {
-        padding: 10px 0;
-    }
-
-    /* HERO */
-    .hero {
-        background-image: none; /* hilangkan bg biar ga numpuk */
-        padding: 80px 0 50px;
-        text-align: center;
-    }
-
-    .hero-title {
-        font-size: 28px;
-    }
-
-    .hero-sub {
-        font-size: 14px;
-    }
-
-    /* SEARCH */
-    .search-box {
-        width: 100% !important;
-    }
-
-    /* BUTTON */
-    .hero-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .hero-buttons .btn {
-        width: 100%;
-    }
-
-    /* TENTANG */
-    #tentang .row {
-        text-align: center;
-    }
-
-    #tentang h3 {
-        text-align: center !important;
-    }
-}
-
-/* EXTRA SMALL (HP kecil banget) */
-@media (max-width: 576px) {
-
-    .hero-title {
-        font-size: 24px;
-    }
-
-    .section-title {
-        font-size: 20px;
-    }
-
-    .card-step {
-        padding: 20px;
-    }
-}
     </style>
 </head>
 
 <body x-data="{ openModal: false }">
 
 
-   <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-custom shadow-sm" style="
-    background: linear-gradient(135deg, #2563eb, #38bdf8);
-    padding: 12px 0;
-">
-    <div class="container">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
+                <img src="{{ asset('images/logo21.png') }}" alt="Logo"
+                    style="height: 130px; width: auto; object-fit: contain; margin-top: -10px;">
+            </a>
 
-        <!-- BRAND -->
-        <!-- TOGGLER (TAMBAHAN) -->
-<button class="navbar-toggler border-0 text-white" type="button"
-    data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-    <i class="bi bi-list fs-2 text-white"></i>
-</button>
-        <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo"
-                style="height: 60px; width: auto; object-fit: contain;">
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="#home">
+                            <i class="bi bi-house-door"></i>
+                            <span>Beranda</span>
+                        </a>
+                    </li>
 
-            <span style="
-                margin-left: 10px;
-                font-family: 'Poppins', sans-serif;
-                font-weight: 700;
-                font-size: 20px;
-                letter-spacing: 0.5px;
-                color: white;
-            ">
-                FindKos
-            </span>
-        </a>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="#tentang">
+                            <i class="bi bi-building"></i>
+                            <span>Tentang</span>
+                        </a>
+                    </li>
 
-        <!-- MENU -->
-       <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-            <ul class="navbar-nav align-items-center" style="gap: 10px;">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="#cara-kerja">
+                            <i class="bi bi-gear"></i>
+                            <span>Cara Kerja</span>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 text-white"
-                        href="#home"
-                        style="font-weight:500; transition:0.2s;">
-                        <i class="bi bi-house-door"></i>
-                        <span>Beranda</span>
-                    </a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 text-white"
-                        href="#tentang"
-                        style="font-weight:500; transition:0.2s;">
-                        <i class="bi bi-building"></i>
-                        <span>Tentang</span>
-                    </a>
-                </li>
+                    {{-- KONTAK --}}
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="{{ route('kontak') }}">
+                            <i class="bi bi-telephone"></i>
+                            <span>Kontak</span>
+                        </a>
+                    </li>
+                </ul>
 
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 text-white"
-                        href="#cara-kerja"
-                        style="font-weight:500; transition:0.2s;">
-                        <i class="bi bi-gear"></i>
-                        <span>Cara Kerja</span>
-                    </a>
-                </li>
-
-                {{-- KONTAK --}}
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 text-white"
-                        href="{{ route('kontak') }}"
-                        style="font-weight:500; transition:0.2s;">
-                        <i class="bi bi-telephone"></i>
-                        <span>Kontak</span>
-                    </a>
-                </li>
-
-            </ul>
+            </div>
         </div>
-    </div>
-</nav>
-
-<!-- HOVER EFFECT (TAMBAHAN, GAK NGANGGU KODE LAMA) -->
-<style>
-    .navbar .nav-link:hover {
-        opacity: 0.8;
-        transform: translateY(-1px);
-    }
-</style>
+    </nav>
     <!-- MODAL REGISTER -->
     <template x-if="openModal">
         <div class="position-fixed top-0 start-0 w-100 vh-100 d-flex align-items-center justify-content-center"
@@ -419,7 +310,7 @@
     <section id="cara-kerja" class="container text-center mt-5">
         <h3 class="section-title">Cara Kerja Sistem</h3>
 
-       <div class="row text-center justify-content-center">
+        <div class="row text-center justify-content-center flex-nowrap">
 
             <div class="col-md-3 col-sm-6 mb-4 d-flex">
                 <div class="card-step w-100">
@@ -498,11 +389,11 @@
             <div class="d-flex justify-content-center gap-3">
 
                 <button @click="openModal = true" class="btn btn-light btn-lg px-4 fw-semibold shadow">
-                    🚀 Daftar Sekarang
+                    Daftar Sekarang
                 </button>
 
                 <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-4 fw-semibold">
-                    🔐 Login
+                    Login
                 </a>
 
             </div>
@@ -514,7 +405,7 @@
     <footer class="bg-dark text-white text-center py-3">
         © {{ date('Y') }} <strong>FindKos</strong> | Sistem Penyewaan Kamar Kos berbasis AI
     </footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>
