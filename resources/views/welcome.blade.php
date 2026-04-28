@@ -10,6 +10,7 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -71,7 +72,6 @@
             background-color: #3f8efc;
             border: none;
             border-radius: 8px;
-            padding: 10px 20px;
         }
 
         /* SECTION CARA KERJA */
@@ -160,10 +160,60 @@
             display: flex;
             gap: 14px;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
 
         [x-cloak] {
             display: none !important;
+        }
+
+        /* Responsiveness Mobile */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: linear-gradient(90deg, #2f80ed, #56ccf2);
+                border-radius: 12px;
+                padding: 10px;
+                margin-top: 10px;
+            }
+            .nav-link {
+                padding: 10px 15px !important;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            .nav-item:last-child .nav-link {
+                border-bottom: none;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                background-image: none; /* Menyembunyikan gambar background di mobile */
+                padding: 80px 0;
+                min-height: auto;
+            }
+            .hero-title {
+                font-size: 32px;
+            }
+            .search-box.w-75 {
+                width: 100% !important;
+            }
+            .card-step img {
+                height: 70px;
+            }
+            .cta-section {
+                padding: 40px 0;
+            }
+            #tentang .row {
+                flex-direction: column-reverse;
+            }
+            #tentang .section-title {
+                text-align: center !important;
+            }
+            #tentang p {
+                text-align: center !important;
+            }
+            #tentang img {
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
@@ -172,15 +222,20 @@
 
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
                 <img src="{{ asset('images/logo21.png') }}" alt="Logo"
                     style="height: 130px; width: auto; object-fit: contain; margin-top: -10px;">
             </a>
 
-            <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
+            <!-- Hamburger Button -->
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-2 py-2 py-lg-0">
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center gap-2" href="#home">
                             <i class="bi bi-house-door"></i>
@@ -250,13 +305,13 @@
                 <div class="d-grid gap-3">
 
                     <a href="{{ route('register.pemilik') }}"
-                        class="btn btn-primary btn-lg rounded-3 fw-semibold shadow-sm">
+                        class="btn btn-primary rounded-3 fw-semibold shadow-sm">
                         <i class="bi bi-building me-2"></i>
                         Daftar sebagai Pemilik
                     </a>
 
                     <a href="{{ route('register.penyewa') }}"
-                        class="btn btn-outline-primary btn-lg rounded-3 fw-semibold">
+                        class="btn btn-outline-primary rounded-3 fw-semibold">
                         <i class="bi bi-person me-2"></i>
                         Daftar sebagai Penyewa
                     </a>
@@ -310,7 +365,7 @@
     <section id="cara-kerja" class="container text-center mt-5">
         <h3 class="section-title">Cara Kerja Sistem</h3>
 
-        <div class="row text-center justify-content-center flex-nowrap">
+        <div class="row text-center justify-content-center">
 
             <div class="col-md-3 col-sm-6 mb-4 d-flex">
                 <div class="card-step w-100">
@@ -386,13 +441,13 @@
                 Mudah, cepat, dan sesuai preferensimu hanya di FindKos.
             </p>
 
-            <div class="d-flex justify-content-center gap-3">
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
 
-                <button @click="openModal = true" class="btn btn-light btn-lg px-4 fw-semibold shadow">
+                <button @click="openModal = true" class="btn btn-light px-4 fw-semibold shadow">
                     Daftar Sekarang
                 </button>
 
-                <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-4 fw-semibold">
+                <a href="{{ route('login') }}" class="btn btn-outline-light px-4 fw-semibold">
                     Login
                 </a>
 
