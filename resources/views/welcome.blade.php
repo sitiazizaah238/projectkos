@@ -201,11 +201,11 @@
                             <span>Cara Kerja</span>
                         </a>
                     </li>
-                  
+
 
                     {{-- KONTAK --}}
                     <li class="nav-item">
-                      <a class="nav-link d-flex align-items-center gap-2" href="{{ route('kontak') }}">
+                        <a class="nav-link d-flex align-items-center gap-2" href="{{ route('kontak') }}">
                             <i class="bi bi-telephone"></i>
                             <span>Kontak</span>
                         </a>
@@ -389,11 +389,11 @@
             <div class="d-flex justify-content-center gap-3">
 
                 <button @click="openModal = true" class="btn btn-light btn-lg px-4 fw-semibold shadow">
-                    🚀 Daftar Sekarang
+                    Daftar Sekarang
                 </button>
 
                 <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg px-4 fw-semibold">
-                    🔐 Login
+                    Login
                 </a>
 
             </div>
