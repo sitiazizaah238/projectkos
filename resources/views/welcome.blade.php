@@ -175,10 +175,12 @@
                 padding: 10px;
                 margin-top: 10px;
             }
+
             .nav-link {
                 padding: 10px 15px !important;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
+
             .nav-item:last-child .nav-link {
                 border-bottom: none;
             }
@@ -186,35 +188,158 @@
 
         @media (max-width: 767px) {
             .hero {
-                background-image: none; /* Menyembunyikan gambar background di mobile */
+                background-image: none;
+                /* Menyembunyikan gambar background di mobile */
                 padding: 80px 0;
                 min-height: auto;
             }
+
             .hero-title {
                 font-size: 32px;
             }
+
             .search-box.w-75 {
                 width: 100% !important;
             }
+
             .card-step img {
                 height: 70px;
             }
+
             .cta-section {
                 padding: 40px 0;
             }
+
             #tentang .row {
                 flex-direction: column-reverse;
             }
+
             #tentang .section-title {
                 text-align: center !important;
             }
+
             #tentang p {
                 text-align: center !important;
             }
+
             #tentang img {
                 margin-bottom: 20px;
             }
         }
+        /* ================= ANIMATION GLOBAL ================= */
+
+            /* Smooth scroll */
+            html {
+                scroll-behavior: smooth;
+            }
+
+            /* Fade Up Animation */
+            .fade-up {
+                opacity: 0;
+                transform: translateY(40px);
+                transition: all 0.8s ease;
+            }
+
+            .fade-up.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            /* Fade In */
+            .fade-in {
+                opacity: 0;
+                transition: opacity 1s ease;
+            }
+
+            .fade-in.show {
+                opacity: 1;
+            }
+
+            /* Zoom */
+            .zoom-in {
+                transform: scale(0.9);
+                opacity: 0;
+                transition: all 0.6s ease;
+            }
+
+            .zoom-in.show {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            /* Navbar hover efek */
+            .nav-link {
+                position: relative;
+                transition: 0.3s;
+            }
+
+            .nav-link::after {
+                content: "";
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                width: 0%;
+                height: 2px;
+                background: white;
+                transition: 0.3s;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            /* Button hover */
+            .btn {
+                transition: all 0.3s ease;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Hero animation */
+            .hero-title {
+                animation: fadeSlide 1s ease forwards;
+            }
+
+            .hero-sub {
+                animation: fadeSlide 1.2s ease forwards;
+            }
+
+            @keyframes fadeSlide {
+                from {
+                    opacity: 0;
+                    transform: translateY(40px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Modal animation */
+            [x-cloak] {
+                display: none !important;
+            }
+
+            .modal-animate {
+                animation: zoomFade 0.3s ease;
+            }
+
+            @keyframes zoomFade {
+                from {
+                    transform: scale(0.8);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                
+            }
     </style>
 </head>
 
@@ -224,11 +349,12 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm sticky-top">
         <div class="container">
-             <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo"
-                style="height: 60px; width: auto; object-fit: contain;">
+            <a class="navbar-brand d-flex align-items-center" href="#" style="height: 50px;">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                    style="height: 60px; width: auto; object-fit: contain;">
 
-            <span style="
+                <span
+                    style="
                 margin-left: 10px;
                 font-family: 'Poppins', sans-serif;
                 font-weight: 700;
@@ -236,12 +362,14 @@
                 letter-spacing: 0.5px;
                 color: white;
             ">
-                FindKos
-            </span>
-        </a>
+                    FindKos
+                </span>
+            </a>
 
             <!-- Hamburger Button -->
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -286,7 +414,7 @@
         <div class="position-fixed top-0 start-0 w-100 vh-100 d-flex align-items-center justify-content-center"
             style="background: rgba(15,23,42,0.65); backdrop-filter: blur(6px); z-index:9999;">
 
-            <div class="bg-white rounded-4 shadow-lg p-5 position-relative" style="width:420px; max-width:95%;">
+         <div class="bg-white rounded-4 shadow-lg p-5 position-relative modal-animate">
 
                 <!-- Close Button -->
                 <button type="button" @click="openModal = false"
@@ -315,14 +443,12 @@
                 <!-- Buttons -->
                 <div class="d-grid gap-3">
 
-                    <a href="{{ route('register.pemilik') }}"
-                        class="btn btn-primary rounded-3 fw-semibold shadow-sm">
+                    <a href="{{ route('register.pemilik') }}" class="btn btn-primary rounded-3 fw-semibold shadow-sm">
                         <i class="bi bi-building me-2"></i>
                         Daftar sebagai Pemilik
                     </a>
 
-                    <a href="{{ route('register.penyewa') }}"
-                        class="btn btn-outline-primary rounded-3 fw-semibold">
+                    <a href="{{ route('register.penyewa') }}" class="btn btn-outline-primary rounded-3 fw-semibold">
                         <i class="bi bi-person me-2"></i>
                         Daftar sebagai Penyewa
                     </a>
@@ -337,7 +463,7 @@
     <section id="home" class="hero">
         <div class="container">
             <div class="row align-items-end">
-                <div class="col-md-6 hero-text">
+               <div class="col-md-6 hero-text fade-up">
                     <h1 class="hero-title">
                         Temukan Kos Terbaik <br>
                         di <span>Lohbener</span> dengan Mudah
@@ -367,7 +493,6 @@
                 </div>
 
 
-
             </div>
         </div>
     </section>
@@ -379,7 +504,7 @@
         <div class="row text-center justify-content-center">
 
             <div class="col-md-3 col-sm-6 mb-4 d-flex">
-                <div class="card-step w-100">
+                <div class="card-step w-100 fade-up">
                     <img src="{{ asset('images/step1.png') }}" class="img-fluid" alt="">
                     <h5>1. Daftar Akun</h5>
                     <p>Buat akun Anda terlebih dahulu</p>
@@ -387,7 +512,7 @@
             </div>
 
             <div class="col-md-3 col-sm-6 mb-4 d-flex">
-                <div class="card-step w-100">
+              <div class="card-step w-100 fade-up">
                     <img src="{{ asset('images/step2.png') }}" class="img-fluid" alt="">
                     <h5>2. Isi Preferensi</h5>
                     <p>Pilih kriteria kos sesuai kebutuhan</p>
@@ -395,7 +520,7 @@
             </div>
 
             <div class="col-md-3 col-sm-6 mb-4 d-flex">
-                <div class="card-step w-100">
+                <div class="card-step w-100 fade-up">
                     <img src="{{ asset('images/step3.png') }}" class="img-fluid" alt="">
                     <h5>3. Dapat Rekomendasi</h5>
                     <p>Temukan kos terbaik untuk Anda</p>
@@ -403,7 +528,7 @@
             </div>
 
             <div class="col-md-3 col-sm-6 mb-4 d-flex">
-                <div class="card-step w-100">
+             <div class="card-step w-100 fade-up">
                     <img src="{{ asset('images/step4.png') }}" class="img-fluid" alt="">
                     <h5>4. Pilih & Sewa Kos</h5>
                     <p>Pilih kos dan lakukan proses sewa</p>
@@ -416,7 +541,7 @@
     <!-- TENTANG WEBSITE -->
     <section id="tentang" class="container mt-5 mb-5">
         <div class="row align-items-center">
-            <div class="col-md-6">
+            <div class="col-md-6 fade-left">
                 <h3 class="section-title text-start">Tentang FindKos</h3>
                 <p style="text-align: justify; color:#555;">
                     <strong>FindKos</strong> merupakan sistem informasi pencarian dan rekomendasi
@@ -434,14 +559,14 @@
                 </p>
             </div>
 
-            <div class="col-md-6 text-center">
+           <div class="col-md-6 text-center fade-up">
                 <img src="{{ asset('images/kos.png') }}" class="img-fluid" style="max-height:350px;"
                     alt="Tentang FindKos">
             </div>
         </div>
     </section>
     <!-- CTA -->
-    <section class="py-5 text-center bg-primary bg-gradient text-white">
+ <section class="py-5 text-center bg-primary bg-gradient text-white fade-in">
         <div class="container">
 
             <h2 class="fw-bold mb-3">
@@ -471,7 +596,20 @@
     <footer class="bg-dark text-white text-center py-3">
         © {{ date('Y') }} <strong>FindKos</strong> | Sistem Penyewaan Kamar Kos berbasis AI
     </footer>
+<script>
+    // Reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting){
+                entry.target.classList.add('show');
+            }
+        });
+    });
 
+    document.querySelectorAll('.fade-up, .fade-in, .zoom-in').forEach(el => {
+        observer.observe(el);
+    });
+</script>
 </body>
 
 </html>
