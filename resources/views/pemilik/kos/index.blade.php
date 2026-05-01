@@ -182,6 +182,23 @@
                 align-items: stretch !important;
             }
         }
+        /* ================= FIX TOMBOL DESKTOP ================= */
+@media (min-width: 769px) {
+
+    .header-kos {
+        flex-wrap: nowrap !important;
+    }
+
+    .header-kos .search-mobile {
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .header-kos a.btn {
+        white-space: nowrap;
+        margin-left: auto;
+    }
+}
     </style>
     <div class="d-flex">
 
@@ -226,8 +243,7 @@
                     <small class="text-muted"> Manajemen Kos / Data Kos</small>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-
+              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2 header-kos">
                     {{-- KIRI (SEARCH MOBILE) --}}
                     <form action="{{ route('pemilik.kos.index') }}" method="GET" class="search-mobile">
                         <div class="input-group">
