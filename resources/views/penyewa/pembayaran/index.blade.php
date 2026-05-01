@@ -1,6 +1,103 @@
 @extends('layouts.app')
-
 @section('content')
+<style>
+    /* ================= RESPONSIVE MOBILE FIX (BERSIH & AMAN) ================= */
+@media (max-width: 768px) {
+
+    /* ===== LAYOUT ===== */
+    .d-flex {
+        flex-wrap: wrap !important;
+    }
+
+    .sidebar {
+        position: fixed !important;
+        z-index: 1050;
+    }
+
+    .flex-grow-1 {
+        width: 100% !important;
+    }
+
+    .p-4 {
+        padding: 15px !important;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap !important;
+    }
+
+    .topbar span {
+    display: inline !important;
+    font-size: 12px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+    .topbar img {
+        width: 35px !important;
+        height: 35px !important;
+    }
+
+    /* ===== SEARCH ===== */
+    .input-group {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* ===== TABLE (INI YANG PENTING) ===== */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+    }
+
+    .table {
+        min-width: 900px; /* WAJIB biar ga gepeng */
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+        font-size: 12px !important;
+        padding: 8px !important;
+        vertical-align: middle;
+    }
+
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background: #f8f9fa;
+        z-index: 2;
+    }
+
+    /* ===== UI KECIL ===== */
+    h3 {
+        font-size: 20px !important;
+    }
+
+    .badge {
+        font-size: 10px;
+        padding: 5px 6px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+    </style>
     <div class="d-flex">
         @include('components.sidebar-penyewa')
 

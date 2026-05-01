@@ -45,6 +45,114 @@
             box-shadow: 0 10px 20px rgba(220, 53, 69, 0.28);
             transform: translateY(-1px);
         }
+        /* ================= SAFE RESPONSIVE (TIDAK GANGGU DESKTOP) ================= */
+@media (max-width: 768px) {
+
+    /* Jangan ganggu layout utama desktop */
+    .d-flex {
+        flex-wrap: wrap !important;
+    }
+
+    /* Sidebar (biarkan sistem lama handle hamburger kamu) */
+    .sidebar {
+        position: fixed !important;
+        z-index: 1050;
+    }
+
+    /* Konten biar tidak ketindih sidebar */
+    .flex-grow-1 {
+        width: 100% !important;
+    }
+
+    /* Topbar lebih rapi */
+    .topbar {
+        flex-wrap: wrap;
+        justify-content: space-between !important;
+    }
+
+    /* Padding mobile */
+    .p-4 {
+        padding: 15px !important;
+    }
+
+    /* SEARCH JADI FULL */
+    .input-group {
+        width: 100% !important;
+    }
+
+    /* TABLE JANGAN HANCUR → SCROLL */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 800px;
+    }
+
+    td, th {
+        white-space: nowrap;
+    }
+
+    /* FONT */
+    h3 {
+        font-size: 20px !important;
+    }
+
+    /* BUTTON */
+    .btn {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    /* MODAL */
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+@media (max-width: 768px) {
+    .card {
+        border-radius: 12px;
+    }
+
+    .table {
+        font-size: 13px;
+    }
+}
+@media (max-width: 768px) {
+
+    /* Paksa topbar tetap ke kanan */
+    .topbar {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Semua isi topbar tetap satu baris */
+    .topbar > * {
+        order: 2;
+    }
+
+    /* Kalau ada hamburger di luar topbar, biarkan dia sendiri */
+    .topbar .btn-menu,
+    .topbar .hamburger {
+        order: 1;
+        margin-right: auto;
+    }
+
+    /* Notif + profile tetap di kanan */
+    .topbar .dropdown,
+    .topbar button {
+        display: flex;
+        align-items: center;
+    }
+
+}
+@media (max-width: 768px) {
+    .topbar .me-auto {
+        margin-right: auto !important;
+    }
+}
     </style>
     <div class="d-flex">
 
@@ -98,7 +206,7 @@
                     </form>
 
                     <form method="GET">
-                        <div class="input-group" style="width:300px;">
+                      <div class="input-group w-100" style="max-width:300px;">
                             <input type="hidden" name="per_page" value="{{ $selectedPerPage }}">
                             <input type="text" name="search" value="{{ request('search') }}"
                                 class="form-control rounded-start-pill" placeholder="Cari nama kos / kamar...">
