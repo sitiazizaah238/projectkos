@@ -49,7 +49,7 @@ class PengajuanController extends Controller
         $request->validate([
             'kos_id' => 'required',
             'kamar_id' => 'required',
-            'tanggal_mulai' => 'required|date|after_or_equal:today',
+         'tanggal_mulai' => 'required|date',
             'jenis_sewa' => 'required|in:bulanan,tahunan',
             'durasi' => 'required|integer|min:1'
         ]);
