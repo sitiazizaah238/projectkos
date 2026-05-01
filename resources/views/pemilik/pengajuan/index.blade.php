@@ -35,14 +35,14 @@
 @endphp
 
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row">
 
         {{-- SIDEBAR --}}
         @include('components.sidebar-pemilik')
 
         <div class="flex-grow-1">
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+            <div class="topbar d-flex justify-content-end align-items-center px-3 px-md-4 gap-2 flex-wrap">
                 @include('components.notif-pemilik')
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -77,18 +77,30 @@
                 <small class="text-muted d-block mb-4">
                     Data Pengajuan / Data Sewa
                 </small>
+                <div class="d-md-none mb-3">
 
+                    <form method="GET">
+                        <div class="input-group">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                placeholder="Cari penyewa / kos / kamar...">
+
+                            <button class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
                 <div class="card shadow-sm rounded-4">
-
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-
+                    <div
+                        class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-receipt me-2"></i>
                             <span class="fw-semibold">Data Penyewa</span>
                         </div>
 
-                        <form method="GET">
-                            <div class="input-group" style="width:250px;">
+                      <form method="GET" class="d-none d-md-block">
+                            <div class="input-group w-100 w-md-auto" style="max-width:250px;">
                                 <input type="text" name="search" value="{{ request('search') }}" class="form-control"
                                     placeholder="Cari penyewa / kos / kamar...">
 
@@ -100,7 +112,7 @@
 
                     </div>
                     <div class="table-responsive">
-                        <table class="table align-middle mb-0">
+                        <table class="table table-bordered align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th>No</th>
