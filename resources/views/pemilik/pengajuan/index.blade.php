@@ -99,7 +99,7 @@
                             <span class="fw-semibold">Data Penyewa</span>
                         </div>
 
-                      <form method="GET" class="d-none d-md-block">
+                        <form method="GET" class="d-none d-md-block">
                             <div class="input-group w-100 w-md-auto" style="max-width:250px;">
                                 <input type="text" name="search" value="{{ request('search') }}" class="form-control"
                                     placeholder="Cari penyewa / kos / kamar...">
@@ -112,7 +112,7 @@
 
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered align-middle mb-0">
+                        <table class="table table-bordered align-middle mb-0 w-100"> 
                             <thead class="table-light">
                                 <tr>
                                     <th>No</th>
