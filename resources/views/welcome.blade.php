@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>FindKos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/images/logo2.png">
+    <link rel="icon" type="image/png" href="/images/logo2.
+    png">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -116,11 +117,11 @@
         .hero {
             position: relative;
             min-height: 560px;
-            padding: 120px 0 80px 0;
+            padding: 90px 0 80px 0;
 
             background-image: url("{{ asset('images/hero.png') }}");
             background-repeat: no-repeat;
-            background-position: right bottom;
+           background-position: right 40%;
             background-size: contain;
         }
 
@@ -188,7 +189,7 @@
 
         @media (max-width: 767px) {
             .hero {
-                background-image: none;
+              background-image: url("{{ asset('images/hero.png') }}");
                 /* Menyembunyikan gambar background di mobile */
                 padding: 80px 0;
                 min-height: auto;
@@ -338,7 +339,7 @@
                     transform: scale(1);
                     opacity: 1;
                 }
-                
+
             }
     </style>
 </head>
