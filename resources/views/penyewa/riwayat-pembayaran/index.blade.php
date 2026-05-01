@@ -223,14 +223,19 @@
 
                                             <td>{{ $kos->nama_kos ?? '-' }}</td>
                                             <td>{{ $kamar->nama_kamar ?? '-' }}</td>
-                                            <td>{{ $item->created_at?->format('d-m-Y') ?? '-' }}</td>
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($item->pengajuan->tanggal_mulai ?? now())->format('d-m-Y') }}
+                                            </td>
                                             <td>
                                                 @php
                                                     $tanggalMulai = \Carbon\Carbon::parse(
                                                         $item->pengajuan->tanggal_mulai ?? now(),
                                                     );
                                                     $durasi = $item->pengajuan->durasi ?? 0;
-                                                    $tanggalSelesai = $tanggalMulai->copy()->addMonths($durasi);
+                                                 $tanggalSelesai = $tanggalMulai
+    ->copy()
+    ->addMonths((int) $durasi)
+    ->subDay(); // 🔥 penting
                                                 @endphp
 
                                                 {{ $tanggalSelesai->format('d-m-Y') }}

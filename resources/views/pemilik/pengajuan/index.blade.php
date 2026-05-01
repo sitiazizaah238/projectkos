@@ -128,8 +128,10 @@
                                         <td>
                                             @php
                                                 $tanggalMulai = \Carbon\Carbon::parse($p->tanggal_mulai);
-                                                $tanggalSelesai = $tanggalMulai->copy()->addMonths((int) $p->durasi);
-                                            @endphp
+                                                $tanggalSelesai = $tanggalMulai
+                                                    ->copy()
+                                                    ->addMonths((int) $p->durasi)
+                                                ->subDay(); @endphp
 
                                             {{ $tanggalSelesai->format('d-m-Y') }}
                                         </td>
