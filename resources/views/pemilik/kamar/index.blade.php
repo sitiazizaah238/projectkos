@@ -33,7 +33,7 @@
 @endphp
 
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row">
 
         {{-- SIDEBAR --}}
         @include('components.sidebar-pemilik')
@@ -41,7 +41,10 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+            <div class="topbar d-flex justify-content-end align-items-center px-3 px-md-4 gap-2">
+
+                {{-- GROUP KANAN --}}
+                <div class="d-flex align-items-center gap-2"></div>
                 @include('components.notif-pemilik')
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -76,9 +79,29 @@
                         Kelola Data Kamar</h3>
                     <small class="text-muted">Manajemen Kos / Data Kamar Kos</small>
                 </div>
+                {{-- SEARCH + TAMBAH (MOBILE) --}}
+                <div class="d-md-none mb-3">
 
-                {{-- TOMBOL TAMBAH --}}
-                <div class="d-flex justify-content-end mb-2">
+                    {{-- SEARCH --}}
+                    <form method="GET" action="{{ route('pemilik.kamar.index') }}" class="mb-2">
+                        <div class="input-group">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                placeholder="Cari nama kamar / kos...">
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- TOMBOL TAMBAH --}}
+                    <a href="{{ route('pemilik.kamar.create') }}" class="btn btn-primary d-block w-100 py-2">
+                        <i class="bi bi-plus-circle me-1"></i> Tambah Kamar
+                    </a>
+
+                </div>
+                {{-- TOMBOL TAMBAH DESKTOP --}}
+                <div class="d-none d-md-flex justify-content-end mb-2">
                     <a href="{{ route('pemilik.kamar.create') }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle me-1"></i> Tambah Kamar
                     </a>
@@ -87,14 +110,15 @@
                 <div class="card shadow-sm">
 
                     {{-- HEADER --}}
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <div
+                        class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-door-open fs-5 me-2"></i>
                             <span class="fw-semibold">Manajemen Data Kamar</span>
                         </div>
 
-                        <form method="GET" action="{{ route('pemilik.kamar.index') }}">
-                            <div class="input-group" style="width:250px;">
+                        <form method="GET" action="{{ route('pemilik.kamar.index') }}" class="d-none d-md-block">
+                            <div class="input-group w-100 w-md-auto" style="max-width:250px;">
                                 <input type="text" name="search" value="{{ request('search') }}" class="form-control"
                                     placeholder="Cari nama kamar / kos...">
 
@@ -108,104 +132,253 @@
 
                     {{-- BODY --}}
                     <div class="card-body p-0">
-                        <table class="table table-bordered mb-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
 
-                            <thead class="table-light">
-                                <tr>
-                                    <th width="50">No</th>
-                                    <th>Nama Kos</th>
-                                    <th>Nama Kamar</th>
-                                    <th>Harga</th>
-                                    <th>Tipe Harga</th>
-                                    <th>Status Kamar</th>
-                                    <th width="180">Aksi</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @forelse($kamars as $k)
+                                <thead class="table-light">
                                     <tr>
-                                        <td>{{ ($kamars->currentPage() - 1) * $kamars->perPage() + $loop->iteration }}</td>
-                                        <td>{{ $k->kos->nama_kos }}</td>
-                                        <td>{{ $k->nama_kamar }}</td>
-                                        <td>
-                                            Rp. {{ number_format($k->harga, 0, ',', '.') }}
-                                        </td>
-
-                                        <td>{{ ucfirst($k->tipe_harga) }}</td>
-
-                                        <td>
-                                            @if ($k->status == 'tersedia')
-                                                <span class="badge bg-success">Tersedia</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark">Terisi</span>
-                                            @endif
-                                        </td>
-
-                                        <td class="text-nowrap">
-                                            <div class="d-flex gap-1">
-
-                                                {{-- LIHAT --}}
-                                                <a href="{{ route('pemilik.kamar.show', $k->id) }}"
-                                                    class="btn btn-sm btn-info text-white">
-                                                    Detail
-                                                </a>
-
-                                                {{-- EDIT --}}
-                                                <a href="{{ route('pemilik.kamar.edit', $k->id) }}"
-                                                    class="btn btn-sm btn-primary">
-                                                    Edit
-                                                </a>
-
-                                                {{-- HAPUS --}}
-                                                <form action="{{ route('pemilik.kamar.destroy', $k->id) }}" method="POST"
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-
-                                                    <button type="button" class="btn btn-sm btn-danger btn-delete"
-                                                        data-status="{{ $k->status }}">
-                                                        Hapus
-                                                    </button>
-                                                </form>
-
-                                            </div>
-                                        </td>
+                                        <th width="50">No</th>
+                                        <th>Nama Kos</th>
+                                        <th>Nama Kamar</th>
+                                        <th>Harga</th>
+                                        <th>Tipe Harga</th>
+                                        <th>Status Kamar</th>
+                                        <th width="180">Aksi</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4 text-muted">
-                                            @if (request('search'))
-                                                Data kamar atau nama kos tidak ditemukan
-                                            @else
-                                                Belum ada data kamar
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                </thead>
 
-                            </tbody>
+                                <tbody>
+                                    @forelse($kamars as $k)
+                                        <tr>
+                                            <td>{{ ($kamars->currentPage() - 1) * $kamars->perPage() + $loop->iteration }}
+                                            </td>
+                                            <td>{{ $k->kos->nama_kos }}</td>
+                                            <td>{{ $k->nama_kamar }}</td>
+                                            <td>
+                                                Rp. {{ number_format($k->harga, 0, ',', '.') }}
+                                            </td>
 
-                        </table>
+                                            <td>{{ ucfirst($k->tipe_harga) }}</td>
+
+                                            <td>
+                                                @if ($k->status == 'tersedia')
+                                                    <span class="badge bg-success">Tersedia</span>
+                                                @else
+                                                    <span class="badge bg-warning text-dark">Terisi</span>
+                                                @endif
+                                            </td>
+
+                                            <td class="text-nowrap">
+                                                <div class="d-flex gap-1 flex-nowrap">
+
+                                                    {{-- LIHAT --}}
+                                                    <a href="{{ route('pemilik.kamar.show', $k->id) }}"
+                                                        class="btn btn-sm btn-info text-white">
+                                                        Detail
+                                                    </a>
+
+                                                    {{-- EDIT --}}
+                                                    <a href="{{ route('pemilik.kamar.edit', $k->id) }}"
+                                                        class="btn btn-sm btn-primary">
+                                                        Edit
+                                                    </a>
+
+                                                    {{-- HAPUS --}}
+                                                    <form action="{{ route('pemilik.kamar.destroy', $k->id) }}"
+                                                        method="POST" class="delete-form">
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button type="button" class="btn btn-sm btn-danger btn-delete"
+                                                            data-status="{{ $k->status }}">
+                                                            Hapus
+                                                        </button>
+                                                    </form>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center py-4 text-muted">
+                                                @if (request('search'))
+                                                    Data kamar atau nama kos tidak ditemukan
+                                                @else
+                                                    Belum ada data kamar
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforelse
+
+                                </tbody>
+
+                            </table>
+                        </div>
                         @if ($kamars->hasPages())
                             <div class="p-3 d-flex justify-content-end">
                                 {{ $kamars->links() }}
                             </div>
                         @endif
                         <style>
-                            .pagination .page-link {
-                                color: #0d6efd;
+                            /* ============================= */
+                            /* PAGINATION FIX TOTAL (ANTI PUTIH) */
+                            /* ============================= */
+
+                            .pagination {
+                                gap: 4px;
                             }
 
+                            /* semua item pagination */
+                            .pagination li {
+                                list-style: none;
+                            }
+
+                            /* SEMUA LINK / SPAN pagination */
+                            .pagination .page-link,
+                            .pagination .page-item span,
+                            .pagination .page-item a {
+                                color: #0d6efd !important;
+                                background-color: #fff !important;
+                                border: 1px solid #dee2e6 !important;
+                                padding: 6px 12px !important;
+                                display: block;
+                            }
+
+                            /* hover */
+                            .pagination .page-link:hover,
+                            .pagination .page-item a:hover {
+                                background-color: #0b5ed7 !important;
+                                color: #fff !important;
+                            }
+
+                            /* active */
                             .pagination .page-item.active .page-link {
-                                background-color: #0d6efd;
-                                border-color: #0d6efd;
-                                color: #fff;
+                                background-color: #0d6efd !important;
+                                border-color: #0d6efd !important;
+                                color: #fff !important;
                             }
 
-                            .pagination .page-link:hover {
-                                background-color: #0b5ed7;
-                                color: #fff;
+                            /* disabled (NEXT / PREV FIX UTAMA) */
+                            .pagination .page-item.disabled span {
+                                color: #6c757d !important;
+                                background-color: #e9ecef !important;
+                                border-color: #dee2e6 !important;
+                                opacity: 1 !important;
+                                cursor: not-allowed !important;
+                            }
+
+                            /* kalau Next/Prev masih <a> bukan span */
+                            .pagination .page-item.disabled a {
+                                color: #6c757d !important;
+                                background-color: #e9ecef !important;
+                                border-color: #dee2e6 !important;
+                                pointer-events: none !important;
+                                opacity: 1 !important;
+                            }
+
+                            /* fokus mobile */
+                            .pagination .page-link:focus {
+                                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, .25) !important;
+                            }
+
+                            .pagination * {
+                                background: #fff !important;
+                                color: #0d6efd !important;
+                            }
+
+                            /* ============================= */
+                            /* RESPONSIVE MOBILE FIX */
+                            /* ============================= */
+                            @media (max-width: 768px) {
+
+                                /* padding konten biar ga sempit */
+                                .p-4 {
+                                    padding: 15px !important;
+                                }
+
+                                /* topbar biar ga nabrak */
+                                .topbar {
+                                    flex-wrap: wrap;
+                                    gap: 8px;
+                                }
+
+                                .topbar {
+                                    overflow-x: auto;
+                                }
+
+                                /* header card (title + search) */
+                                .card-header {
+                                    flex-direction: column !important;
+                                    align-items: stretch !important;
+                                    gap: 10px;
+                                }
+
+                                /* search full width */
+                                .card-header form {
+                                    width: 100%;
+                                }
+
+                                .card-header .input-group {
+                                    width: 100% !important;
+                                    max-width: 100% !important;
+                                }
+
+                                /* tabel lebih kecil */
+                                table {
+                                    font-size: 13px;
+                                }
+
+                                td .d-flex {
+                                    flex-wrap: nowrap;
+                                }
+
+                                td .btn {
+                                    white-space: nowrap;
+                                }
+                            }
+
+                            @media (max-width:768px) {
+                                .btn-primary {
+                                    width: auto !important;
+                                }
+                            }
+
+                            @media (max-width:768px) {
+                                .btn-primary {
+                                    width: auto !important;
+                                }
+                            }
+
+                            @media (max-width:768px) {
+                                .topbar {
+                                    padding-top: 10px;
+                                    padding-bottom: 10px;
+                                }
+                            }
+
+                            @media (max-width: 768px) {
+
+                                /* bikin tinggi search & tombol sama */
+                                .d-md-none .input-group .form-control {
+                                    height: 45px;
+                                }
+
+                                .d-md-none .input-group .btn {
+                                    height: 45px;
+                                }
+
+                                /* tombol tambah biar kotak & sejajar */
+                                .d-md-none a.btn-primary {
+                                    height: 45px;
+                                    min-width: 50px;
+                                    padding: 0;
+                                }
+
+                                .pagination .page-item.disabled .page-link {
+                                    color: #333 !important;
+                                    background-color: #e9ecef !important;
+                                    opacity: 1 !important;
+                                }
                             }
                         </style>
                     </div>
