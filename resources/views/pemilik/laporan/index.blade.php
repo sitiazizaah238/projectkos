@@ -22,7 +22,7 @@
 @endphp
 
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row">
 
         @include('components.sidebar-pemilik')
 
@@ -62,10 +62,9 @@
 
                 {{-- FILTER & EXPORT SEJARAH --}}
                 <form method="GET" action="{{ route('pemilik.laporan.index') }}" id="filterForm" class="mb-3">
-                    <div class="row g-2 align-items-end">
-
+              <div class="row g-2 align-items-end">
                         {{-- SEARCH DENGAN ICON --}}
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-4">
                             <div class="input-group">
                                 <input type="text" name="search" class="form-control border-secondary rounded-start"
                                     placeholder="Cari penyewa / kamar..." value="{{ request('search') }}"
@@ -76,28 +75,25 @@
                             </div>
                         </div>
 
-                        {{-- FILTER TANGGAL DENGAN LABEL --}}
-                        <div class="col-md-2">
-                            <label for="dari" class="form-label small text-muted">Dari Tanggal</label>
-                            <input type="date" name="dari" id="dari" class="form-control"
-                                value="{{ request('dari') }}" onchange="this.form.submit()">
+                        <div class="col-6 col-md-2">
+                            <label for="dari" class="form-label small text-muted mb-0">Dari Tanggal</label>
+                            <input type="date" name="dari" id="dari" class="form-control">
                         </div>
 
-                        <div class="col-md-2">
-                            <label for="sampai" class="form-label small text-muted">Sampai Tanggal</label>
-                            <input type="date" name="sampai" id="sampai" class="form-control"
-                                value="{{ request('sampai') }}" onchange="this.form.submit()">
+                        <div class="col-6 col-md-2">
+                            <label for="sampai" class="form-label small text-muted mb-0">Sampai Tanggal</label>
+                            <input type="date" name="sampai" id="sampai" class="form-control">
                         </div>
 
                         {{-- EXPORT PDF & EXCEL --}}
-                        <div class="col-md-4 d-flex justify-content-end gap-2">
-                            <a href="{{ route('pemilik.laporan.print', request()->query()) }}" class="btn btn-danger"
-                                target="_blank" data-no-loader>
+                        <div class="col-12 col-md-4 d-flex flex-wrap justify-content-md-end gap-2">
+                            <a href="{{ route('pemilik.laporan.print', request()->query()) }}"
+                                class="btn btn-danger flex-fill flex-md-grow-0" target="_blank" data-no-loader>
                                 <i class="bi bi-file-pdf me-1"></i> Export PDF
                             </a>
 
-                            <a href="{{ route('pemilik.laporan.excel', request()->query()) }}" class="btn btn-success"
-                                target="_blank" data-no-loader>
+                            <a href="{{ route('pemilik.laporan.excel', request()->query()) }}"
+                                class="btn btn-success flex-fill flex-md-grow-0" target="_blank" data-no-loader>
                                 <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
                             </a>
                         </div>
@@ -112,8 +108,8 @@
                         Data Laporan Pembayaran
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered mb-0 text-center">
+                    <div class="table-responsive" style="overflow-x:auto;">
+                        <table class="table table-bordered mb-0 text-center align-middle" style="min-width:800px;">
 
                             <thead class="table-light">
                                 <tr>

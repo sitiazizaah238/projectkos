@@ -77,7 +77,7 @@
     $jumlahNotif = $notifTimeline->where('is_unread', true)->count();
 @endphp
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row">
 
         @include('components.sidebar-pemilik')
 
@@ -150,7 +150,18 @@
                 <small class="text-muted d-block mb-4">
                     Verifikasi/Pembayaran Sewa
                 </small>
+                <div class="d-md-none mb-3">
+                    <form method="GET" action="">
+                        <div class="input-group">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                                placeholder="Cari penyewa / kamar...">
 
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <div class="card shadow-sm rounded-4">
 
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
@@ -161,8 +172,8 @@
                         </div>
 
                         {{-- SEARCH (SAMA KAYA KAMAR) --}}
-                        <form method="GET" action="">
-                            <div class="input-group" style="width:250px;">
+                        <form method="GET" action="" class="ms-2 flex-grow-1 flex-md-grow-0 d-none d-md-block">
+                            <div class="input-group w-100" style="max-width:250px;">
                                 <input type="text" name="search" value="{{ request('search') }}" class="form-control"
                                     placeholder="Cari penyewa / kamar...">
 
@@ -173,8 +184,8 @@
                         </form>
 
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered mb-0 text-center">
+                    <div class="table-responsive" style="overflow-x:auto;">
+                        <table class="table table-bordered mb-0 text-center align-middle">
 
                             <thead class="table-light">
                                 <tr>
@@ -222,27 +233,32 @@
                                         </td>
 
                                         <td>
-                                            <form id="form-konfirmasi-{{ $item->id }}"
-                                                action="{{ route('pemilik.verifikasi.konfirmasi', $item->id) }}"
-                                                method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="button" class="btn btn-sm btn-primary btn-konfirmasi"
-                                                    data-id="{{ $item->id }}" data-status="{{ $item->status }}">
-                                                    Konfirmasi
-                                                </button>
-                                            </form>
+                                            <div class="d-flex flex-wrap flex-md-nowrap justify-content-center gap-1">
 
-                                            <form id="form-tolak-{{ $item->id }}"
-                                                action="{{ route('pemilik.verifikasi.tolak', $item->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                 <button type="button" class="btn btn-sm btn-danger btn-tolak"
-                                                    data-id="{{ $item->id }}" data-status="{{ $item->status }}">
-                                                    Tolak
-                                                </button>
-                                            </form>
+                                                <form id="form-konfirmasi-{{ $item->id }}"
+                                                    action="{{ route('pemilik.verifikasi.konfirmasi', $item->id) }}"
+                                                    method="POST" class="flex-fill flex-md-grow-0">
+                                                    @csrf
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-primary btn-konfirmasi w-100 w-md-auto"
+                                                        data-id="{{ $item->id }}" data-status="{{ $item->status }}">
+                                                        Konfirmasi
+                                                    </button>
+                                                </form>
+
+                                                <form id="form-tolak-{{ $item->id }}"
+                                                    action="{{ route('pemilik.verifikasi.tolak', $item->id) }}"
+                                                    method="POST" class="flex-fill flex-md-grow-0">
+                                                    @csrf
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger btn-tolak w-100 w-md-auto"
+                                                        data-id="{{ $item->id }}" data-status="{{ $item->status }}">
+                                                        Tolak
+                                                    </button>
+                                                </form>
+
+                                            </div>
                                         </td>
-
                                     </tr>
                                 @empty
                                     <tr>
@@ -269,106 +285,106 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-           document.querySelectorAll('.btn-konfirmasi').forEach(button => {
-    button.addEventListener('click', function() {
+            document.querySelectorAll('.btn-konfirmasi').forEach(button => {
+                button.addEventListener('click', function() {
 
-        let id = this.getAttribute('data-id');
-        let status = this.getAttribute('data-status');
+                    let id = this.getAttribute('data-id');
+                    let status = this.getAttribute('data-status');
 
-        // 🚫 Kalau SUDAH DIKONFIRMASI
-        if (status === 'dikonfirmasi') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Sudah Dikonfirmasi',
-                text: 'Pembayaran ini sudah dikonfirmasi sebelumnya.'
+                    // 🚫 Kalau SUDAH DIKONFIRMASI
+                    if (status === 'dikonfirmasi') {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sudah Dikonfirmasi',
+                            text: 'Pembayaran ini sudah dikonfirmasi sebelumnya.'
+                        });
+                        return;
+                    }
+
+                    // 🚫 Kalau DITOLAK
+                    if (status === 'ditolak') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Pembayaran Ditolak',
+                            text: 'Pembayaran ini sudah ditolak.'
+                        });
+                        return;
+                    }
+
+                    // ✅ Kalau MENUNGGU
+                    Swal.fire({
+                        title: 'Konfirmasi Pembayaran?',
+                        text: "Pembayaran akan disetujui dan kamar otomatis terisi!",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Konfirmasi!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('form-konfirmasi-' + id).submit();
+                        }
+                    });
+
+                });
             });
-            return;
-        }
-
-        // 🚫 Kalau DITOLAK
-        if (status === 'ditolak') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Pembayaran Ditolak',
-                text: 'Pembayaran ini sudah ditolak.'
-            });
-            return;
-        }
-
-        // ✅ Kalau MENUNGGU
-        Swal.fire({
-            title: 'Konfirmasi Pembayaran?',
-            text: "Pembayaran akan disetujui dan kamar otomatis terisi!",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Konfirmasi!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('form-konfirmasi-' + id).submit();
-            }
-        });
-
-    });
-});
             document.querySelectorAll('.btn-tolak').forEach(button => {
-    button.addEventListener('click', function() {
+                button.addEventListener('click', function() {
 
-        let id = this.getAttribute('data-id');
-        let status = this.getAttribute('data-status');
+                    let id = this.getAttribute('data-id');
+                    let status = this.getAttribute('data-status');
 
-        // 🚫 Kalau SUDAH DIKONFIRMASI
-        if (status === 'dikonfirmasi') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Sudah Dikonfirmasi',
-                text: 'Tidak bisa menolak pembayaran yang sudah dikonfirmasi.'
+                    // 🚫 Kalau SUDAH DIKONFIRMASI
+                    if (status === 'dikonfirmasi') {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sudah Dikonfirmasi',
+                            text: 'Tidak bisa menolak pembayaran yang sudah dikonfirmasi.'
+                        });
+                        return;
+                    }
+
+                    // 🚫 Kalau SUDAH DITOLAK
+                    if (status === 'ditolak') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Sudah Ditolak',
+                            text: 'Pembayaran ini sudah ditolak sebelumnya.'
+                        });
+                        return;
+                    }
+
+                    // ✅ Kalau MENUNGGU
+                    Swal.fire({
+                        title: 'Tolak Pembayaran',
+                        input: 'textarea',
+                        inputLabel: 'Masukkan alasan penolakan',
+                        inputPlaceholder: 'Contoh: Nominal kurang / Bukti tidak jelas',
+                        showCancelButton: true,
+                        confirmButtonText: 'Tolak Pembayaran',
+                        cancelButtonText: 'Batal',
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Alasan wajib diisi!'
+                            }
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            let form = document.getElementById('form-tolak-' + id);
+
+                            let input = document.createElement("input");
+                            input.type = "hidden";
+                            input.name = "alasan";
+                            input.value = result.value;
+
+                            form.appendChild(input);
+
+                            form.submit();
+                        }
+                    });
+
+                });
             });
-            return;
-        }
-
-        // 🚫 Kalau SUDAH DITOLAK
-        if (status === 'ditolak') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Sudah Ditolak',
-                text: 'Pembayaran ini sudah ditolak sebelumnya.'
-            });
-            return;
-        }
-
-        // ✅ Kalau MENUNGGU
-        Swal.fire({
-            title: 'Tolak Pembayaran',
-            input: 'textarea',
-            inputLabel: 'Masukkan alasan penolakan',
-            inputPlaceholder: 'Contoh: Nominal kurang / Bukti tidak jelas',
-            showCancelButton: true,
-            confirmButtonText: 'Tolak Pembayaran',
-            cancelButtonText: 'Batal',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Alasan wajib diisi!'
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-
-                let form = document.getElementById('form-tolak-' + id);
-
-                let input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "alasan";
-                input.value = result.value;
-
-                form.appendChild(input);
-
-                form.submit();
-            }
-        });
-
-    });
-});
         });
     </script>
 @endsection
