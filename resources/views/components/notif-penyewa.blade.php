@@ -32,7 +32,8 @@
             ];
         })
         ->filter(function (array $item) {
-            return (($item['sisa_hari'] >= 3 && $item['sisa_hari'] <= 5) || $item['sisa_hari'] < 0) && $item['can_extend'];
+            // Tampilkan notifikasi jika sisa hari <= 5 (menjelang habis atau sudah lewat/jatuh tempo)
+            return $item['sisa_hari'] <= 5 && $item['can_extend'];
         })
         ->values();
 

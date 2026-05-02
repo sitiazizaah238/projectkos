@@ -138,19 +138,8 @@
                             ->where('status', 'dikonfirmasi')
                             ->count();
 
-                        $jatuhTempoTagihan = $tanggalMulaiSewa->copy()->addMonths($bulanTagihanSaatIni - 1);
-
-                        if (now()->greaterThan($tanggalSelesaiSewa)) {
-                            $statusTagihan = 'selesai';
-                        } elseif (
-                            $sewaAktifData->status === 'aktif' &&
-                            now()->greaterThanOrEqualTo($jatuhTempoTagihan) &&
-                            $jumlahKonfirmasi < $bulanTagihanSaatIni
-                        ) {
-                            $statusTagihan = 'jatuh_tempo';
-                        } else {
-                            $statusTagihan = $sewaAktifData->status;
-                        }
+                        $statusTagihan = $sewaAktifData->statusSaatIni();
+                        $jatuhTempoTagihan = $sewaAktifData->tanggalSelesai();
                     } else {
                         $statusTagihan = null;
                         $jatuhTempoTagihan = null;

@@ -56,29 +56,23 @@ class PengajuanSewa extends Model
 
     public function statusSaatIni(): string
     {
-        if ($this->isLewatBatasAkhirSewa()) {
+        // 1. Jika sudah melewati batas toleransi (grace period 2 hari), maka sewa SELESAI
+        if ($this->isLewatBatasAkhirSewa(2)) {
             return 'selesai';
         }
 
-        if ($this->status !== 'aktif') {
+        if ($this->status !== 'aktif' && $this->status !== 'jatuh_tempo') {
             return $this->status;
         }
 
-        // H-5 sampai hari selesai sewa ditandai sebagai jatuh tempo agar notifikasi dan alur bayar aktif.
-        if ($this->sisaHariSewa() <= 5 && $this->sisaHariSewa() >= 0) {
+        // 2. Jika hari ini sudah lewat tanggal selesai ATAU sisa hari sewa <= 5 hari, maka JATUH TEMPO
+        // Ini berlaku sampai batas grace period di atas tercapai.
+        if ($this->sisaHariSewa() <= 5) {
             return 'jatuh_tempo';
         }
 
-        if ($this->isJatuhTempo()) {
-            return 'jatuh_tempo';
-        }
-
-        if (
-            now()->greaterThan($this->tanggalSelesai())
-            && $this->jumlahPembayaranTerkonfirmasi() >= max((int) $this->durasi, 1)
-        ) {
-            return 'selesai';
-        }
+        // Hapus logika isJatuhTempo bulanan agar tidak membingungkan user yang menyewa jangka panjang
+        // (Misal sewa 1 tahun, tidak muncul jatuh tempo di bulan ke-1)
 
         return 'aktif';
     }
@@ -159,28 +153,24 @@ class PengajuanSewa extends Model
 
     public function isJatuhTempo(): bool
     {
+        // Logika ini sekarang hanya sisa pendukung, tapi statusUtama sudah dihandle di statusSaatIni
         if (! in_array($this->status, ['aktif', 'jatuh_tempo'], true)) {
             return false;
         }
 
-        $targetKonfirmasi = $this->bulanTagihanSaatIni();
-        $sudahKonfirmasi = $this->jumlahPembayaranTerkonfirmasi();
-
-        return now()->greaterThanOrEqualTo($this->tanggalJatuhTempoSaatIni())
-            && $sudahKonfirmasi < $targetKonfirmasi;
+        return $this->sisaHariSewa() <= 5;
     }
 
-    public function isLewatBatasAkhirSewa(int $batasHari = 3): bool
+    public function isLewatBatasAkhirSewa(int $batasHari = 2): bool
     {
         if (! in_array($this->status, ['aktif', 'jatuh_tempo'], true)) {
             return false;
         }
 
-        // Grace period 3 hari setelah tanggal selesai sewa.
-        // Otomatis selesai di hari ke-4 jika belum ada pembayaran/perpanjangan.
+        // Grace period 2 hari setelah tanggal selesai sewa (misal selesai tgl 1, tgl 2 masih jatuh tempo, tgl 3 otomatis selesai)
         $batasAkhir = $this->tanggalSelesai()->copy()->startOfDay()->addDays($batasHari);
 
-        return now()->startOfDay()->greaterThan($batasAkhir);
+        return now()->startOfDay()->greaterThanOrEqualTo($batasAkhir);
     }
 
     public static function syncExpiredRentals(): int
