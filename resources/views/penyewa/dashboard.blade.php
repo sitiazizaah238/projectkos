@@ -280,9 +280,10 @@
                             <hr class="my-2">
                             @if ($sewaAktifData)
                                 @php
-                                    $tanggalMulai = \Carbon\Carbon::parse($sewaAktifData->tanggal_mulai);
+                                    $tanggalMulai = \Carbon\Carbon::parse($sewaAktifData->tanggal_mulai)->startOfDay();
                                     $jumlahBulan = (int) $sewaAktifData->durasi;
-                                    $tanggalSelesai = $tanggalMulai->copy()->addMonths($jumlahBulan)->endOfDay();
+
+                                    $tanggalSelesai = $tanggalMulai->copy()->addMonths($jumlahBulan)->subDay(); // biar pas (misal 1 Jan - 1 Feb jadi 31 Jan)
                                     $statusSewaAktif = $statusTagihan;
                                 @endphp
                                 <div class="row">

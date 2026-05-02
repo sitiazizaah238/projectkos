@@ -330,7 +330,7 @@
 
                                             {{-- Tombol --}}
                                             <div class="mt-auto">
-                                                <a href="{{ route('penyewa.kos.detail', $k->id) }}"
+                                                <a href="{{ route('penyewa.kos.detail', ['id' => $k->id, 'from' => 'cari']) }}"
                                                     class="btn btn-primary w-100">Detail</a>
                                             </div>
 

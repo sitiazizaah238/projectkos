@@ -125,8 +125,8 @@
             }
 
             .auth-logo {
-                left: 50%;
-                transform: translateX(-50%);
+                left: 20px;
+                transform: none;
             }
 
             .auth-left-content {

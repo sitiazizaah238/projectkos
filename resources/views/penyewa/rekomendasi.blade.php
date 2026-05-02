@@ -172,9 +172,8 @@
                                     </div>
                                     {{-- 5. Tombol Detail --}}
                                     <div class="mt-auto">
-                                        <a href="{{ route('penyewa.kos.detail', $k->id) }}" class="btn btn-primary w-100">
-                                            Lihat Detail
-                                        </a>
+                                        <a href="{{ route('penyewa.kos.detail', ['id' => $k->id, 'from' => 'rekomendasi']) }}"
+                                            class="btn btn-primary w-100">Detail</a>
                                     </div>
                                 </div>
                             </div>

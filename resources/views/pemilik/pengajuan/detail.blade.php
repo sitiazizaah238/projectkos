@@ -157,36 +157,42 @@
                     </h6>
 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <small>Nama Kamar</small>
                             <div class="fw-semibold">{{ $pengajuan->kamar->nama_kamar }}</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <small>Harga / {{ $tipeHarga === 'tahunan' ? 'Tahun' : 'Bulan' }}</small>
                             <div class="fw-semibold">
                                 Rp {{ number_format($harga, 0, ',', '.') }}
                             </div>
                         </div>
 
-                        <div class="col-md-3">
-                            <small>Durasi</small>
+                        <div class="col-md-2">
+                            <small>Durasi Sewa</small>
                             <div class="fw-semibold">
                                 {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $durasi, $tipeHarga) }}
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <small>Tanggal Mulai</small>
                             <div class="fw-semibold">
                                 {{ \Carbon\Carbon::parse($pengajuan->tanggal_mulai)->format('d-m-Y') }}
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <small>Tanggal Selesai</small>
                             <div class="fw-semibold">
-                                {{ $pengajuan->tanggalSelesai()->format('d-m-Y') }}
+                                @php
+                                    $tanggalSelesai = \Carbon\Carbon::parse($pengajuan->tanggal_mulai)
+                                        ->addMonths((int) $pengajuan->durasi)
+                                        ->subDay();
+                                @endphp
+
+                                {{ $tanggalSelesai->format('d-m-Y') }}
                             </div>
                         </div>
                     </div>

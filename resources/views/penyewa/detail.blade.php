@@ -369,8 +369,7 @@
 
                                                     <div class="mb-3">
                                                         <label class="fw-semibold">Tanggal Mulai</label>
-                                                        <input type="date" name="tanggal_mulai" class="form-control"
-                                                            min="{{ now()->toDateString() }}" required>
+                                                     <input type="date" name="tanggal_mulai" class="form-control" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="fw-semibold">Jenis Sewa</label>
