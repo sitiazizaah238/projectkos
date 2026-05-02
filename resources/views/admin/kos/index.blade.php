@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row" style="min-height:100vh; overflow-x:hidden;">
 
         @include('components.sidebar-admin')
 
         <div class="flex-grow-1">
-
-            <div class="topbar d-flex justify-content-between align-items-center px-4 w-100">
+            <div class="topbar d-flex flex-wrap justify-content-between align-items-center px-3 px-md-4 w-100">
                 <div></div>
 
                 <div class="d-flex align-items-center">
@@ -37,7 +36,18 @@
                         Manajemen Kos / <span class="text-dark">Data Kos</span>
                     </small>
                 </div>
-
+                {{-- SEARCH MOBILE --}}
+                <div class="d-block d-md-none mb-3">
+                    <form method="GET" action="{{ route('admin.kos.index') }}">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control" placeholder="Cari kos / lokasi..."
+                                value="{{ request('search') }}">
+                        </div>
+                    </form>
+                </div>
                 <div class="card shadow-sm ms-1">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
@@ -45,7 +55,7 @@
                             <span class="fw-semibold">Data Kos</span>
                         </div>
 
-                        <form method="GET" action="{{ route('admin.kos.index') }}">
+                        <form method="GET" action="{{ route('admin.kos.index') }}" class="d-none d-md-block">
                             <div class="input-group input-group-sm" style="width: 280px;">
                                 <span class="input-group-text bg-white">
                                     <i class="bi bi-search"></i>
@@ -58,7 +68,8 @@
 
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-bordered mb-0 align-middle">
+
+                            <table class="table table-bordered mb-0 align-middle w-100 text-nowrap">
                                 <thead class="table-light">
                                     <tr>
                                         <th width="50">No</th>
@@ -169,4 +180,46 @@
             </div>
         </div>
     </div>
+    <style>
+@media (min-width: 992px) {
+
+    .card.shadow-sm {
+        overflow: hidden;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table.table {
+        width: 100%;
+    }
+
+    table.table th,
+    table.table td {
+        white-space: nowrap;   /* tetap rapi horizontal */
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    /* biar kolom panjang (nama/lokasi) tidak ganggu */
+    table.table td:nth-child(2),
+    table.table td:nth-child(3) {
+        white-space: normal;   /* hanya ini yang boleh wrap */
+        max-width: 200px;
+    }
+
+    /* kolom aksi tetap kecil */
+    table.table th:last-child,
+    table.table td:last-child {
+        width: 120px;
+        text-align: center;
+    }
+
+    /* badge jangan bikin tinggi aneh */
+    .badge {
+        font-size: 12px;
+    }
+}
+</style>
 @endsection

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row" style="min-height:100vh; overflow-x:hidden;">
 
         @include('components.sidebar-admin')
 
@@ -19,7 +19,7 @@
                     <button type="button" class="btn text-white d-flex align-items-center gap-3" data-bs-toggle="modal"
                         data-bs-target="#profileModal">
 
-                        <span class="fw-semibold small">
+                        <span class="fw-semibold small text-nowrap">
                             {{ Auth::user()->name }}
                         </span>
 
@@ -49,7 +49,17 @@
                     </small>
                 </div>
 
-
+{{-- SEARCH MOBILE --}}
+<div class="d-block d-md-none mb-3">
+    <form method="GET" action="">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="search" class="form-control" placeholder="Cari..." value="{{ request('search') }}">
+        </div>
+    </form>
+</div>
 
                 {{-- CARD --}}
                 <div class="card shadow-sm">
@@ -62,8 +72,8 @@
                         </div>
 
                         {{-- KANAN: SEARCH --}}
-                        <form method="GET" action="">
-                            <div class="d-flex gap-2">
+                      <form method="GET" action="" class="d-none d-md-block">
+                           <div class="d-flex flex-column flex-md-row gap-2">
 
                                 {{-- FILTER WAKTU --}}
                                 <select name="filter" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -92,88 +102,93 @@
                     <div class="card-body p-0">
                         <div class="card-body p-0">
 
-    {{-- 🔵 INFO FILTER --}}
-    @if(request('filter') == '7')
-        <div class="p-2 px-3 bg-light border-bottom">
-            <span class="badge bg-primary">
-                Menampilkan log 7 hari terakhir
-            </span>
-        </div>
-    @elseif(request('filter') == '30')
-        <div class="p-2 px-3 bg-light border-bottom">
-            <span class="badge bg-primary">
-                Menampilkan log 30 hari terakhir
-            </span>
-        </div>
-    @elseif(request('filter') == 'all')
-        <div class="p-2 px-3 bg-light border-bottom">
-            <span class="badge bg-secondary">
-                Menampilkan semua log aktivitas
-            </span>
-        </div>
-    @endif
-                        <table class="table table-bordered mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th width="50">No</th>
-                                    <th>Nama Pemilik</th>
-                                    <th>Nama Kos</th>
-                                    <th>Aktivitas</th>
-                                    <th>Tanggal</th>
-                                    <th>Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($logs as $log)
-                                    <tr>
-                                        <td>{{ ($logs->currentPage() - 1) * $logs->perPage() + $loop->iteration }}</td>
-                                        <td>{{ $log->user->name ?? '-' }}</td>
-                                        <td>{{ $log->kos->nama_kos ?? '-' }}</td>
-                                        <td>{{ $log->aktivitas }}</td>
-                                        <td>{{ $log->created_at->format('d-m-Y') }}</td>
-                                        <td>{{ $log->keterangan ?? '-' }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-4">
-                                            Belum ada aktivitas
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        @if ($logs->hasPages())
-                            <div class="p-3 d-flex justify-content-end">
-                                {{ $logs->links() }}
+                            {{-- 🔵 INFO FILTER --}}
+                            @if (request('filter') == '7')
+                                <div class="p-2 px-3 bg-light border-bottom">
+                                    <span class="badge bg-primary">
+                                        Menampilkan log 7 hari terakhir
+                                    </span>
+                                </div>
+                            @elseif(request('filter') == '30')
+                                <div class="p-2 px-3 bg-light border-bottom">
+                                    <span class="badge bg-primary">
+                                        Menampilkan log 30 hari terakhir
+                                    </span>
+                                </div>
+                            @elseif(request('filter') == 'all')
+                                <div class="p-2 px-3 bg-light border-bottom">
+                                    <span class="badge bg-secondary">
+                                        Menampilkan semua log aktivitas
+                                    </span>
+                                </div>
+                            @endif
+                            <div class="table-responsive" style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+
+                                    <table class="table table-bordered mb-0 align-middle w-100">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="50">No</th>
+                                                <th>Nama Pemilik</th>
+                                                <th>Nama Kos</th>
+                                                <th>Aktivitas</th>
+                                                <th>Tanggal</th>
+                                                <th>Keterangan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($logs as $log)
+                                                <tr>
+                                                    <td class="text-nowrap">
+                                                        {{ ($logs->currentPage() - 1) * $logs->perPage() + $loop->iteration }}
+                                                    </td>
+                                                    <td>{{ $log->user->name ?? '-' }}</td>
+                                                    <td>{{ $log->kos->nama_kos ?? '-' }}</td>
+                                                    <td>{{ $log->aktivitas }}</td>
+                                                    <td>{{ $log->created_at->format('d-m-Y') }}</td>
+                                                    <td>{{ $log->keterangan ?? '-' }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="6" class="text-center py-4">
+                                                        Belum ada aktivitas
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                             </div>
-                        @endif
+                            @if ($logs->hasPages())
+                                <div class="p-3 d-flex justify-content-end">
+                                    {{ $logs->links() }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
-    {{-- MODAL PROFILE --}}
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+        {{-- MODAL PROFILE --}}
+        <div class="modal fade" id="profileModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content p-3 text-center" style="border-radius:20px;">
 
-                <div class="mb-3">
-                    <div class="fw-bold">{{ Auth::user()->name }}</div>
-                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                    <div class="mb-3">
+                        <div class="fw-bold">{{ Auth::user()->name }}</div>
+                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                    </div>
+
+                    <a href="{{ route('admin.profile') }}" class="btn btn-primary w-100 mb-2">
+                        Profil
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-danger w-100">
+                            Logout
+                        </button>
+                    </form>
                 </div>
-
-                <a href="{{ route('admin.profile') }}" class="btn btn-primary w-100 mb-2">
-                    Profil
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-danger w-100">
-                        Logout
-                    </button>
-                </form>
             </div>
         </div>
-    </div>
-@endsection
+    @endsection

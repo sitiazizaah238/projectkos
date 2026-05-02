@@ -189,4 +189,69 @@
             });
         </script>
     @endif
+    <style>
+/* ===== DESKTOP TETAP ===== */
+.topbar {
+    background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+    height: 70px;
+}
+
+/* card tetap aman */
+.profile-card {
+    border-radius: 20px;
+    background: #f9f9f9;
+}
+
+/* form tetap rapi */
+.form-control {
+    border-radius: 10px;
+}
+
+/* ===== RESPONSIVE FIX ===== */
+@media (max-width: 768px) {
+
+    /* TOPBAR biar gak numpuk */
+    .topbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    /* user profile di tengah */
+    .topbar > div:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* judul + breadcrumb biar gak sempit */
+    .p-4 h3 {
+        font-size: 22px;
+    }
+
+    /* row jadi stack */
+    .row {
+        flex-direction: column;
+    }
+
+    /* tombol jangan numpuk */
+    .text-end {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: stretch !important;
+    }
+
+    .text-end a,
+    .text-end button {
+        width: 100%;
+    }
+
+    /* password input biar gak kecil */
+    .input-group {
+        flex-wrap: nowrap;
+    }
+}
+</style>
 @endsection

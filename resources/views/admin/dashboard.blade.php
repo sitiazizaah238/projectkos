@@ -23,15 +23,16 @@
         <div class="flex-grow-1">
 
             {{-- TOPBAR --}}
-            <div class="topbar d-flex justify-content-end align-items-center px-4 gap-3">
+            <div class="topbar d-flex flex-wrap justify-content-end align-items-center px-4 gap-3">
 
                 @include('components.notif-admin')
 
                 {{-- PROFILE --}}
-                <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
+                <button type="button" class="btn text-white d-flex align-items-center gap-2"
+                    data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
-                    <span>{{ Auth::user()->name }}</span>
+                  <span class="text-white">{{ Auth::user()->name }}</span>
 
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
@@ -52,13 +53,16 @@
 
 
             {{-- CONTENT --}}
-            <div class="p-4">
-                <h3 class="fw-bold" style="font-size: 30px;">Dashboard Admin</h3>
+            <div class="p-3 p-md-4">
+                <h3 class="fw-bold" style="font-size: clamp(20px,2vw,30px);">
+                    Dashboard Admin
+                </h3>
                 <small class="text-muted">Dashboard / Ringkasan</small>
 
                 {{-- CARDS --}}
-                <div class="row mt-4">
-                    <div class="col-md-4">
+                <div class="row mt-4 g-3">
+
+                    <div class="col-12 col-md-4">
                         <div class="card card-stat p-3 shadow-sm">
                             <div class="d-flex justify-content-between">
                                 <div>
@@ -77,7 +81,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <a href="{{ route('admin.pemilik.index') }}" class="text-decoration-none text-dark">
                             <div class="card card-stat p-3 shadow-sm hover-card">
                                 <div class="d-flex justify-content-between">
@@ -95,7 +99,7 @@
                     </div>
 
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <a href="{{ route('admin.log.index') }}" class="text-decoration-none text-dark">
                             <div class="card card-stat p-3 shadow-sm hover-card">
                                 <div class="d-flex justify-content-between">
@@ -113,22 +117,23 @@
                     </div>
 
                 </div>
-                {{-- GRAFIK --}}
-                <div class="row mt-4">
 
-                    <div class="col-md-8">
+                {{-- GRAFIK --}}
+                <div class="row mt-4 g-3">
+
+                    <div class="col-12 col-lg-8">
                         <div class="card p-3 shadow-sm">
                             <h6 class="fw-bold">Monitoring Status Pengajuan Kos</h6>
-                            <div style="height:270px;">
+                            <div style="height:260px;">
                                 <canvas id="lineChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-lg-4">
                         <div class="card p-3 shadow-sm">
                             <h6 class="fw-bold">Persentase Akun</h6>
-                            <div style="height:270px;">
+                            <div style="height:260px;">
                                 <canvas id="donutChart"></canvas>
                             </div>
                         </div>
@@ -163,6 +168,7 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <script>
             new Chart(document.getElementById('lineChart'), {
                 type: 'bar',
@@ -175,12 +181,8 @@
                             {{ $ditolak }},
                             {{ $menunggu }}
                         ],
-                        backgroundColor: [
-                            '#198754',
-                            '#dc3545',
-                            '#ffc107'
-                        ],
-                        barPercentage: 0.9, // ukuran sedang
+                        backgroundColor: ['#198754', '#dc3545', '#ffc107'],
+                        barPercentage: 0.9,
                         categoryPercentage: 0.9,
                         maxBarThickness: 60
                     }]
@@ -188,13 +190,10 @@
                 options: {
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false
-                        }
+                        legend: { display: false }
                     }
                 }
             });
-
 
             new Chart(document.getElementById('donutChart'), {
                 type: 'doughnut',
@@ -202,7 +201,6 @@
                     labels: ['Pemilik', 'Total Kos'],
                     datasets: [{
                         data: [{{ $totalPemilik }}, {{ $totalKos }}],
-
                         backgroundColor: ['#198754', '#dc3545']
                     }]
                 },
@@ -213,4 +211,28 @@
                 }
             });
         </script>
+
+        {{-- RESPONSIVE ONLY (AMAN TANPA RUSAK DESKTOP) --}}
+        <style>
+            @media (max-width: 768px) {
+                .topbar {
+                    flex-wrap: wrap !important;
+                    gap: 10px !important;
+                    padding: 10px !important;
+                }
+
+                .card-stat {
+                    margin-bottom: 10px;
+                }
+
+                canvas {
+                    height: 240px !important;
+                }
+
+                h3 {
+                    font-size: 22px !important;
+                }
+            }
+        </style>
+
     @endsection

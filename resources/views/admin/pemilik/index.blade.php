@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-md-row" style="min-height:100vh; overflow-x:hidden;">
 
         {{-- SIDEBAR --}}
         @include('components.sidebar-admin')
 
-        <div class="flex-grow-1">
+        <div class="flex-grow-1" style="min-width:0;">
 
             {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-between align-items-center px-4 w-100">
@@ -52,9 +52,21 @@
                     </small>
                 </div>
 
-
+                {{-- SEARCH MOBILE --}}
+                <div class="d-block d-md-none mb-3">
+                    <form method="GET" action="{{ route('admin.pemilik.index') }}">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control" placeholder="Cari akun..."
+                                value="{{ request('search') }}">
+                        </div>
+                    </form>
+                </div>
                 <div class="card shadow-sm">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <div
+                        class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
 
                         {{-- KIRI: TITLE --}}
                         <div class="d-flex align-items-center">
@@ -63,8 +75,8 @@
                         </div>
 
                         {{-- KANAN: SEARCH --}}
-                        <form method="GET" action="{{ route('admin.pemilik.index') }}">
-                            <div class="input-group input-group-sm" style="width: 250px;">
+                        <form method="GET" action="{{ route('admin.pemilik.index') }}" class="d-none d-md-block">
+                            <div class="input-group input-group-sm" style="width:250px;">
                                 <span class="input-group-text bg-white">
                                     <i class="bi bi-search"></i>
                                 </span>
@@ -76,9 +88,8 @@
                     </div>
 
 
-
-                    <div class="card-body p-0">
-                        <table class="table table-bordered mb-0">
+                    <div class="card-body p-0 table-responsive">
+                        <table class="table table-bordered table-hover mb-0 align-middle">
                             <thead class="table-light">
                                 <tr>
                                     <th width="50">No</th>
@@ -103,10 +114,10 @@
                                                 <span class="badge bg-danger">Nonaktif</span>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-nowrap">
                                             {{-- DETAIL --}}
                                             <a href="{{ route('admin.pemilik.show', $p->id) }}"
-                                                class="btn btn-sm btn-info text-white" data-bs-toggle="tooltip"
+                                                class="btn btn-sm btn-info text-white " data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Detail">
                                                 <i class="bi bi-eye-fill"></i>
                                             </a>
