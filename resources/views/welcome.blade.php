@@ -15,13 +15,13 @@
 
     <style>
         body {
-            background-color: #eef4fb;
+            background: linear-gradient(135deg, #a2c5fd 0%, #e8f1f9 50%, #82a2f3 100%);
             font-family: 'Segoe UI', sans-serif;
         }
 
         /* NAVBAR */
         .navbar-custom {
-            background: linear-gradient(90deg, #2f80ed, #56ccf2);
+            background: linear-gradient(90deg, #2f80ed, #8dd4fa);
             padding: 12px 0;
         }
 
@@ -46,6 +46,12 @@
         /* HERO */
         .hero {
             padding: 80px 0;
+        }
+
+        @media (min-width: 992px) {
+            .hero-text {
+                margin-top: -30px;
+            }
         }
 
         .hero-title {
@@ -84,7 +90,7 @@
         .card-step {
             background: white;
             border-radius: 15px;
-            padding: 30px;
+            padding: 15px 30px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
             transition: 0.3s;
         }
@@ -112,21 +118,27 @@
             font-size: 14px;
         }
 
-        /* HERO BACKGROUND FIGMA */
+        /* HERO BACKGROUND  */
         .hero {
             position: relative;
-            min-height: 560px;
+            min-height: 532px;
             padding: 90px 0 80px 0;
 
             background-image: url("{{ asset('images/hero.png') }}");
             background-repeat: no-repeat;
-            background-position: right 40%;
+            background-position: right 53%;
             background-size: contain;
+        }
+
+        @media (min-width: 992px) {
+            .hero {
+                background-position: right 75%;
+            }
         }
 
         /* supaya teks tidak terlalu lebar */
         .hero-content {
-            max-width: 540px;
+            max-width: 550px;
         }
 
         /* judul */
@@ -188,10 +200,21 @@
 
         @media (max-width: 767px) {
             .hero {
-                background-image: none; /* Menyembunyikan gambar background di mobile */
                 padding: 80px 0;
                 min-height: auto;
             }
+
+            .hero {
+                padding-top: 40px;
+                /* sebelumnya 90px, ini bikin naik */
+                padding-bottom: 60px;
+            }
+
+            .hero-text {
+                margin-top: -20px;
+                /* dorong teks naik dikit */
+            }
+
 
             .hero-title {
                 font-size: 32px;
@@ -223,6 +246,24 @@
 
             #tentang img {
                 margin-bottom: 20px;
+            }
+
+            /* 🔥 INI YANG DIUBAH */
+            #cara-kerja {
+                margin-top: -80px;
+                /* tarik lebih ke atas */
+                position: relative;
+                z-index: 2;
+            }
+
+            #cara-kerja .section-title {
+                  margin-top: -75px !important;
+
+                margin-bottom: 20px;
+            }
+
+            #cara-kerja .row {
+                margin-top: -20px;
             }
         }
 
@@ -338,7 +379,6 @@
                 transform: scale(1);
                 opacity: 1;
             }
-
         }
     </style>
 </head>
@@ -499,6 +539,7 @@
 
     <!-- CARA KERJA -->
     <section id="cara-kerja" class="container text-center mt-5">
+
         <h3 class="section-title">Cara Kerja Sistem</h3>
 
         <div class="row text-center justify-content-center">
@@ -542,15 +583,17 @@
     <section id="tentang" class="container mt-5 mb-5">
         <div class="row align-items-center">
             <div class="col-md-6 fade-left">
-                <h3 class="section-title text-start">Tentang FindKos</h3>
-                <p style="text-align: justify; color:#555;">
+                <h3 class="section-title text-start" style="margin-bottom:10px;">
+                    Tentang FindKos
+                </h3>
+                <p style="text-align: justify; color:#555; margin-bottom:10px;">
                     <strong>FindKos</strong> merupakan sistem informasi pencarian dan rekomendasi
                     kamar kos berbasis web yang dirancang untuk membantu masyarakat, khususnya
                     mahasiswa dan pekerja di wilayah Lohbener Indramayu, dalam menemukan kos
                     yang sesuai dengan kebutuhan dan preferensi mereka.
                 </p>
 
-                <p style="text-align: justify; color:#555;">
+                <p style="text-align: justify; color:#555; margin-bottom:0;">
                     Sistem ini menerapkan metode rekomendasi berbasis preferensi pengguna
                     sehingga mampu memberikan saran kos terbaik berdasarkan kriteria seperti
                     harga, fasilitas, lokasi, dan kenyamanan. Dengan tampilan yang sederhana
@@ -566,7 +609,8 @@
         </div>
     </section>
     <!-- CTA -->
-    <section class="py-5 text-center bg-primary bg-gradient text-white fade-in">
+    <section class="py-4 text-center text-white fade-in"
+        style="background: linear-gradient(135deg, #4e8ad8, #6ea0ea);">
         <div class="container">
 
             <h2 class="fw-bold mb-3">
