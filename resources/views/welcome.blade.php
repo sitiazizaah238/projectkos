@@ -380,6 +380,7 @@
                 opacity: 1;
             }
         }
+        
     </style>
 </head>
 
