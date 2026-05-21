@@ -232,7 +232,7 @@
                 padding: 40px 0;
             }
 
-            #tentang .row {
+            #tentang>.row.align-items-center {
                 flex-direction: column-reverse;
             }
 
@@ -257,7 +257,7 @@
             }
 
             #cara-kerja .section-title {
-                  margin-top: -75px !important;
+                margin-top: -75px !important;
 
                 margin-bottom: 20px;
             }
@@ -425,7 +425,7 @@
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center gap-2" href="#tentang">
                             <i class="bi bi-building"></i>
-                            <span>Tentang</span>
+                            <span>Tentang Findkos</span>
                         </a>
                     </li>
 
@@ -583,27 +583,97 @@
     <section id="tentang" class="container mt-5 mb-5">
         <div class="row align-items-center">
             <div class="col-md-6 fade-left">
-                <h3 class="section-title text-start" style="margin-bottom:10px;">
-                    Tentang FindKos
+
+                <h3 class="section-title text-start mb-3">
+                    Tentang <span style="color:#3f51b5;">FindKos</span>
                 </h3>
-                <p style="text-align: justify; color:#555; margin-bottom:10px;">
-                    <strong>FindKos</strong> merupakan sistem informasi pencarian dan rekomendasi
-                    kamar kos berbasis web yang dirancang untuk membantu masyarakat, khususnya
-                    mahasiswa dan pekerja di wilayah Lohbener Indramayu, dalam menemukan kos
-                    yang sesuai dengan kebutuhan dan preferensi mereka.
+
+                <p
+                    style="
+        color:#555;
+        line-height:1.9;
+        text-align:justify;
+        font-size:15px;
+    ">
+                    <strong>FindKos</strong> merupakan sistem informasi pencarian dan
+                    rekomendasi kamar kos berbasis web yang dirancang untuk membantu
+                    mahasiswa, pekerja, maupun masyarakat umum dalam menemukan tempat
+                    tinggal yang nyaman dan sesuai kebutuhan di wilayah Lohbener Indramayu.
                 </p>
 
-                <p style="text-align: justify; color:#555; margin-bottom:0;">
-                    Sistem ini menerapkan metode rekomendasi berbasis preferensi pengguna
-                    sehingga mampu memberikan saran kos terbaik berdasarkan kriteria seperti
-                    harga, fasilitas, lokasi, dan kenyamanan. Dengan tampilan yang sederhana
-                    dan mudah digunakan, FindKos bertujuan meningkatkan efisiensi dalam proses
-                    pencarian serta pemesanan kamar kos secara digital.
+                <p
+                    style="
+        color:#555;
+        line-height:1.9;
+        text-align:justify;
+        font-size:15px;
+    ">
+                    Dengan memanfaatkan sistem rekomendasi berbasis preferensi pengguna,
+                    FindKos mampu memberikan saran kos terbaik berdasarkan harga,
+                    fasilitas, lokasi, serta tingkat kenyamanan sehingga proses pencarian
+                    menjadi lebih cepat, praktis, dan efisien.
                 </p>
+
+                <!-- FITUR MINI -->
+                <div class="row mt-4 g-2">
+
+                    <div class="col-6">
+                        <div class="bg-white rounded-4 shadow-sm p-2 h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-house-check-fill text-primary"></i>
+                                <h6 class="mb-0 fw-bold" style="font-size:14px;">Kos Terverifikasi</h6>
+                            </div>
+
+                            <small class="text-muted" style="font-size:12px;">
+                                Menampilkan informasi kos yang lebih jelas dan terpercaya.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="bg-white rounded-4 shadow-sm p-3 h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-geo-alt-fill text-primary"></i>
+                                <h6 class="mb-0 fw-bold">Lokasi Strategis</h6>
+                            </div>
+
+                            <small class="text-muted">
+                                Membantu pengguna menemukan kos di area Lohbener.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="bg-white rounded-4 shadow-sm p-3 h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-stars text-primary"></i>
+                                <h6 class="mb-0 fw-bold">Rekomendasi Pintar</h6>
+                            </div>
+
+                            <small class="text-muted">
+                                Sistem memberikan saran kos sesuai preferensi pengguna.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="bg-white rounded-4 shadow-sm p-3 h-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-phone-fill text-primary"></i>
+                                <h6 class="mb-0 fw-bold">Responsive</h6>
+                            </div>
+
+                            <small class="text-muted">
+                                Tampilan nyaman digunakan di mobile maupun desktop.
+                            </small>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-
             <div class="col-md-6 text-center fade-up">
-                <img src="{{ asset('images/kos.png') }}" class="img-fluid" style="max-height:350px;"
+                <img src="{{ asset('images/kos.png') }}" class="img-fluid" style="max-height:450px;"
                     alt="Tentang FindKos">
             </div>
         </div>
