@@ -72,7 +72,7 @@
             <div class="p-4">
 
                 <h3 class="fw-bold" style="font-size:25px;">
-                    Tambah Data Kos</h3>
+                    Tambah Kos Baru</h3>
                 <small class="text-muted">Manajemen Kos/Data Kos</small>
 
                 <div class="card shadow-sm mt-4">
@@ -231,5 +231,27 @@
             input.files = dataTransfer.files;
         }
     </script>
+    {{-- PROFILE MODAL --}}
+<div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content p-3 text-center" style="border-radius:20px;">
+            <div class="mb-3">
+                <div class="fw-bold">{{ Auth::user()->name }}</div>
+                <small class="text-muted">{{ Auth::user()->email }}</small>
+            </div>
+
+            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                Profil
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger w-100">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 

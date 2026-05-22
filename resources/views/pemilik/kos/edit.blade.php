@@ -36,13 +36,38 @@
 
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
 
-                {{-- NOTIF & PROFILE (TIDAK DIUBAH) --}}
-                ...
-            </div>
+    @include('components.notif-pemilik')
+
+    <button type="button"
+        class="btn text-white d-flex align-items-center gap-2"
+        data-bs-toggle="modal"
+        data-bs-target="#profileModal">
+
+        <span class="fw-semibold text-white small">
+            {{ Auth::user()->name }}
+        </span>
+
+        @if (Auth::user()->photo)
+            <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                style="
+                    width:35px;
+                    height:35px;
+                    min-width:35px;
+                    min-height:35px;
+                    border-radius:50%;
+                    object-fit:cover;
+                ">
+        @else
+            <i class="bi bi-person-circle fs-3"></i>
+        @endif
+
+    </button>
+
+</div>
 
             <div class="p-4">
 
-                <h3 class="fw-bold" style="font-size:25px;">Edit Data Kos</h3>
+                <h3 class="fw-bold" style="font-size:25px;">Edit Kos</h3>
                 <small class="text-muted">Manajemen Kos / Data Kos</small>
 
                 <div class="card shadow-sm mt-4">
@@ -231,5 +256,26 @@
             document.getElementById('old-photo-' + index).remove();
         }
     </script>
+{{-- PROFILE MODAL --}}
+<div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content p-3 text-center" style="border-radius:20px;">
+            <div class="mb-3">
+                <div class="fw-bold">{{ Auth::user()->name }}</div>
+                <small class="text-muted">{{ Auth::user()->email }}</small>
+            </div>
 
+            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                Profil
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger w-100">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
