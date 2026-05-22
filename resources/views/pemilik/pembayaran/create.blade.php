@@ -68,7 +68,7 @@
             </div>
             <div class="p-4" style="background:#f5f7fb; min-height:100vh;">
 
-                <h3 class="fw-bold mb-4">Tambah Metode</h3>
+                <h3 class="fw-bold mb-4">Tambah Metode Pembayaran</h3>
 
                 <div class="card shadow-sm rounded-4 p-4">
 
@@ -91,7 +91,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label>Gambar (QRIS / Logo)</label>
+                            <label>Gambar (QRIS)</label>
                             <input type="file" name="gambar" class="form-control">
                         </div>
 
