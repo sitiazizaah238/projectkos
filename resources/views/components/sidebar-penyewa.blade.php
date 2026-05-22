@@ -6,7 +6,7 @@
     .sidebar {
         min-height: 100vh;
         width: 260px;
-        background: #eef2ff;
+        background: #eceff3;
         height: 100vh;
         overflow: hidden;
     }
