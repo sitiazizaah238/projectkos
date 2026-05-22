@@ -1,6 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    /* khusus filter panel biar tidak ganggu komponen lain */
+    #filterPanel .form-check-input {
+        accent-color: #0d6efd;
+        border: 1px solid #0d6efd;
+        background-color: #fff;
+    }
+
+    #filterPanel .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+</style>
     <div class="d-flex">
 
         {{-- SIDEBAR --}}
@@ -108,7 +121,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="tipe_kos" value="campur"
                                             {{ request('tipe_kos') == 'campur' ? 'checked' : '' }}>
-                                        <label class="form-check-label">Putra/Putri</label>
+                                        <label class="form-check-label">Campur</label>
                                     </div>
                                 </div>
 
