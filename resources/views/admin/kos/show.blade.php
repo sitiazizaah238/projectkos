@@ -25,7 +25,7 @@
             </div>
 
             <div class="p-4" style="background:#f8fafc; min-height:100vh;">
-                <h3 class="fw-bold mb-1">Detail Kos</h3>
+                <h3 class="fw-bold mb-1">Detail Verifikasi Kos</h3>
                 <small class="text-muted d-block mb-4">Manajemen Kos / Detail Verifikasi</small>
 
                 <div class="row g-4">
