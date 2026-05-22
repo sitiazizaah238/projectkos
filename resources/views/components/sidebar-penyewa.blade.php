@@ -41,14 +41,37 @@
 
     .sidebar .nav-link {
         padding: 10px 14px;
-        border-radius: 8px;
+      border-radius: 10px;
         font-weight: 500;
         transition: 0.2s;
     }
 
-    .sidebar .nav-link i {
-        font-size: 17px;
-    }
+  .sidebar .nav-link i {
+    font-size: 17px;
+
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dbeafe;
+    color: #2563eb;
+
+    transition: 0.2s;
+}
+
+.sidebar .nav-link.active i {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.sidebar .nav-link:hover i {
+    background: #bfdbfe;
+    color: #1d4ed8;
+}
 
     .sidebar .nav-item {
         margin-bottom: 5px;
