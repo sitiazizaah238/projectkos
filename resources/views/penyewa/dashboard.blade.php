@@ -375,7 +375,9 @@
                         </div>
                     </div>
                 </div>
-
+@php
+    $punyaRiwayat = \App\Models\PengajuanSewa::where('user_id', auth()->id())->exists();
+@endphp
                 {{-- ================= REKOMENDASI KOS ================= --}}
                 <div class="card mt-4 p-3 shadow-sm">
 
@@ -384,7 +386,24 @@
                     </h6>
 
                     <div class="row g-4">
+  {{-- ❗ KUNCI UTAMA: akun baru tidak tampilkan rekomendasi --}}
+        @if(!$punyaRiwayat)
 
+            <div class="col-12 text-center py-5">
+                <div class="card border-0 shadow-sm p-5" style="border-radius: 20px;">
+                    <i class="bi bi-search fs-1 text-primary mb-3"></i>
+                    <h5 class="fw-bold">Belum Ada Rekomendasi</h5>
+                    <p class="text-muted">
+                        Kami belum mengenal seleramu. Silakan gunakan fitur
+                        <strong>"Cari Kos"</strong> untuk mulai mendapatkan rekomendasi.
+                    </p>
+                    <a href="{{ route('penyewa.cari.kos') }}"
+                       class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                        <i class="bi bi-search me-1"></i> Mulai Mencari
+                    </a>
+                </div>
+            </div>
+                @else
                         {{-- Bagian Card Rekomendasi --}}
                         @forelse($rekomendasi as $k)
                             @php
@@ -545,7 +564,7 @@
                                 </div>
                             </div>
                         @endforelse
-
+  @endif
                     </div>
 
                 </div>
