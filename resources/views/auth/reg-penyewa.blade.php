@@ -66,7 +66,7 @@
 
         .left-content h1 {
             margin: 0;
-            font-size: clamp(30px, 4vw, 42px);
+            font-size: clamp(24px, 3vw, 40px);
             font-weight: 700;
             line-height: 1.2;
         }
@@ -269,15 +269,15 @@
 
             <div class="left-content">
                 <img src="{{ asset('images/kos.png') }}">
-                <h1>Registrasi Akun</h1>
-                <p>Lengkapi data diri Anda untuk mulai menggunakan layanan FindKos di wilayah Lohbener Indramayu.</p>
+                <h1>Cari Kos Jadi Lebih Mudah</h1>
+                <p>Daftar dan temukan tempat tinggal yang sesuai untuk Anda.</p>
             </div>
         </div>
 
         <!-- RIGHT -->
         <div class="right">
             <div class="card">
-                <h2>Register Penyewa</h2>
+                <h2>Daftar Sekarang</h2>
 
                 <!-- SUCCESS MESSAGE -->
                 @if (session('success'))
@@ -293,7 +293,7 @@
                     <div class="form-group">
                         <label>Nama Lengkap</label>
                         <input type="text" name="name" value="{{ old('name') }}"
-                            class="@error('name') error-input @enderror" placeholder="Masukan nama lengkap">
+                            class="@error('name') error-input @enderror" placeholder="Nama lengkap">
 
                         @error('name')
                             <p class="error-text">{{ $message }}</p>
@@ -304,7 +304,7 @@
                     <div class="form-group">
                         <label>Email</label>
                         <input type="email" name="email" value="{{ old('email') }}"
-                            class="@error('email') error-input @enderror" placeholder="Masukan email">
+                            class="@error('email') error-input @enderror" placeholder="Email Aktif">
 
                         @error('email')
                             <p class="error-text">{{ $message }}</p>
@@ -315,7 +315,7 @@
                     <div class="form-group">
                         <label>No HP</label>
                         <input type="text" name="no_hp" value="{{ old('no_hp') }}"
-                            class="@error('no_hp') error-input @enderror" placeholder="Masukan no HP"
+                            class="@error('no_hp') error-input @enderror" placeholder="Nomor HP Aktif"
                             inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
                         @error('no_hp')
