@@ -133,6 +133,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/pemilik/profile', [ProfilePemilikController::class, 'update'])
             ->name('pemilik.profile.update');
+            Route::delete('/pemilik/profile/photo', [ProfilePemilikController::class, 'deletePhoto'])
+    ->name('pemilik.profile.deletePhoto');
         Route::resource('/pemilik/kamar', PemilikKamarController::class)
             ->names('pemilik.kamar');
         Route::get(

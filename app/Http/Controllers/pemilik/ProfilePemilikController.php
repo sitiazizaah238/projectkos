@@ -71,4 +71,24 @@ public function update(Request $request)
     return redirect()->route('pemilik.profile')
         ->with('success', 'Profile berhasil diperbarui');
 }
+public function deletePhoto()
+{
+    $user = Auth::user();
+
+    // cek foto ada
+    if ($user->photo) {
+
+        // hapus file storage
+        if (Storage::exists('public/profile/' . $user->photo)) {
+            Storage::delete('public/profile/' . $user->photo);
+        }
+
+        // hapus database
+        $user->photo = null;
+        $user->save();
+    }
+
+    return redirect()->route('pemilik.profile')
+        ->with('success', 'Foto berhasil dihapus');
+}
 }

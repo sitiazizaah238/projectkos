@@ -125,82 +125,120 @@
                     <form action="{{ route('pemilik.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                       {{-- FOTO + NO HP --}}
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label class="form-label">Foto Profil</label>
-        <input type="file" name="photo" class="form-control">
-    </div>
+                        {{-- FOTO + NO HP --}}
+                        <div class="row align-items-start g-4">
+                            {{-- FOTO --}}
+                            <div class="col-md-6">
 
-    <div class="col-md-6 mb-3">
-        <label>Nomor HP</label>
-        <input type="text" name="no_hp" value="{{ Auth::user()->no_hp }}"
-            class="form-control" placeholder="08xxxxxxxxxx">
-    </div>
-</div>
+                                <label class="form-label fw-semibold">
+                                    Foto Profil
+                                </label>
 
-{{-- NAMA + EMAIL --}}
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label>Nama</label>
-        <input type="text" name="name" value="{{ Auth::user()->name }}" class="form-control">
-    </div>
+                                <div class="d-flex align-items-center gap-3 flex-wrap mb-3">
 
-    <div class="col-md-6 mb-3">
-        <label>Email</label>
-        <input type="email" name="email" value="{{ Auth::user()->email }}" class="form-control">
-    </div>
-</div>
+                                    @if (Auth::user()->photo)
+                                        <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                                            class="foto-preview">
 
-                        {{-- PASSWORD --}}
-                        <div class="border rounded p-3 mt-3">
-                            <h6 class="fw-bold">Ubah Password</h6>
-                            <small class="text-muted">
-                                Tidak perlu diisi jika tidak ingin mengubah password
-                            </small>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#hapusFotoModal">
 
-                            <div class="row mt-3">
+                                            <i class="bi bi-trash"></i>
+                                            Hapus Foto
+                                        </button>
+                                    @else
+                                        <div class="text-muted small">
+                                            Belum ada foto
+                                        </div>
+                                    @endif
 
-                                {{-- PASSWORD BARU --}}
-                                <div class="col-md-6">
-                                    <label>Password Baru</label>
-                                    <div class="input-group">
-                                        <input type="password" name="password" id="password" class="form-control">
-
-                                        <span class="input-group-text" style="cursor:pointer"
-                                            onclick="togglePassword('password', this)">
-                                            <i class="bi bi-eye"></i>
-                                        </span>
-                                    </div>
                                 </div>
 
-                                {{-- CONFIRM PASSWORD --}}
-                                <div class="col-md-6">
-                                    <label>Confirm Password</label>
-                                    <div class="input-group">
-                                        <input type="password" name="password_confirmation" id="confirmPassword"
-                                            class="form-control">
-
-                                        <span class="input-group-text" style="cursor:pointer"
-                                            onclick="togglePassword('confirmPassword', this)">
-                                            <i class="bi bi-eye"></i>
-                                        </span>
-                                    </div>
-                                </div>
+                                {{-- INPUT FOTO --}}
+                                <input type="file" name="photo" class="form-control" accept="image/*"
+                                    onchange="previewPhoto(event)">
 
                             </div>
 
+                            {{-- NOMOR HP --}}
+                            <div class="col-md-6">
 
-                            {{-- BUTTON --}}
-                            <div class="mt-4 d-flex justify-content-end gap-2">
-                                <a href="{{ route('pemilik.dashboard') }}" class="btn btn-danger">
-                                    Batal
-                                </a>
+                                <div class="nohp-wrapper">
 
-                                <button class="btn btn-primary">
-                                    Simpan
-                                </button>
+                                    <label class="form-label fw-semibold">
+                                        Nomor HP
+                                    </label>
+
+                                    <input type="text" name="no_hp" value="{{ Auth::user()->no_hp }}"
+                                        class="form-control" placeholder="08xxxxxxxxxx">
+
+                                </div>
+
                             </div>
+                            {{-- NAMA + EMAIL --}}
+                            <div class="row">
+                                <div class="col-md-6 mb-5">
+                                    <label>Nama</label>
+                                    <input type="text" name="name" value="{{ Auth::user()->name }}"
+                                        class="form-control">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Email</label>
+                                    <input type="email" name="email" value="{{ Auth::user()->email }}"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            {{-- PASSWORD --}}
+                            <div class="border rounded p-3 mt-3">
+                                <h6 class="fw-bold">Ubah Password</h6>
+                                <small class="text-muted">
+                                    Tidak perlu diisi jika tidak ingin mengubah password
+                                </small>
+
+                                <div class="row mt-3">
+
+                                    {{-- PASSWORD BARU --}}
+                                    <div class="col-md-6">
+                                        <label>Password Baru</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" id="password" class="form-control">
+
+                                            <span class="input-group-text" style="cursor:pointer"
+                                                onclick="togglePassword('password', this)">
+                                                <i class="bi bi-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {{-- CONFIRM PASSWORD --}}
+                                    <div class="col-md-6">
+                                        <label>Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password_confirmation" id="confirmPassword"
+                                                class="form-control">
+
+                                            <span class="input-group-text" style="cursor:pointer"
+                                                onclick="togglePassword('confirmPassword', this)">
+                                                <i class="bi bi-eye"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                {{-- BUTTON --}}
+                                <div class="mt-4 d-flex justify-content-end gap-2">
+                                    <a href="{{ route('pemilik.dashboard') }}" class="btn btn-danger">
+                                        Batal
+                                    </a>
+
+                                    <button class="btn btn-primary">
+                                        Simpan
+                                    </button>
+                                </div>
 
                     </form>
                 </div>
@@ -252,5 +290,91 @@
             confirmButtonColor: '#0d6efd'
         });
     </script>
-@endsection
+    <style>
+        .foto-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #0d6efd;
+            flex-shrink: 0;
+        }
 
+        .card form label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .card form .form-control {
+            height: 48px;
+            border-radius: 10px;
+        }
+
+        .input-group .form-control {
+            height: 48px;
+        }
+
+        .input-group-text {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .row.g-4 {
+            --bs-gutter-x: 1.5rem;
+            --bs-gutter-y: 1rem;
+        }
+
+        .nohp-wrapper {
+            margin-top: 18px;
+        }
+    </style>
+    {{-- MODAL HAPUS FOTO --}}
+    <div class="modal fade" id="hapusFotoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Hapus Foto
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Yakin ingin menghapus foto profile?
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <form action="{{ route('pemilik.profile.deletePhoto') }}" method="POST">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger">
+                            Ya, Hapus
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function previewPhoto(event) {
+
+            const image = document.querySelector('.foto-preview');
+
+            if (image) {
+                image.src = URL.createObjectURL(event.target.files[0]);
+            }
+
+        }
+    </script>
+@endsection
