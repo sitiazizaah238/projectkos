@@ -66,7 +66,25 @@ public function update(Request $request)
 
     return back()->with('success', 'Profile updated');
 }
+public function deletePhoto(Request $request)
+{
+    $user = Auth::user();
 
+    // cek foto ada atau tidak
+    if ($user->photo) {
+
+        // hapus file dari storage
+        if (Storage::exists('public/profile/' . $user->photo)) {
+            Storage::delete('public/profile/' . $user->photo);
+        }
+
+        // hapus nama foto dari database
+        $user->photo = null;
+        $user->save();
+    }
+
+    return back()->with('success', 'Foto profil berhasil dihapus');
+}
     /**
      * Delete the user's account.
      */

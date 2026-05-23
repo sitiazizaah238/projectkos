@@ -61,7 +61,30 @@
                         {{-- FOTO --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Foto Profil</label>
-                            <input type="file" name="photo" class="form-control">
+
+                            {{-- PREVIEW FOTO --}}
+                            <div class="mb-3">
+
+                                @if (Auth::user()->photo)
+                                    <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                                        class="profile-preview">
+
+                                    {{-- TOMBOL HAPUS --}}
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" data-bs-toggle="modal"
+                                        data-bs-target="#hapusFotoModal">
+                                        <i class="bi bi-trash"></i> Hapus Foto
+                                    </button>
+                                @else
+                                    <div class="text-muted small">
+                                        Belum ada foto profile
+                                    </div>
+                                @endif
+
+                            </div>
+
+                            {{-- INPUT FOTO --}}
+                            <input type="file" name="photo" class="form-control" accept="image/*"
+                                onchange="previewPhoto(event)">
                         </div>
 
                         {{-- NAMA & EMAIL --}}
@@ -162,6 +185,14 @@
         .btn-danger {
             border: none;
         }
+
+        .profile-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #0d6efd;
+        }
     </style>
     <script>
         function togglePassword(id, el) {
@@ -190,68 +221,108 @@
         </script>
     @endif
     <style>
-/* ===== DESKTOP TETAP ===== */
-.topbar {
-    background: linear-gradient(90deg, #0d6efd, #0b5ed7);
-    height: 70px;
-}
+        /* ===== DESKTOP TETAP ===== */
+        .topbar {
+            background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+            height: 70px;
+        }
 
-/* card tetap aman */
-.profile-card {
-    border-radius: 20px;
-    background: #f9f9f9;
-}
+        /* card tetap aman */
+        .profile-card {
+            border-radius: 20px;
+            background: #f9f9f9;
+        }
 
-/* form tetap rapi */
-.form-control {
-    border-radius: 10px;
-}
+        /* form tetap rapi */
+        .form-control {
+            border-radius: 10px;
+        }
 
-/* ===== RESPONSIVE FIX ===== */
-@media (max-width: 768px) {
+        /* ===== RESPONSIVE FIX ===== */
+        @media (max-width: 768px) {
 
-    /* TOPBAR biar gak numpuk */
-    .topbar {
-        flex-direction: column;
-        height: auto;
-        padding: 10px 15px;
-        gap: 10px;
-    }
+            /* TOPBAR biar gak numpuk */
+            .topbar {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 15px;
+                gap: 10px;
+            }
 
-    /* user profile di tengah */
-    .topbar > div:last-child {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-    }
+            /* user profile di tengah */
+            .topbar>div:last-child {
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+            }
 
-    /* judul + breadcrumb biar gak sempit */
-    .p-4 h3 {
-        font-size: 22px;
-    }
+            /* judul + breadcrumb biar gak sempit */
+            .p-4 h3 {
+                font-size: 22px;
+            }
 
-    /* row jadi stack */
-    .row {
-        flex-direction: column;
-    }
+            /* row jadi stack */
+            .row {
+                flex-direction: column;
+            }
 
-    /* tombol jangan numpuk */
-    .text-end {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        text-align: stretch !important;
-    }
+            /* tombol jangan numpuk */
+            .text-end {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                text-align: stretch !important;
+            }
 
-    .text-end a,
-    .text-end button {
-        width: 100%;
-    }
+            .text-end a,
+            .text-end button {
+                width: 100%;
+            }
 
-    /* password input biar gak kecil */
-    .input-group {
-        flex-wrap: nowrap;
-    }
-}
-</style>
+            /* password input biar gak kecil */
+            .input-group {
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+    {{-- MODAL HAPUS FOTO --}}
+    <div class="modal fade" id="hapusFotoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-trash"></i>
+                        Hapus Foto
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Yakin ingin menghapus foto profile?
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <form action="{{ route('profile.deletePhoto') }}" method="POST">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger">
+                            Ya, Hapus
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection

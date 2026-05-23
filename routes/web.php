@@ -51,7 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::middleware(['auth', 'role:admin'])->group(function () {
-
+        Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])
+            ->name('profile.deletePhoto');
         Route::get('/admin/profile', function () {
             return view('admin.profile');
         })->name('admin.profile');
