@@ -68,7 +68,7 @@
                                     @if ($data->status == 'dikonfirmasi')
                                         <span class="badge bg-success">Berhasil</span>
                                     @elseif($data->status == 'menunggu')
-                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        <span class="badge bg-warning text-dark">Menunggu</span>
                                     @else
                                         <span class="badge bg-danger">Gagal</span>
                                     @endif

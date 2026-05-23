@@ -353,7 +353,7 @@
             <div class="modal-content rounded-4 p-4 text-center">
                 <i class="bi bi-check-circle-fill text-success" style="font-size:60px;"></i>
                 <h5 class="fw-bold text-success mt-2">Pembayaran Sudah Dikonfirmasi</h5>
-                <p class="mb-0">Pembayaran ini telah dikonfirmasi. Anda tidak perlu mengirim ulang bukti pembayaran.</p>
+                <p class="mb-0">Selamat! Pembayaran telah dikonfirmasi oleh pemilik kos. Anda sudah bisa menempati kamar.</p>
                 <button class="btn btn-secondary mt-3" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
