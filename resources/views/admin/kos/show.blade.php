@@ -320,10 +320,11 @@
                     let form = this.closest('form');
 
                     Swal.fire({
-                        title: 'Konfirmasi Aksi?',
+                        title: 'Yakin ingin memverifikasi data ini?',
+                        text: 'Status akan diubah menjadi "Sudah Terverifikasi".',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonText: 'Ya, lanjutkan',
+                        confirmButtonText: 'Ya, Verifikasi',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
