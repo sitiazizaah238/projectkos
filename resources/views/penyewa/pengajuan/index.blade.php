@@ -439,7 +439,7 @@
                                         </div>
 
                                         <div class="col">
-                                            <small>Durasi Tagihan</small>
+                                            <small>Durasi Sewa</small>
                                             <div>
                                                 {{ \App\Models\PengajuanSewa::formatDurasiByTipe((int) $durasiTagihanBerjalan, optional($item->kamar)->tipe_harga) }}
                                             </div>
