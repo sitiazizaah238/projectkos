@@ -58,8 +58,33 @@
 
                                 {{-- FOTO --}}
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Foto Profil</label>
-                                    <input type="file" name="foto" class="form-control">
+
+                                    <label class="form-label fw-semibold">
+                                        Foto Profil
+                                    </label>
+
+                                    <div class="d-flex align-items-center gap-3 flex-wrap mb-3">
+
+                                        @if (Auth::user()->photo)
+                                            <img src="{{ asset('storage/' . Auth::user()->photo) }}" class="foto-preview">
+
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#hapusFotoModal">
+
+                                                <i class="bi bi-trash"></i>
+                                                Hapus Foto
+                                            </button>
+                                        @else
+                                            <div class="text-muted small">
+                                                Belum ada foto
+                                            </div>
+                                        @endif
+
+                                    </div>
+
+                                    <input type="file" name="foto" class="form-control" accept="image/*"
+                                        onchange="previewPhoto(event)">
+
                                 </div>
 
                                 {{-- NAMA --}}
@@ -159,4 +184,72 @@
             confirmButtonColor: '#0d6efd'
         });
     </script>
+    <style>
+    .foto-preview{
+        width:90px;
+        height:90px;
+        border-radius:50%;
+        object-fit:cover;
+        border:3px solid #0d6efd;
+        flex-shrink:0;
+    }
+</style>
+<script>
+    function previewPhoto(event) {
+
+        const image = document.querySelector('.foto-preview');
+
+        if (image) {
+            image.src = URL.createObjectURL(event.target.files[0]);
+        }
+
+    }
+</script>
+{{-- MODAL HAPUS FOTO --}}
+<div class="modal fade" id="hapusFotoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Hapus Foto
+                </h5>
+
+                <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Yakin ingin menghapus foto profile?
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Batal
+                </button>
+
+                <form action="{{ route('penyewa.profile.deletePhoto') }}"
+                    method="POST">
+
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit"
+                        class="btn btn-danger">
+
+                        Ya, Hapus
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 @endsection

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Storage;
 class ProfilePenyewaController extends Controller
 {
     public function index()
@@ -41,5 +41,22 @@ class ProfilePenyewaController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Profile berhasil diperbarui');
+    }
+    // ================= HAPUS FOTO =================
+    public function deletePhoto()
+    {
+        $user = Auth::user();
+
+        if ($user->photo) {
+
+            if (Storage::exists('public/' . $user->photo)) {
+                Storage::delete('public/' . $user->photo);
+            }
+
+            $user->photo = null;
+            $user->save();
+        }
+
+        return redirect()->back()->with('success', 'Foto berhasil dihapus');
     }
 }

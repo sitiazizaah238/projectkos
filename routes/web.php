@@ -307,6 +307,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/penyewa/profile', [ProfilePenyewaController::class, 'update'])
             ->name('penyewa.profile.update');
+            Route::delete('/penyewa/profile/delete-photo', [ProfilePenyewaController::class, 'deletePhoto'])
+    ->name('penyewa.profile.deletePhoto');
         Route::get('/penyewa/notif/pengajuan/{id}', function ($id) {
             $data = PengajuanSewa::findOrFail($id);
 
