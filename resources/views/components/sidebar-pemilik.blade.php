@@ -157,7 +157,7 @@
                     <li class="nav-item">
                         <a href="{{ route('pemilik.verifikasi.index') }}"
                             class="nav-link mb-1 d-flex align-items-center {{ request()->routeIs('pemilik.verifikasi.*') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
-                            <i class="bi bi-credit-card me-2"></i> Verifikasi Pembayaran
+                            <i class="bi bi-credit-card me-2"></i> Pembayaran Penyewa
                         </a>
                     </li>
                     <li class="nav-item">
