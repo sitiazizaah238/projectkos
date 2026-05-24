@@ -224,7 +224,7 @@
 
                                         <td>
                                             @if ($item->status == 'menunggu')
-                                                <span class="badge bg-warning">Menunggu Verifikasi</span>
+                                                <span class="badge bg-warning">Menunggu Konfirmasi</span>
                                             @elseif($item->status == 'dikonfirmasi')
                                                 <span class="badge bg-success">Dikonfirmasi</span>
                                             @else
