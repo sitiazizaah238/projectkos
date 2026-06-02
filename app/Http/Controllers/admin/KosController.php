@@ -113,6 +113,8 @@ class KosController extends Controller
         $kos->update([
             'nama_kos' => $payload['nama_kos'] ?? $kos->nama_kos,
             'lokasi' => $payload['lokasi'] ?? $kos->lokasi,
+            'latitude' => $payload['latitude'] ?? $kos->latitude,
+            'longitude' => $payload['longitude'] ?? $kos->longitude,
             'tipe_kos' => $payload['tipe_kos'] ?? $kos->tipe_kos,
             'deskripsi' => $payload['deskripsi'] ?? $kos->deskripsi,
             'fasilitas' => $payload['fasilitas'] ?? $kos->fasilitas,

@@ -19,6 +19,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    @stack('styles')
+
     <!-- GLOBAL CSS DASHBOARD -->
     <style>
         /* Fix for Bootstrap collapse conflict with Tailwind */
@@ -73,8 +75,14 @@
             color: #fff !important;
         }
 
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link:hover * {
+            color: #fff !important;
+        }
+
         .sidebar .nav-link:hover i {
             color: #fff !important;
+            background: rgba(255,255,255,0.2) !important;
         }
 
         .topbar {
@@ -340,6 +348,7 @@
             });
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>

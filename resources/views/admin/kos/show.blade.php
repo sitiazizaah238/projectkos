@@ -94,6 +94,23 @@
                                     <span class="text-muted">Tanggal Verifikasi:</span>
                                     {{ $kos->tanggal_verifikasi ? $kos->tanggal_verifikasi->format('d-m-Y H:i') : '-' }}
                                 </div>
+                                <div class="mt-3">
+                                    @php
+                                        $displayLat = $kos->latitude;
+                                        $displayLng = $kos->longitude;
+                                        if ($kos->edit_request_status === 'menunggu' && is_array($kos->edit_request_data)) {
+                                            $displayLat = $kos->edit_request_data['latitude'] ?? $displayLat;
+                                            $displayLng = $kos->edit_request_data['longitude'] ?? $displayLng;
+                                        }
+                                    @endphp
+                                    <span class="fw-semibold d-block mb-2">Peta Lokasi:</span>
+                                    <div id="map" style="height: 250px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                    @if($displayLat && $displayLng)
+                                        <a href="https://www.google.com/maps?q={{ $displayLat }},{{ $displayLng }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                                            <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                        </a>
+                                    @endif
+                                </div>
                                 @if ($kos->alasan)
                                     <div class="alert alert-warning mt-3 mb-0">
                                         <div class="fw-semibold mb-1">Catatan Admin</div>
@@ -358,3 +375,25 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+@endpush
+
+@push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var lat = {{ $displayLat ?: -6.4005784 }};
+            var lng = {{ $displayLng ?: 108.2100865 }};
+            
+            var map = L.map('map').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("<b>" + {!! json_encode($kos->nama_kos) !!} + "</b><br>" + {!! json_encode($kos->lokasi) !!}).openPopup();
+        });
+    </script>
+@endpush

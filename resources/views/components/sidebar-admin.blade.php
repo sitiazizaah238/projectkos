@@ -92,10 +92,7 @@
         color: #1d4ed8 !important;
     }
 
-    .sidebar .nav-link:hover i {
-        background: #bfdbfe;
-        color: #1d4ed8;
-    }
+
 
     /* PROFILE */
     .sidebar-profile {
