@@ -154,6 +154,16 @@
                                 <span class="fw-semibold">{{ $kos->tipe_kos }}</span>
                             </div>
 
+                            <div class="mb-3">
+                                <span class="text-muted d-block mb-2">Peta Lokasi</span>
+                                <div id="map" style="height: 250px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                @if($kos->latitude && $kos->longitude)
+                                    <a href="https://www.google.com/maps?q={{ $kos->latitude }},{{ $kos->longitude }}" target="_blank" class="btn btn-outline-primary w-100 mt-2">
+                                        <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                    </a>
+                                @endif
+                            </div>
+
                             <div>
                                 <small class="text-muted">Deskripsi</small>
                                 <p class="mb-0">{{ $kos->deskripsi }}</p>
@@ -517,3 +527,27 @@
             </div>
         </div>
     @endsection
+
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+@endpush
+
+@push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var lat = {{ $kos->latitude ?: -6.383568 }};
+            var lng = {{ $kos->longitude ?: 108.281052 }};
+            
+            var map = L.map('map').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            @if($kos->latitude && $kos->longitude)
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup("<b>" + {!! json_encode($kos->nama_kos) !!} + "</b><br>" + {!! json_encode($kos->lokasi) !!}).openPopup();
+            @endif
+        });
+    </script>
+@endpush

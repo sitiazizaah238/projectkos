@@ -23,7 +23,9 @@ class Kos extends Model
         'edit_request_status',
         'edit_request_data',
         'edit_request_alasan',
-        'edit_requested_at'
+        'edit_requested_at',
+        'latitude',
+        'longitude'
     ];
 
     protected $casts = [

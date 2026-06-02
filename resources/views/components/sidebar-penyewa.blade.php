@@ -68,10 +68,7 @@
     color: white;
 }
 
-.sidebar .nav-link:hover i {
-    background: #bfdbfe;
-    color: #1d4ed8;
-}
+
 
     .sidebar .nav-item {
         margin-bottom: 5px;

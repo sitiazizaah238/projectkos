@@ -41,6 +41,8 @@ class PemilikKosController extends Controller
         $request->validate([
             'nama_kos' => 'required',
             'lokasi' => 'required',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
             'tipe_kos' => 'required',
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048'
         ]);
@@ -62,6 +64,8 @@ class PemilikKosController extends Controller
             'user_id' => auth()->id(),
             'nama_kos' => $request->nama_kos,
             'lokasi' => $request->lokasi,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'tipe_kos' => $request->tipe_kos,
             'deskripsi' => $request->deskripsi,
             'fasilitas' => $request->fasilitas,
@@ -104,13 +108,25 @@ class PemilikKosController extends Controller
         $request->validate([
             'nama_kos' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
             'tipe_kos' => 'required|string|max:255',
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        if ($request->latitude && $request->longitude) {
+            $lat = (float) $request->latitude;
+            $lng = (float) $request->longitude;
+            if ($lat < -6.45 || $lat > -6.30 || $lng < 108.15 || $lng > 108.35) {
+                return back()->withErrors(['lokasi' => 'Titik peta lokasi harus berada di wilayah Kecamatan Lohbener.'])->withInput();
+            }
+        }
+
         $data = $request->only([
             'nama_kos',
             'lokasi',
+            'latitude',
+            'longitude',
             'tipe_kos',
             'deskripsi',
         ]);

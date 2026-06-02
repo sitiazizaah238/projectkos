@@ -136,16 +136,16 @@
                             <div class="card-body p-0">
 
                                 {{-- HEADER BIAR LEBIH KESEPARATE --}}
-                                <div class="px-3 py-2 border-bottom bg-light rounded-top-4">
+                                <div class="px-3 py-2 border-bottom bg-light rounded-top-4 d-flex justify-content-between align-items-center">
                                     <small class="text-muted fw-semibold">
                                         <i class="bi bi-geo-alt"></i> Lokasi Kos
                                     </small>
+                                    <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm bg-white">
+                                        <i class="bi bi-box-arrow-up-right"></i> Buka di Maps
+                                    </a>
                                 </div>
 
-                                <iframe src="https://www.google.com/maps?q={{ urlencode($kos->lokasi) }}&output=embed"
-                                    width="100%" height="220" style="border:0;" class="rounded-bottom-4" allowfullscreen
-                                    loading="lazy">
-                                </iframe>
+                                <div id="map" style="height: 250px; width: 100%; border-radius: 0 0 16px 16px; z-index: 1;"></div>
 
                             </div>
                         </div>
@@ -256,3 +256,25 @@
             </div>
         </div>
     @endsection
+
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+@endpush
+
+@push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var lat = {{ $kos->latitude ?: -6.4005784 }};
+            var lng = {{ $kos->longitude ?: 108.2100865 }};
+            
+            var map = L.map('map').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("<b>" + {!! json_encode($kos->nama_kos) !!} + "</b><br>" + {!! json_encode($kos->lokasi) !!}).openPopup();
+        });
+    </script>
+@endpush

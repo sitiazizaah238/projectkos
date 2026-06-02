@@ -113,8 +113,16 @@
                                 </div>
 
                                 <div class="col-md-6 mt-3">
-                                    <label>Lokasi Kos</label>
+                                    <label>Lokasi Kos (Alamat Lengkap)</label>
                                     <input type="text" name="lokasi" class="form-control">
+                                </div>
+
+                                <div class="col-md-12 mt-3">
+                                    <label>Titik Lokasi (Maps)</label>
+                                    <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                    <input type="hidden" name="latitude" id="latitude">
+                                    <input type="hidden" name="longitude" id="longitude">
+                                    <small class="text-muted">Klik pada peta untuk menentukan titik lokasi kos yang tepat.</small>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
@@ -168,7 +176,55 @@
             </div>
         </div>
     </div>
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+@endpush
+@push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var map = L.map('map').setView([-6.4005784, 108.2100865], 13); // Default Lohbener
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            var marker = L.marker([-6.4005784, 108.2100865], {
+                draggable: true
+            }).addTo(map);
+
+            document.getElementById('latitude').value = -6.4005784;
+            document.getElementById('longitude').value = 108.2100865;
+
+            marker.on('dragend', function(e) {
+                var position = marker.getLatLng();
+                if (position.lat < -6.45 || position.lat > -6.30 || position.lng < 108.15 || position.lng > 108.35) {
+                    alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
+                    marker.setLatLng([-6.4005784, 108.2100865]);
+                    map.setView([-6.4005784, 108.2100865], 13);
+                    document.getElementById('latitude').value = -6.4005784;
+                    document.getElementById('longitude').value = 108.2100865;
+                    return;
+                }
+                document.getElementById('latitude').value = position.lat;
+                document.getElementById('longitude').value = position.lng;
+            });
+
+            map.on('click', function(e) {
+                var lat = e.latlng.lat;
+                var lng = e.latlng.lng;
+
+                if (lat < -6.45 || lat > -6.30 || lng < 108.15 || lng > 108.35) {
+                    alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
+                    return;
+                }
+
+                marker.setLatLng(e.latlng);
+
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+            });
+        });
+
         let selectedFiles = [];
         const input = document.getElementById('fotoInput');
         const preview = document.getElementById('previewContainer');
@@ -231,6 +287,7 @@
             input.files = dataTransfer.files;
         }
     </script>
+@endpush
     {{-- PROFILE MODAL --}}
 <div class="modal fade" id="profileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
