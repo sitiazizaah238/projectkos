@@ -41,7 +41,7 @@
                                             @foreach ($kos->foto as $idx => $foto)
                                                 <div class="carousel-item {{ $idx === 0 ? 'active' : '' }}">
                                                     <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
-                                                        style="height:360px; object-fit:cover;">
+                                                        style="height:280px; object-fit:cover;">
                                                 </div>
                                             @endforeach
                                         </div>
@@ -59,7 +59,7 @@
                                         @foreach ($kos->foto as $foto)
                                             <div class="col-4">
                                                 <img src="{{ asset('storage/' . $foto) }}" class="w-100 rounded-3"
-                                                    style="height:90px; object-fit:cover;">
+                                                    style="height:70px; object-fit:cover;">
                                             </div>
                                         @endforeach
                                     </div>
@@ -69,7 +69,6 @@
                             </div>
                         </div>
 
-                        </div>
                     </div>
 
                     <div class="col-lg-5">
@@ -105,13 +104,17 @@
                                 @endif
                             </div>
                         </div>
-
+                        
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
+                                <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row g-4 mt-1">
+                <div class="row g-4 mt-4">
                     <div class="col-lg-7">
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
@@ -167,13 +170,6 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0 rounded-4 mt-4">
-                    <div class="card-body p-4">
-                        <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
-                        <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
                     </div>
                 </div>
 

@@ -66,46 +66,59 @@
                             }
                         @endphp
 
-                        @if (!empty($fotoKos))
-                            <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-white border-0 pt-4 px-4">
+                                <h5 class="mb-0 fw-semibold">Foto Kos</h5>
+                            </div>
+                            <div class="card-body pt-3 px-4 pb-4">
+                                @if (!empty($fotoKos))
+                                    <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
 
-                                {{-- INDICATOR --}}
-                                <div class="carousel-indicators">
-                                    @foreach ($fotoKos as $i => $foto)
-                                        <button type="button" data-bs-target="#carouselKos"
-                                            data-bs-slide-to="{{ $i }}" class="{{ $i == 0 ? 'active' : '' }}">
-                                        </button>
-                                    @endforeach
-                                </div>
-
-                                {{-- ISI SLIDE --}}
-                                <div class="carousel-inner rounded-4 overflow-hidden" style="height:420px;">
-                                    @foreach ($fotoKos as $i => $foto)
-                                        <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
-                                            <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
-                                                style="height:420px; object-fit:cover;">
+                                        {{-- INDICATOR --}}
+                                        <div class="carousel-indicators">
+                                            @foreach ($fotoKos as $i => $foto)
+                                                <button type="button" data-bs-target="#carouselKos"
+                                                    data-bs-slide-to="{{ $i }}" class="{{ $i == 0 ? 'active' : '' }}">
+                                                </button>
+                                            @endforeach
                                         </div>
-                                    @endforeach
-                                </div>
 
-                                {{-- BUTTON --}}
-                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselKos"
-                                    data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon"></span>
-                                </button>
+                                        {{-- ISI SLIDE --}}
+                                        <div class="carousel-inner rounded-4 overflow-hidden" style="height:280px;">
+                                            @foreach ($fotoKos as $i => $foto)
+                                                <div class="carousel-item {{ $i == 0 ? 'active' : '' }}">
+                                                    <img src="{{ asset('storage/' . $foto) }}" class="d-block w-100"
+                                                        style="height:280px; object-fit:cover;">
+                                                </div>
+                                            @endforeach
+                                        </div>
 
-                                <button class="carousel-control-next" type="button" data-bs-target="#carouselKos"
-                                    data-bs-slide="next">
-                                    <span class="carousel-control-next-icon"></span>
-                                </button>
+                                        {{-- BUTTON --}}
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselKos"
+                                            data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon"></span>
+                                        </button>
 
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselKos"
+                                            data-bs-slide="next">
+                                            <span class="carousel-control-next-icon"></span>
+                                        </button>
+
+                                    </div>
+
+                                    <div class="row g-2 mt-2">
+                                        @foreach ($fotoKos as $foto)
+                                            <div class="col-4">
+                                                <img src="{{ asset('storage/' . $foto) }}" class="w-100 rounded-3"
+                                                    style="height:70px; object-fit:cover;">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-light border text-muted mb-0">Belum ada foto kos.</div>
+                                @endif
                             </div>
-                        @else
-                            <div class="bg-light d-flex justify-content-center align-items-center rounded-4"
-                                style="height:420px;">
-                                <i class="bi bi-image fs-1 text-muted"></i>
-                            </div>
-                        @endif
+                        </div>
                     </div>
                     {{-- FOTO --}}
                     @php
@@ -123,52 +136,42 @@
 
                     {{-- INFORMASI KOS --}}
                     <div class="col-md-5">
-                        <div class="card shadow-sm rounded-4 mb-3 w-100">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4 w-100">
                             <div class="card-body p-4">
 
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">
-                                    <i class="bi bi-info-circle"></i> Informasi Kos
-                                </h6>
+                                <h5 class="fw-semibold mb-4">
+                                    Informasi Utama
+                                </h5>
 
-                                <div class="d-flex justify-content-between mb-2 fs-6">
-                                    <span class="text-muted">Nama Kos</span>
-                                    <span class="fw-semibold">{{ $kos->nama_kos }}</span>
+                                <div class="mb-2 fs-6">
+                                    <span class="text-muted">Pemilik Kos:</span> {{ $kos->user->name ?? '-' }}
+                                </div>
+                                <div class="mb-2 fs-6">
+                                    <span class="text-muted">No HP Pemilik:</span> {{ $kos->user->no_hp ?? '-' }}
+                                </div>
+                                <div class="mb-2 fs-6">
+                                    <span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}
+                                </div>
+                                <div class="mb-2 fs-6">
+                                    <span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}
+                                </div>
+                                <div class="mb-2 fs-6">
+                                    <span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}
                                 </div>
 
-                                <div class="d-flex justify-content-between mb-2 fs-6">
-                                    <span class="text-muted">Pemilik Kos</span>
-                                    <span class="fw-semibold">{{ $kos->user->name ?? '-' }}</span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-2 fs-6">
-                                    <span class="text-muted">No HP Pemilik</span>
-                                    <span class="fw-semibold">{{ $kos->user->no_hp ?? '-' }}</span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-2 fs-6">
-                                    <span class="text-muted">Lokasi Kos</span>
-                                    <span class="fw-semibold text-end">{{ $kos->lokasi }}</span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-3 fs-6">
-                                    <span class="text-muted">Tipe Kos</span>
-                                    <span class="fw-semibold">{{ $kos->tipe_kos }}</span>
-                                </div>
-
-                                <hr class="my-4">
-
-                                <div>
-                                    <div class="text-muted mb-2 fs-6">Deskripsi</div>
-                                    <div class="fs-6" style="line-height:1.7;">
-                                        {{ $kos->deskripsi }}
-                                    </div>
-                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
+                                <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row g-4">
+                <div class="row g-4 mt-4">
                     <div class="col-md-7">
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
@@ -182,20 +185,21 @@
                     </div>
                     
                     <div class="col-md-5">
-                        <div class="card shadow-sm rounded-4 mb-3 w-100">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4 w-100">
                             <div class="card-body p-4">
-                                <h6 class="fw-bold mb-3">
-                                    <i class="bi bi-stars me-2 text-primary"></i> Fasilitas Kos
-                                </h6>
-
-                                <div class="row fs-6">
-                                    @foreach ($kos->fasilitas as $fasilitas)
-                                        <div class="col-6 mb-2">
-                                            <i class="bi {{ $fasilitasIcon[$fasilitas] ?? 'bi-check-circle' }}"></i>
-                                            {{ $fasilitas }}
-                                        </div>
-                                    @endforeach
-                                </div>
+                                <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
+                                @php
+                                    $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
+                                @endphp
+                                @if (count($fasilitas) > 0)
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($fasilitas as $f)
+                                            <span class="badge bg-light text-dark border">{{ $f }}</span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-muted">Tidak ada fasilitas.</div>
+                                @endif
                             </div>
                         </div>
 
