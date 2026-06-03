@@ -151,38 +151,21 @@
                             <div class="card shadow-sm border-0 rounded-4 mb-4">
                                 <div class="card-body p-4">
 
-                                    <h5 class="fw-bold mb-4">
-                                        Informasi Utama
-                                    </h5>
-
-                                    <div class="row mb-3 fs-5">
-                                        <div class="col-5 text-muted">Nama</div>
-                                        <div class="col-7 fw-semibold">{{ $kos->nama_kos }}</div>
+                                    <h5 class="fw-semibold mb-3">Informasi Utama</h5>
+                                    
+                                    <div class="mb-2"><span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}</div>
+                                    <div class="mb-2"><span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}</div>
+                                    <div class="mb-2"><span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}</div>
+                                    <div class="mb-2">
+                                        <span class="text-muted">Status Verifikasi:</span>
+                                        @if ($kos->status == 'disetujui')
+                                            <span class="badge bg-success">Disetujui</span>
+                                        @elseif($kos->status == 'ditolak')
+                                            <span class="badge bg-danger">Ditolak</span>
+                                        @else
+                                            <span class="badge bg-warning text-dark">Menunggu</span>
+                                        @endif
                                     </div>
-
-                                    <div class="row mb-3 fs-5">
-                                        <div class="col-5 text-muted">Lokasi</div>
-                                        <div class="col-7 fw-semibold">{{ $kos->lokasi }}</div>
-                                    </div>
-
-                                    <div class="row mb-3 fs-5">
-                                        <div class="col-5 text-muted">Tipe</div>
-                                        <div class="col-7 fw-semibold">{{ $kos->tipe_kos }}</div>
-                                    </div>
-
-                                    <div class="row mb-3 fs-5">
-                                        <div class="col-5 text-muted">Status Verifikasi</div>
-                                        <div class="col-7">
-                                            @if ($kos->status == 'disetujui')
-                                                <span class="badge bg-success fs-6 px-3 py-2">Disetujui</span>
-                                            @elseif($kos->status == 'ditolak')
-                                                <span class="badge bg-danger fs-6 px-3 py-2">Ditolak</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark fs-6 px-3 py-2">Menunggu</span>
-                                            @endif
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                             
