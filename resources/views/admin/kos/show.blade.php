@@ -69,7 +69,6 @@
                             </div>
                         </div>
 
-                        </div>
                     </div>
 
                     <div class="col-lg-5">
@@ -103,9 +102,6 @@
                                         {{ $kos->alasan }}
                                     </div>
                                 @endif
-                            </div>
-                        </div>
-
                             </div>
                         </div>
                     </div>
