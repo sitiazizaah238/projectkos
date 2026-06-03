@@ -106,6 +106,16 @@
                                 <i class="bi bi-image fs-1 text-muted"></i>
                             </div>
                         @endif
+
+                        <div class="card shadow-sm border-0 rounded-4 mt-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     {{-- FOTO --}}
                     @php
@@ -154,15 +164,7 @@
                                 <span class="fw-semibold">{{ $kos->tipe_kos }}</span>
                             </div>
 
-                            <div class="mb-3">
-                                <span class="text-muted d-block mb-2">Peta Lokasi</span>
-                                <div id="map" style="height: 250px; width: 100%; border-radius: 8px; z-index: 1;"></div>
-                                @if($kos->latitude && $kos->longitude)
-                                    <a href="https://www.google.com/maps?q={{ $kos->latitude }},{{ $kos->longitude }}" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                                        <i class="bi bi-geo-alt"></i> Buka di Google Maps
-                                    </a>
-                                @endif
-                            </div>
+
 
                             <div>
                                 <small class="text-muted">Deskripsi</small>
