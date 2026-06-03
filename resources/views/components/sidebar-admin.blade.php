@@ -76,17 +76,11 @@
         color: white;
     }
 
-    /* NON ACTIVE */
-    .sidebar .nav-link.text-dark {
-        color: #374151 !important;
-    }
 
     .sidebar .nav-link.text-dark i {
         background: #dbeafe;
         color: #2563eb;
     }
-
-
 
     /* PROFILE */
     .sidebar-profile {
