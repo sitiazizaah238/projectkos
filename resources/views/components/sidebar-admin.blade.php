@@ -86,12 +86,6 @@
         color: #2563eb;
     }
 
-    /* HOVER */
-    .sidebar .nav-link:hover {
-        background: #dbeafe;
-        color: #1d4ed8 !important;
-    }
-
 
 
     /* PROFILE */

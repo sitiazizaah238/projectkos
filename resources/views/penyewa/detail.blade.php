@@ -132,57 +132,66 @@
                     @endphp
 
                     {{-- INFORMASI KOS --}}
-                    <div class="col-md-5 d-flex">
-                        <div class="card shadow-sm rounded-4 p-4 w-100" style="min-height:430px;">
+                    <div class="col-md-5">
+                        <div class="card shadow-sm rounded-4 mb-3 w-100">
+                            <div class="card-body p-4">
 
-                            <h6 class="fw-bold border-bottom pb-2 mb-3">
-                                <i class="bi bi-info-circle"></i> Informasi Kos
-                            </h6>
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">
+                                    <i class="bi bi-info-circle"></i> Informasi Kos
+                                </h6>
 
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Nama Kos</span>
-                                <span class="fw-semibold">{{ $kos->nama_kos }}</span>
-                            </div>
+                                <div class="d-flex justify-content-between mb-2 fs-6">
+                                    <span class="text-muted">Nama Kos</span>
+                                    <span class="fw-semibold">{{ $kos->nama_kos }}</span>
+                                </div>
 
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Pemilik Kos</span>
-                                <span class="fw-semibold">{{ $kos->user->name ?? '-' }}</span>
-                            </div>
+                                <div class="d-flex justify-content-between mb-2 fs-6">
+                                    <span class="text-muted">Pemilik Kos</span>
+                                    <span class="fw-semibold">{{ $kos->user->name ?? '-' }}</span>
+                                </div>
 
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">No HP Pemilik</span>
-                                <span class="fw-semibold">{{ $kos->user->no_hp ?? '-' }}</span>
-                            </div>
+                                <div class="d-flex justify-content-between mb-2 fs-6">
+                                    <span class="text-muted">No HP Pemilik</span>
+                                    <span class="fw-semibold">{{ $kos->user->no_hp ?? '-' }}</span>
+                                </div>
 
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Lokasi Kos</span>
-                                <span class="fw-semibold text-end">{{ $kos->lokasi }}</span>
-                            </div>
+                                <div class="d-flex justify-content-between mb-2 fs-6">
+                                    <span class="text-muted">Lokasi Kos</span>
+                                    <span class="fw-semibold text-end">{{ $kos->lokasi }}</span>
+                                </div>
 
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted">Tipe Kos</span>
-                                <span class="fw-semibold">{{ $kos->tipe_kos }}</span>
-                            </div>
+                                <div class="d-flex justify-content-between mb-3 fs-6">
+                                    <span class="text-muted">Tipe Kos</span>
+                                    <span class="fw-semibold">{{ $kos->tipe_kos }}</span>
+                                </div>
 
+                                <hr class="my-4">
 
-
-                            <div>
-                                <small class="text-muted">Deskripsi</small>
-                                <p class="mb-0">{{ $kos->deskripsi }}</p>
-                            </div>
-                            <hr class="my-4">
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-stars me-2 text-primary"></i> Fasilitas Kos
-                            </h6>
-
-                            <div class="row">
-                                @foreach ($kos->fasilitas as $fasilitas)
-                                    <div class="col-6 mb-2">
-                                        <i class="bi {{ $fasilitasIcon[$fasilitas] ?? 'bi-check-circle' }}"></i>
-                                        {{ $fasilitas }}
+                                <div>
+                                    <div class="text-muted mb-2 fs-6">Deskripsi</div>
+                                    <div class="fs-6" style="line-height:1.7;">
+                                        {{ $kos->deskripsi }}
                                     </div>
-                                @endforeach
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="card shadow-sm rounded-4 mb-3 w-100">
+                            <div class="card-body p-4">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="bi bi-stars me-2 text-primary"></i> Fasilitas Kos
+                                </h6>
+
+                                <div class="row fs-6">
+                                    @foreach ($kos->fasilitas as $fasilitas)
+                                        <div class="col-6 mb-2">
+                                            <i class="bi {{ $fasilitasIcon[$fasilitas] ?? 'bi-check-circle' }}"></i>
+                                            {{ $fasilitas }}
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
 
                             {{-- Tombol WhatsApp --}}
                             @if (!empty($kos->user->no_hp))
