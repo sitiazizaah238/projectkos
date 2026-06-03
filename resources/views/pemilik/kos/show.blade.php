@@ -135,7 +135,7 @@
                         <div class="card shadow-sm border-0 rounded-4 mt-4">
                             <div class="card-body p-4">
                                 <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
-                                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
                                 <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
                                     <i class="bi bi-geo-alt"></i> Buka di Google Maps
                                 </a>

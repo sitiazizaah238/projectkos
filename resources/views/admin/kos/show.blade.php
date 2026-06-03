@@ -80,7 +80,7 @@
                                     }
                                 @endphp
                                 <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
-                                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
                                 <a href="https://www.google.com/maps?q={{ $displayLat ?: -6.4005784 }},{{ $displayLng ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
                                     <i class="bi bi-geo-alt"></i> Buka di Google Maps
                                 </a>
