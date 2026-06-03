@@ -195,7 +195,7 @@
                         </div>
                     </div>
 
-                    <div class="row g-4 mt-1">
+                    <div class="row g-4 mt-4">
                         <div class="col-md-7">
                             {{-- MAP --}}
                             <div class="card shadow-sm border-0 rounded-4">

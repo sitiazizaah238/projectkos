@@ -171,7 +171,7 @@
                     </div>
                 </div>
 
-                <div class="row g-4">
+                <div class="row g-4 mt-4">
                     <div class="col-md-7">
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
