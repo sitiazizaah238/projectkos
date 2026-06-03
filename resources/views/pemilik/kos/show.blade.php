@@ -100,46 +100,59 @@
                     <div class="col-md-7">
 
                         {{-- FOTO --}}
-                        @if ($kos->foto && count($kos->foto) > 0)
-                            <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-header bg-white border-0 pt-4 px-4">
+                                <h5 class="mb-0 fw-semibold">Foto Kos</h5>
+                            </div>
+                            <div class="card-body pt-3 px-4 pb-4">
+                                @if ($kos->foto && count($kos->foto) > 0)
+                                    <div id="carouselKos" class="carousel slide" data-bs-ride="carousel">
 
-                                <div class="carousel-inner">
+                                        <div class="carousel-inner rounded-4 overflow-hidden" style="height:280px;">
 
-                                    @foreach ($kos->foto as $key => $f)
-                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                            <img src="{{ asset('storage/' . $f) }}" class="d-block w-100 rounded-4 shadow"
-                                                style="height:400px; object-fit:cover;">
+                                            @foreach ($kos->foto as $key => $f)
+                                                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                    <img src="{{ asset('storage/' . $f) }}" class="d-block w-100"
+                                                        style="height:280px; object-fit:cover;">
+                                                </div>
+                                            @endforeach
+
                                         </div>
-                                    @endforeach
 
-                                </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselKos"
+                                            data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon"></span>
+                                        </button>
 
-                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselKos"
-                                    data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon"></span>
-                                </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselKos"
+                                            data-bs-slide="next">
+                                            <span class="carousel-control-next-icon"></span>
+                                        </button>
 
-                                <button class="carousel-control-next" type="button" data-bs-target="#carouselKos"
-                                    data-bs-slide="next">
-                                    <span class="carousel-control-next-icon"></span>
-                                </button>
+                                    </div>
 
+                                    <div class="row g-2 mt-2">
+                                        @foreach ($kos->foto as $foto)
+                                            <div class="col-4">
+                                                <img src="{{ asset('storage/' . $foto) }}" class="w-100 rounded-3"
+                                                    style="height:70px; object-fit:cover;">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-light border text-muted mb-0">Belum ada foto kos.</div>
+                                @endif
                             </div>
-                        @else
-                            <div class="bg-light text-center p-5 rounded">
-                                Tidak ada foto
-                            </div>
-                        @endif
+                        </div>
                     </div>
                         <div class="col-md-5">
 
                             {{-- INFORMASI --}}
-                            <div class="card shadow rounded-4 mb-3"
-                                style="background:linear-gradient(135deg,#f8f9fa,#ffffff);">
+                            <div class="card shadow-sm border-0 rounded-4 mb-4">
                                 <div class="card-body p-4">
 
                                     <h5 class="fw-bold mb-4">
-                                        <i class="bi bi-info-circle"></i> Informasi Kos
+                                        Informasi Utama
                                     </h5>
 
                                     <div class="row mb-3 fs-5">
@@ -170,14 +183,13 @@
                                         </div>
                                     </div>
 
-                                    <hr>
-
-                                    <div>
-                                        <div class="text-muted mb-2 fs-6">Deskripsi</div>
-                                        <div class="fs-6" style="line-height:1.7;">
-                                            {{ $kos->deskripsi }}
-                                        </div>
-                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card shadow-sm border-0 rounded-4">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
+                                    <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
                                 </div>
                             </div>
                         </div>
@@ -199,23 +211,21 @@
 
                         <div class="col-md-5">
                             {{-- FASILITAS --}}
-                            <div class="card shadow rounded-4 mb-3" style="background:#f8f9fc;">
+                            <div class="card shadow-sm border-0 rounded-4 mb-4">
                                 <div class="card-body p-4">
-                                    <h5 class="fw-bold mb-3">
-                                        <i class="bi bi-list-check"></i> Fasilitas Kos
-                                    </h5>
-
-                                    <div class="row fs-6">
-                                        @if ($kos->fasilitas)
-                                            @foreach ($kos->fasilitas as $f)
-                                                <div class="col-6 mb-2">
-                                                    <i class="bi bi-check-circle text-success"></i> {{ $f }}
-                                                </div>
+                                    <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
+                                    @php
+                                        $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
+                                    @endphp
+                                    @if (count($fasilitas) > 0)
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach ($fasilitas as $f)
+                                                <span class="badge bg-light text-dark border">{{ $f }}</span>
                                             @endforeach
-                                        @else
-                                            <div class="text-muted">Tidak ada fasilitas</div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @else
+                                        <div class="text-muted">Tidak ada fasilitas</div>
+                                    @endif
                                 </div>
                             </div>
 
