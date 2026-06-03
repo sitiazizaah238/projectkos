@@ -186,7 +186,7 @@
                     <div class="row g-4 mt-1">
                         <div class="col-md-7">
                             {{-- MAP --}}
-                            <div class="card shadow-sm border-0 rounded-4 h-100">
+                            <div class="card shadow-sm border-0 rounded-4">
                                 <div class="card-body p-4">
                                     <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
                                     <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
@@ -197,9 +197,9 @@
                             </div>
                         </div>
 
-                        <div class="col-md-5 d-flex flex-column">
+                        <div class="col-md-5">
                             {{-- FASILITAS --}}
-                            <div class="card shadow rounded-4 mb-3 flex-grow-1" style="background:#f8f9fc;">
+                            <div class="card shadow rounded-4 mb-3" style="background:#f8f9fc;">
                                 <div class="card-body p-4">
                                     <h5 class="fw-bold mb-3">
                                         <i class="bi bi-list-check"></i> Fasilitas Kos

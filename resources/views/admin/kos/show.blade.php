@@ -113,7 +113,7 @@
 
                 <div class="row g-4 mt-1">
                     <div class="col-lg-7">
-                        <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
                                 @php
                                     $displayLat = $kos->latitude;
@@ -132,8 +132,8 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-5 d-flex flex-column">
-                        <div class="card shadow-sm border-0 rounded-4 mb-4 flex-grow-1">
+                    <div class="col-lg-5">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body p-4">
                                 <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
                                 @php
