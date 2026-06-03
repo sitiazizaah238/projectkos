@@ -132,21 +132,13 @@
                         @endif
 
                         {{-- MAP --}}
-                        <div class="card shadow rounded-4 mt-3 border-0">
-                            <div class="card-body p-0">
-
-                                {{-- HEADER BIAR LEBIH KESEPARATE --}}
-                                <div class="px-3 py-2 border-bottom bg-light rounded-top-4 d-flex justify-content-between align-items-center">
-                                    <small class="text-muted fw-semibold">
-                                        <i class="bi bi-geo-alt"></i> Lokasi Kos
-                                    </small>
-                                    <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm bg-white">
-                                        <i class="bi bi-box-arrow-up-right"></i> Buka di Maps
-                                    </a>
-                                </div>
-
-                                <div id="map" style="height: 250px; width: 100%; border-radius: 0 0 16px 16px; z-index: 1;"></div>
-
+                        <div class="card shadow-sm border-0 rounded-4 mt-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                                <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                </a>
                             </div>
                         </div>
                     </div>
