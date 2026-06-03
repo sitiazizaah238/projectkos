@@ -69,22 +69,6 @@
                             </div>
                         </div>
 
-                        <div class="card shadow-sm border-0 rounded-4 mt-4">
-                            <div class="card-body p-4">
-                                @php
-                                    $displayLat = $kos->latitude;
-                                    $displayLng = $kos->longitude;
-                                    if ($kos->edit_request_status === 'menunggu' && is_array($kos->edit_request_data)) {
-                                        $displayLat = $kos->edit_request_data['latitude'] ?? $displayLat;
-                                        $displayLng = $kos->edit_request_data['longitude'] ?? $displayLng;
-                                    }
-                                @endphp
-                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
-                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
-                                <a href="https://www.google.com/maps?q={{ $displayLat ?: -6.4005784 }},{{ $displayLng ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
-                                </a>
-                            </div>
                         </div>
                     </div>
 
@@ -122,7 +106,34 @@
                             </div>
                         </div>
 
-                        <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-1">
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm border-0 rounded-4 h-100">
+                            <div class="card-body p-4">
+                                @php
+                                    $displayLat = $kos->latitude;
+                                    $displayLng = $kos->longitude;
+                                    if ($kos->edit_request_status === 'menunggu' && is_array($kos->edit_request_data)) {
+                                        $displayLat = $kos->edit_request_data['latitude'] ?? $displayLat;
+                                        $displayLng = $kos->edit_request_data['longitude'] ?? $displayLng;
+                                    }
+                                @endphp
+                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                <a href="https://www.google.com/maps?q={{ $displayLat ?: -6.4005784 }},{{ $displayLng ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 d-flex flex-column">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4 flex-grow-1">
                             <div class="card-body p-4">
                                 <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
                                 @php

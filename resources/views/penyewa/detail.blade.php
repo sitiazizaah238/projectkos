@@ -106,16 +106,6 @@
                                 <i class="bi bi-image fs-1 text-muted"></i>
                             </div>
                         @endif
-
-                        <div class="card shadow-sm border-0 rounded-4 mt-4">
-                            <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
-                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
-                                <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
-                                </a>
-                            </div>
-                        </div>
                     </div>
                     {{-- FOTO --}}
                     @php
@@ -175,8 +165,24 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="card shadow-sm rounded-4 mb-3 w-100">
+                <div class="row g-4">
+                    <div class="col-md-7">
+                        <div class="card shadow-sm border-0 rounded-4 h-100">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-5 d-flex flex-column">
+                        <div class="card shadow-sm rounded-4 mb-3 w-100 flex-grow-1">
                             <div class="card-body p-4">
                                 <h6 class="fw-bold mb-3">
                                     <i class="bi bi-stars me-2 text-primary"></i> Fasilitas Kos
