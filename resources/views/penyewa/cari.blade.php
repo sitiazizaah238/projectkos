@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    /* khusus filter panel biar tidak ganggu komponen lain */
-    #filterPanel .form-check-input {
-        accent-color: #0d6efd;
-        border: 1px solid #0d6efd;
-        background-color: #fff;
-    }
+    <style>
+        /* khusus filter panel biar tidak ganggu komponen lain */
+        #filterPanel .form-check-input {
+            accent-color: #0d6efd;
+            border: 1px solid #0d6efd;
+            background-color: #fff;
+        }
 
-    #filterPanel .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-</style>
+        #filterPanel .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+    </style>
     <div class="d-flex">
 
         {{-- SIDEBAR --}}
@@ -228,6 +228,7 @@
                                     $kamarTersedia = $k->kamars->where('status', 'tersedia');
                                     $kamarTermurah = $kamarTersedia->sortBy('harga')->first();
                                     $kamarTermahal = $kamarTersedia->sortBy('harga')->last();
+                                    $tipeHargaList = $kamarTersedia->pluck('tipe_harga')->unique();
                                 @endphp
 
                                 <div class="col-md-6 col-lg-4">
@@ -332,6 +333,12 @@
                                                         <span
                                                             class="text-muted">/{{ ucfirst($kamarTermurah->tipe_harga) }}</span>
                                                     </div>
+                                                    @if ($tipeHargaList->count() > 1)
+                                                        <div class="small text-primary mt-1">
+                                                            Tersedia:
+                                                            {{ $tipeHargaList->map(fn($t) => ucfirst($t))->implode(' & ') }}
+                                                        </div>
+                                                    @endif
                                                 @else
                                                     @if ($k->kamars->count() > 0)
                                                         <span class="badge bg-danger">Kamar Penuh</span>

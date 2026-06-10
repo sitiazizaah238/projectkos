@@ -48,7 +48,6 @@
                         $punyaRiwayat = \App\Models\PengajuanSewa::where('user_id', auth()->id())->exists();
                     @endphp
                     @if (!$punyaRiwayat)
-
                         <div class="col-12 text-center py-5">
                             <div class="card border-0 shadow-sm p-5" style="border-radius: 20px;">
                                 <i class="bi bi-search fs-1 text-primary mb-3"></i>
@@ -75,6 +74,7 @@
                                 $fasKos = is_array($k->fasilitas) ? $k->fasilitas : [];
                                 $kamarTermurah = $k->kamars->sortBy('harga')->first();
                                 $kamarTermahal = $k->kamars->sortBy('harga')->last();
+                                $tipeHargaList = $k->kamars->pluck('tipe_harga')->unique();
                             @endphp
                             <div class="col-md-4">
                                 <div class="card shadow-sm border-0 h-100" style="border-radius:16px; overflow:hidden;">
@@ -187,6 +187,12 @@
                                                     <span
                                                         class="text-muted">/{{ ucfirst($kamarTermurah->tipe_harga) }}</span>
                                                 </div>
+                                                @if ($tipeHargaList->count() > 1)
+                                                    <div class="small text-primary mt-1">
+                                                        Tersedia:
+                                                        {{ $tipeHargaList->map(fn($t) => ucfirst($t))->implode(' & ') }}
+                                                    </div>
+                                                @endif
                                             @else
                                                 <small class="text-muted">Belum ada kamar tersedia</small>
                                             @endif
@@ -217,7 +223,7 @@
                                 </div>
                             </div>
                         @endforelse
-                        @endif
+                    @endif
                 </div>
             </div>
         </div>
