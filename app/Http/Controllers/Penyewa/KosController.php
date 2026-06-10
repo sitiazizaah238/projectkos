@@ -103,14 +103,16 @@ class KosController extends Controller
             ->when($request->filled('fasilitas'), function ($query) use ($request) {
                 $query->whereHas('kamars', function ($q) use ($request) {
                     foreach ($request->fasilitas as $fasilitas) {
-                        // Karena JSON disimpan sebagai ["ac", "meja"], 
+                        // Karena JSON disimpan sebagai ["ac", "meja"],
                         // kita cari menggunakan LIKE yang diapit tanda kutip ganda
                         $q->where('fasilitas', 'LIKE', '%"' . $fasilitas . '"%');
                     }
                 });
             })
             ->latest()
-            ->get();
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
 
         // Belajar dari hasil pencarian agar preferensi makin adaptif.
         if ($search && $kos->isNotEmpty()) {

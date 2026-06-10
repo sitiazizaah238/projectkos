@@ -363,7 +363,9 @@
                                     Tidak ada kos ditemukan
                                 </div>
                             @endforelse
-
+                            <div class="mt-4 d-flex justify-content-center">
+                                {{ $kos->links() }}
+                            </div>
                         </div>
                     </div>
 
