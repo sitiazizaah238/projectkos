@@ -49,7 +49,7 @@
             <div class="p-4" style="background:#f5f7fb;min-height:100vh;">
 
                 <h3 class="fw-bold" style="font-size: 30px;">Pencarian Kos Tersedia</h3>
-                <small class="text-muted">Menampilkan/Mencari kos berdasarkan nama atau lokasi</small>
+                <small class="text-muted">Menampilkan/Mencari kos berdasarkan nama atau lokasi ter</small>
 
                 {{-- FORM SEARCH (terpisah dari form filter) --}}
                 <div class="mt-3 mb-4 d-flex gap-2 align-items-center flex-wrap">
@@ -68,7 +68,7 @@
 
                         <div class="input-group" style="max-width:400px;">
                             <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                                placeholder="Cari nama atau lokasi...">
+                                placeholder="Cari nama kos...">
                             <button type="submit" class="btn btn-primary">Cari</button>
                         </div>
                     </form>
@@ -333,10 +333,9 @@
                                                         <span
                                                             class="text-muted">/{{ ucfirst($kamarTermurah->tipe_harga) }}</span>
                                                     </div>
-                                                    @if ($tipeHargaList->count() > 1)
+                                                    @if ($tipeHargaList->contains('tahunan'))
                                                         <div class="small text-primary mt-1">
-                                                            Tersedia:
-                                                            {{ $tipeHargaList->map(fn($t) => ucfirst($t))->implode(' & ') }}
+                                                            Tersedia: Tahunan
                                                         </div>
                                                     @endif
                                                 @else

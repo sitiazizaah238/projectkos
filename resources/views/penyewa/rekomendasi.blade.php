@@ -187,10 +187,9 @@
                                                     <span
                                                         class="text-muted">/{{ ucfirst($kamarTermurah->tipe_harga) }}</span>
                                                 </div>
-                                                @if ($tipeHargaList->count() > 1)
+                                                @if ($tipeHargaList->contains('tahunan'))
                                                     <div class="small text-primary mt-1">
-                                                        Tersedia:
-                                                        {{ $tipeHargaList->map(fn($t) => ucfirst($t))->implode(' & ') }}
+                                                        Tersedia: Tahunan
                                                     </div>
                                                 @endif
                                             @else
@@ -224,11 +223,11 @@
                             </div>
                         @endforelse
                     @endif
-                    @if($rekomendasi instanceof \Illuminate\Pagination\LengthAwarePaginator)
-    <div class="d-flex justify-content-center mt-4">
-        {{ $rekomendasi->links() }}
-    </div>
-@endif
+                    @if ($rekomendasi instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        <div class="d-flex justify-content-center mt-4">
+                            {{ $rekomendasi->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
