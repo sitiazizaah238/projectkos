@@ -91,8 +91,8 @@ it('learns softly from view and strongly from confirmed action', function () {
     $service->learnFromKosView($penyewa, $kosTahunan);
     $prefAfterView = UserPreference::where('user_id', $penyewa->id)->first();
 
-    expect($prefAfterView->pref_tipe_kos)->toBe('campur');
-    expect($prefAfterView->pref_tipe_harga)->toBe('bulanan');
+    expect($prefAfterView->pref_tipe_kos)->toBe('campur,putri');
+    expect($prefAfterView->pref_tipe_harga)->toBe('bulanan,tahunan');
     expect((int) $prefAfterView->pref_harga)->toBeGreaterThan(1000000);
 
     $kamarTahunan = $kosTahunan->kamars()->first();
@@ -100,8 +100,8 @@ it('learns softly from view and strongly from confirmed action', function () {
 
     $prefAfterAction = UserPreference::where('user_id', $penyewa->id)->first();
 
-    expect($prefAfterAction->pref_tipe_kos)->toBe('putri');
-    expect($prefAfterAction->pref_tipe_harga)->toBe('tahunan');
+    expect($prefAfterAction->pref_tipe_kos)->toBe('campur,putri,putri');
+    expect($prefAfterAction->pref_tipe_harga)->toBe('bulanan,tahunan,tahunan');
     expect($prefAfterAction->pref_fasilitas)->toContain('CCTV');
 
     // Ensure existing unrelated kos still present and service can rank post-learning.
