@@ -61,7 +61,7 @@ class RecommendationScoringService
             return;
         }
 
-        $this->learn($user, $kos, $kamar, 0.12, false);
+        $this->learn($user, $kos, $kamar, 0.12);
     }
 
     public function learnFromKosView(User $user, Kos $kos): void
@@ -72,7 +72,7 @@ class RecommendationScoringService
             return;
         }
 
-        $this->learn($user, $kos, $kamar, 0.20, false);
+        $this->learn($user, $kos, $kamar, 0.20);
     }
 
     public function learnFromConfirmedAction(User $user, Kos $kos, ?Kamar $kamar = null): void
@@ -83,7 +83,7 @@ class RecommendationScoringService
             return;
         }
 
-        $this->learn($user, $kos, $kamarDipakai, 0.45, true);
+        $this->learn($user, $kos, $kamarDipakai, 0.45);
     }
 
     private function scoreCandidates(Collection $kandidatKos, UserPreference $pref): Collection
@@ -138,9 +138,20 @@ class RecommendationScoringService
             return 1.0;
         }
 
-        return strtolower((string) $kos->tipe_kos) === strtolower((string) $pref->pref_tipe_kos)
-            ? 1.0
-            : 0.0;
+        $history = array_filter(explode(',', strtolower((string) $pref->pref_tipe_kos)));
+        if (empty($history)) {
+            return 1.0;
+        }
+
+        $target = trim(strtolower((string) $kos->tipe_kos));
+        $count = 0;
+        foreach ($history as $h) {
+            if (trim($h) === $target) {
+                $count++;
+            }
+        }
+
+        return $count / count($history);
     }
 
     private function rawFasilitasScore(UserPreference $pref, Kamar $kamar): float
@@ -163,9 +174,20 @@ class RecommendationScoringService
             return 1.0;
         }
 
-        return strtolower((string) $kamar->tipe_harga) === strtolower((string) $pref->pref_tipe_harga)
-            ? 1.0
-            : 0.0;
+        $history = array_filter(explode(',', strtolower((string) $pref->pref_tipe_harga)));
+        if (empty($history)) {
+            return 1.0;
+        }
+
+        $target = trim(strtolower((string) $kamar->tipe_harga));
+        $count = 0;
+        foreach ($history as $h) {
+            if (trim($h) === $target) {
+                $count++;
+            }
+        }
+
+        return $count / count($history);
     }
 
     private function normalizeBenefit(array $values): array
@@ -225,7 +247,7 @@ class RecommendationScoringService
         return 'Kurang Sesuai';
     }
 
-    private function learn(User $user, Kos $kos, Kamar $kamar, float $alpha, bool $overwriteKategori): void
+    private function learn(User $user, Kos $kos, Kamar $kamar, float $alpha): void
     {
         $pref = UserPreference::firstOrNew(['user_id' => $user->id]);
 
@@ -238,13 +260,19 @@ class RecommendationScoringService
             $pref->pref_harga = (int) round(($hargaLama * (1 - $alpha)) + ($hargaBaru * $alpha));
         }
 
-        if ($overwriteKategori || ! $pref->pref_tipe_kos) {
-            $pref->pref_tipe_kos = $kos->tipe_kos;
+        $kosTypes = array_filter(explode(',', strtolower((string) $pref->pref_tipe_kos)));
+        $kosTypes[] = trim(strtolower($kos->tipe_kos));
+        if (count($kosTypes) > 5) {
+            array_shift($kosTypes);
         }
+        $pref->pref_tipe_kos = implode(',', $kosTypes);
 
-        if ($overwriteKategori || ! $pref->pref_tipe_harga) {
-            $pref->pref_tipe_harga = $kamar->tipe_harga;
+        $hargaTypes = array_filter(explode(',', strtolower((string) $pref->pref_tipe_harga)));
+        $hargaTypes[] = trim(strtolower($kamar->tipe_harga));
+        if (count($hargaTypes) > 5) {
+            array_shift($hargaTypes);
         }
+        $pref->pref_tipe_harga = implode(',', $hargaTypes);
 
         $existing = is_array($pref->pref_fasilitas) ? $pref->pref_fasilitas : [];
         $baru = is_array($kamar->fasilitas) ? $kamar->fasilitas : [];
