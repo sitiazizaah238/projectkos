@@ -103,7 +103,7 @@
                             <tbody>
                                 @forelse($pemilik as $key => $p)
                                     <tr>
-                                        <td>{{ $key + 1 }}</td>
+                                      <td>{{ $pemilik->firstItem() + $key }}</td>
                                         <td>{{ $p->name }}</td>
                                         <td>{{ $p->email }}</td>
                                         <td>{{ $p->no_hp }}</td>
@@ -214,6 +214,9 @@
 
                             </tbody>
                         </table>
+                    </div>
+                    <div class="p-3">
+                        {{ $pemilik->links() }}
                     </div>
                 </div>
 
