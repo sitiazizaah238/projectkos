@@ -56,10 +56,12 @@
                                     Kami belum mengenal seleramu. Silakan gunakan fitur
                                     <strong>"Cari Kos"</strong> untuk mulai mendapatkan rekomendasi.
                                 </p>
-                                <a href="{{ route('penyewa.cari.kos') }}"
-                                    class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
-                                    <i class="bi bi-search me-1"></i> Mulai Mencari
-                                </a>
+                                <div class="mt-2">
+                                    <a href="{{ route('penyewa.cari.kos') }}"
+                                        class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-search me-1"></i> Mulai Mencari
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     @else
