@@ -45,9 +45,9 @@
 
                 <div class="row g-4 mt-2">
                     @php
-                        $punyaRiwayat = \App\Models\PengajuanSewa::where('user_id', auth()->id())->exists();
+                        $punyaRiwayat = \App\Models\UserPreference::where('user_id', auth()->id())->exists();
                     @endphp
-                   @if ($rekomendasi->count() == 0)
+                   @if (!$punyaRiwayat || $rekomendasi->count() == 0)
                         <div class="col-12 text-center py-5">
                             <div class="card border-0 shadow-sm p-5" style="border-radius: 20px;">
                                 <i class="bi bi-search fs-1 text-primary mb-3"></i>
