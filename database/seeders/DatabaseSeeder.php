@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             UserSeeder::class,
             KosKamarSeeder::class,
+            RecommendationTestingSeeder::class,
         ]);
     }
 }
