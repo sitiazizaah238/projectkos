@@ -376,7 +376,7 @@
                     </div>
                 </div>
 @php
-    $punyaRiwayat = \App\Models\PengajuanSewa::where('user_id', auth()->id())->exists();
+    $punyaRiwayat = \App\Models\UserPreference::where('user_id', auth()->id())->exists();
 @endphp
                 {{-- ================= REKOMENDASI KOS ================= --}}
                 <div class="card mt-4 p-3 shadow-sm">
