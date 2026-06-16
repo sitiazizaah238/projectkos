@@ -161,7 +161,7 @@
 
                             </div>
                         </div>
-                        
+
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
                                 <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
@@ -183,7 +183,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-5">
                         <div class="card shadow-sm border-0 rounded-4 mb-4 w-100">
                             <div class="card-body p-4">
@@ -247,7 +247,7 @@
                             @php
                                 $pengajuanUser = \App\Models\PengajuanSewa::where('user_id', Auth::id())->get();
                             @endphp
-                            @forelse($kos->kamars as $kamar)
+                          @forelse($kamars as $kamar)
                                 <div class="col-md-4">
                                     <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column">
 
@@ -442,6 +442,9 @@
                                     </td>
                                 </tr>
                             @endforelse
+                            <div class="d-flex justify-content-center mt-4">
+    {{ $kamars->links() }}
+</div>
                             </tbody>
                             </table>
                         </div>
@@ -559,7 +562,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             var lat = {{ $kos->latitude ?: -6.383568 }};
             var lng = {{ $kos->longitude ?: 108.281052 }};
-            
+
             var map = L.map('map').setView([lat, lng], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

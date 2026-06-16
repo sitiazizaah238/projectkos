@@ -120,7 +120,7 @@
                                     <label class="fw-semibold mb-2">Fasilitas Kamar</label>
 
                                     <div class="row">
-                                        @foreach (['Kamar Mandi Dalam', 'AC', 'Kipas Angin', 'Cermin', 'Lemari Pakaian', 'Meja', 'Tempat Tidur'] as $f)
+                                        @foreach (['Kamar Mandi Dalam', 'AC', 'Kipas Angin', 'Cermin', 'Lemari Pakaian', 'Meja Bejalar/ Kerja', 'Kasur & Bantal'] as $f)
                                             <div class="col-6">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="fasilitas[]"
@@ -189,11 +189,11 @@
                                         <select name="tipe_harga" class="form-select">
                                             <option value="bulanan"
                                                 {{ $kamar->tipe_harga == 'bulanan' ? 'selected' : '' }}>
-                                                Bulanan
+                                                Perbulan
                                             </option>
                                             <option value="tahunan"
                                                 {{ $kamar->tipe_harga == 'tahunan' ? 'selected' : '' }}>
-                                                Tahunan
+                                                Pertahun
                                             </option>
                                         </select>
                                     </div>

@@ -154,9 +154,9 @@
                                                     <div class="form-check"><input class="form-check-input" type="checkbox"
                                                             name="fasilitas[]" value="Lemari Pakaian"> Lemari Pakaian</div>
                                                     <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                            name="fasilitas[]" value="Meja"> Meja</div>
+                                                            name="fasilitas[]" value="Meja"> Meja Belajar/Kerja</div>
                                                     <div class="form-check"><input class="form-check-input" type="checkbox"
-                                                            name="fasilitas[]" value="Tempat Tidur"> Tempat Tidur</div>
+                                                            name="fasilitas[]" value="Tempat Tidur"> Kasur & Bantal</div>
                                                 </div>
                                             </div>
 
@@ -196,8 +196,8 @@
                                             <div class="mb-3">
                                                 <label class="form-label">Tipe Harga</label>
                                                 <select name="tipe_harga" class="form-select">
-                                                    <option value="bulanan">Bulan</option>
-                                                    <option value="tahunan">Tahun</option>
+                                                    <option value="bulanan">Perbulan</option>
+                                                    <option value="tahunan">Pertahun</option>
                                                 </select>
                                             </div>
 

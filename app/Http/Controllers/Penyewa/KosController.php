@@ -133,9 +133,11 @@ class KosController extends Controller
                 $q->where('status', 'aktif');
             })
             ->findOrFail($id);
-
+        $kamars = $kos->kamars()
+            ->where('status', 'tersedia')
+            ->paginate(6);
         $this->recommendationScoring->learnFromKosView(Auth::user(), $kos);
 
-        return view('penyewa.detail', compact('kos'));
+        return view('penyewa.detail', compact('kos','kamars'));
     }
 }
