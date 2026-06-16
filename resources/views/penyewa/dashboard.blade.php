@@ -397,9 +397,9 @@
                         Kami belum mengenal seleramu. Silakan gunakan fitur
                         <strong>"Cari Kos"</strong> untuk mulai mendapatkan rekomendasi.
                     </p>
-                    <div class="mt-2">
+                    <div class="mt-3 d-flex justify-content-center">
                         <a href="{{ route('penyewa.cari.kos') }}"
-                           class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                           class="btn btn-primary px-4 py-2 rounded-pill shadow-sm" style="width: fit-content;">
                             <i class="bi bi-search me-1"></i> Mulai Mencari
                         </a>
                     </div>
