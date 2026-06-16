@@ -225,7 +225,7 @@
                             </div>
                         @endforelse
                     @endif
-                    @if ($rekomendasi instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    @if ($punyaRiwayat && $rekomendasi->count() > 0 && $rekomendasi instanceof \Illuminate\Pagination\LengthAwarePaginator)
                         <div class="d-flex justify-content-center mt-4">
                             {{ $rekomendasi->links() }}
                         </div>

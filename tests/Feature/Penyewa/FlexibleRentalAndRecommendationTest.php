@@ -10,6 +10,7 @@ use App\Models\UserPreference;
 use App\Services\RecommendationScoringService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class FlexibleRentalAndRecommendationTest extends TestCase
@@ -57,7 +58,7 @@ class FlexibleRentalAndRecommendationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_precision_pro_rata_price_for_yearly_room_with_3_months_duration()
     {
         $this->actingAs($this->penyewa);
@@ -77,7 +78,7 @@ class FlexibleRentalAndRecommendationTest extends TestCase
         $this->assertEquals(3000000, $pengajuan->total_bayar);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_full_price_for_yearly_room_with_12_months_duration()
     {
         $this->actingAs($this->penyewa);
@@ -94,7 +95,7 @@ class FlexibleRentalAndRecommendationTest extends TestCase
         $this->assertEquals(12000000, $pengajuan->total_bayar);
     }
 
-    /** @test */
+    #[Test]
     public function it_formats_yearly_duration_label_correctly_in_model()
     {
         // 12 bulan pada kamar tahunan harus jadi "1 Tahun"
@@ -110,7 +111,7 @@ class FlexibleRentalAndRecommendationTest extends TestCase
         $this->assertEquals('3 Bulan', $label);
     }
 
-    /** @test */
+    #[Test]
     public function it_learns_from_user_habits_feedback_loop()
     {
         $service = new RecommendationScoringService();
@@ -129,7 +130,7 @@ class FlexibleRentalAndRecommendationTest extends TestCase
         $this->assertEquals('tahunan', $pref->pref_tipe_harga);
     }
 
-    /** @test */
+    #[Test]
     public function it_extends_yearly_room_with_monthly_duration_and_correct_price()
     {
         $this->actingAs($this->penyewa);
