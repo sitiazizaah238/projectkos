@@ -66,7 +66,7 @@
 
         .hero-sub {
             margin: 20px 0;
-            color: #555;
+            color: #151414;
         }
 
         .search-box input {
@@ -380,7 +380,6 @@
                 opacity: 1;
             }
         }
-        
     </style>
 </head>
 
@@ -505,14 +504,13 @@
         <div class="container">
             <div class="row align-items-end">
                 <div class="col-md-6 hero-text fade-up">
-                    <h1 class="hero-title">
+                   <h1 class="hero-title mb-5">
                         Temukan Kos Terbaik <br>
                         di <span>Lohbener</span> dengan Mudah
                     </h1>
-
-                    <p class="hero-sub mt-4">
-                        Sistem Rekomendasi Kos berbasis Web <br>
-                        di wilayah Lohbener Indramayu
+                    <p class="hero-sub mobile-sub text-dark mt-4 mt-md-5">
+                        Sistem Rekomendasi Kos Berbasis Web <br>
+                        di Kecamatan Lohbener, Indramayu
                     </p>
 
                     <div class="search-box mb-3 position-relative w-75">
