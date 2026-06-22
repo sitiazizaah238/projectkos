@@ -16,7 +16,17 @@
     $totalKamar = Kamar::whereIn('kos_id', $kosIds)->count();
     $kamarTersedia = Kamar::whereIn('kos_id', $kosIds)->where('status', 'tersedia')->count();
     $totalPenyewa = PengajuanSewa::whereIn('kos_id', $kosIds)->where('status', 'aktif')->count();
+    $kamarTerisi = $totalKamar - $kamarTersedia;
 
+    $grafikBulanan = [];
+
+    for ($i = 1; $i <= 12; $i++) {
+        $grafikBulanan[] = PengajuanSewa::whereIn('kos_id', $kosIds)
+            ->where('status', 'aktif')
+            ->whereMonth('created_at', $i)
+            ->whereYear('created_at', date('Y'))
+            ->count();
+    }
     // =====================
     // NOTIF SECTION
     // =====================
@@ -33,7 +43,7 @@
     $jumlahNotif = $notifKos->count() + $notifPengajuan->count() + $notifPembayaran->count();
 @endphp
 @section('content')
-  <div class="d-flex flex-column flex-md-row">
+    <div class="d-flex flex-column flex-md-row">
 
         {{-- SIDEBAR --}}
         @include('components.sidebar-pemilik')
@@ -109,7 +119,7 @@
                 <div class="row mt-4 g-3">
 
                     {{-- TOTAL KOS --}}
-                  <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-3">
                         <a href="{{ route('pemilik.kos.index') }}" class="dashboard-card-link">
                             <div class="card dashboard-card p-3 shadow-sm border-start border-4 border-primary">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -194,7 +204,7 @@
                 <div class="row mt-4">
 
                     {{-- BAR CHART --}}
-                 <div class="col-12 col-md-8 mb-3 mb-md-0">
+                    <div class="col-12 col-md-8 mb-3 mb-md-0">
                         <div class="card p-3 shadow-sm">
                             <h6 class="fw-bold">Grafik Penyewaan Bulanan</h6>
                             <div style="height:260px;">
@@ -204,99 +214,122 @@
                     </div>
 
                     {{-- DONUT CHART --}}
-                   <div class="col-12 col-md-4">
-                        <div class="card p-3 shadow-sm">
-                            <h6 class="fw-bold">Status Kamar</h6>
-                            <div style="height:260px;">
+                    <div class="col-12 col-md-4">
+                        <div class="card p-3 pb-2 shadow-sm">
+                           <h6 class="fw-bold border-bottom pb-2">Status Kamar</h6>
+                            <div style="height:200px; display:flex; align-items:center; justify-content:center;">
                                 <canvas id="donutChart"></canvas>
                             </div>
+
+                            {{-- TAMBAHKAN INI --}}
+                            <div class="mt-2 border-top pt-2">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>
+                                        <i class="bi bi-circle-fill text-success me-1"></i>
+                                        Kamar Tersedia
+                                    </span>
+                                    <strong>{{ $kamarTersedia }}</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <span>
+                                        <i class="bi bi-circle-fill text-primary me-1"></i>
+                                        Kamar Terisi
+                                    </span>
+                                    <strong>{{ $kamarTerisi }}</strong>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
                 </div>
-
             </div>
+
         </div>
 
-    </div>
+        {{-- PROFILE MODAL --}}
+        <div class="modal fade" id="profileModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                    <div class="mb-3">
+                        <div class="fw-bold">{{ Auth::user()->name }}</div>
+                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                    </div>
 
-    {{-- PROFILE MODAL --}}
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content p-3 text-center" style="border-radius:20px;">
-                <div class="mb-3">
-                    <div class="fw-bold">{{ Auth::user()->name }}</div>
-                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                    <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                        Profil
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-danger w-100">
+                            Logout
+                        </button>
+                    </form>
                 </div>
-
-                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                    Profil
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-danger w-100">
-                        Logout
-                    </button>
-                </form>
             </div>
         </div>
-    </div>
 
-    {{-- CHART JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        {{-- CHART JS --}}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        /* BAR CHART (seperti figma) */
-        new Chart(document.getElementById('barChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-                datasets: [{
-                    label: 'Jumlah Penyewaan',
-                    data: [3, 6, 9, 12, 15, 10],
-                }]
-            },
-            options: {
-                maintainAspectRatio: false
+        <script>
+            /* BAR CHART (seperti figma) */
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                    datasets: [{
+                        label: 'Jumlah Penyewaan',
+                        data: @json($grafikBulanan),
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false
+                }
+            });
+
+
+            /* DONUT STATUS KAMAR */
+            new Chart(document.getElementById('donutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: [' Tersedia', ' Terisi'],
+                    datasets: [{
+                        data: [{{ $kamarTersedia }}, {{ $kamarTerisi }}],
+                        backgroundColor: ['#22c55e', '#0d6efd'],
+                        radius: '78%' // 👈 TAMBAH INI (perkecil lingkaran donut)
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    layout: {
+                        padding: 15
+                    }
+                }
+            });
+        </script>
+        <style>
+            @media (max-width: 768px) {
+
+                .p-4 {
+                    padding: 12px !important;
+                }
+
+                h3 {
+                    font-size: 20px !important;
+                }
+
+                .card h3 {
+                    font-size: 18px !important;
+                }
+
+                canvas {
+                    max-height: 220px !important;
+                }
+
             }
-        });
-
-        /* DONUT STATUS KAMAR */
-        new Chart(document.getElementById('donutChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Kosong', 'Terisi'],
-                datasets: [{
-                    data: [32, 68],
-                    backgroundColor: ['#22c55e', '#0d6efd']
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                cutout: '70%'
-            }
-        });
-    </script>
-    <style>
-@media (max-width: 768px) {
-
-    .p-4 {
-        padding: 12px !important;
-    }
-
-    h3 {
-        font-size: 20px !important;
-    }
-
-    .card h3 {
-        font-size: 18px !important;
-    }
-
-    canvas {
-        max-height: 220px !important;
-    }
-
-}
-</style>
-@endsection
+        </style>
+    @endsection
