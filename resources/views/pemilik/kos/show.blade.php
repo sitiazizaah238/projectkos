@@ -145,17 +145,18 @@
                             </div>
                         </div>
                     </div>
-                   <div class="col-12 col-md-5 mt-3 mt-md-0">
+                    <div class="col-12 col-md-5 mt-3 mt-md-0">
 
                         {{-- INFORMASI --}}
                         <div class="card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body p-4">
 
-                                <h5 class="fw-semibold mb-3">Informasi Utama</h5>
-
+                                <h5 class="fw-semibold mb-3">
+                                    <i class="bi bi-info-circle me-2"></i> Informasi Kos
+                                </h5>
                                 <div class="mb-2"><span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}</div>
-                                <div class="mb-2"><span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}</div>
-                                <div class="mb-2"><span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}</div>
+                                <div class="mb-2"><span class="text-muted">Lokasi Kos:</span> {{ $kos->lokasi }}</div>
+                                <div class="mb-2"><span class="text-muted">Tipe Kos:</span> {{ $kos->tipe_kos }}</div>
                                 <div class="mb-2">
                                     <span class="text-muted">Status Verifikasi:</span>
                                     @if ($kos->status == 'disetujui')
@@ -181,19 +182,23 @@
                         @endif
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
+                                <h5 class="fw-semibold mb-3">
+                                    <i class="bi bi-card-text me-2"></i> Deskripsi Kos
+                                </h5>
                                 <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-               <div class="row g-4 mt-2">
+                <div class="row g-4 mt-2">
                     <div class="col-md-7">
                         {{-- MAP --}}
-                      <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                                <h5 class="fw-semibold mb-3">
+                                    <i class="bi bi-geo-alt-fill me-2"></i> Peta Lokasi
+                                </h5>
                                 <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;">
                                 </div>
                                 <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}"
@@ -208,8 +213,9 @@
                         {{-- FASILITAS --}}
                         <div class="card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
-
+                                <h5 class="fw-semibold mb-3">
+                                    <i class="bi bi-stars me-2"></i> Fasilitas Kos
+                                </h5>
                                 @php
                                     $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
 

@@ -74,13 +74,16 @@
                     <div class="col-lg-5">
                         <div class="card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Informasi Utama</h5>
-                                <div class="mb-2"><span class="text-muted">Pemilik:</span> {{ $kos->user->name }}</div>
+                                <h5 class="fw-semibold mb-3">
+                                    <i class="bi bi-info-circle me-2"></i> Informasi Kos
+                                </h5>
+                                <div class="mb-2"><span class="text-muted">Pemilik Kos:</span> {{ $kos->user->name }}
+                                </div>
                                 <div class="mb-2"><span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}</div>
-                                <div class="mb-2"><span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}</div>
-                                <div class="mb-2"><span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}</div>
+                                <div class="mb-2"><span class="text-muted">Lokasi Kos:</span> {{ $kos->lokasi }}</div>
+                                <div class="mb-2"><span class="text-muted">Tipe Kos:</span> {{ $kos->tipe_kos }}</div>
                                 <div class="mb-2">
-                                    <span class="text-muted">Status:</span>
+                                    <span class="text-muted">Status Kos:</span>
                                     @if ($kos->status === 'disetujui')
                                         <span class="badge bg-success">Disetujui</span>
                                     @elseif($kos->status === 'ditolak')
@@ -98,23 +101,26 @@
 
                                 @if ($kos->alasan)
                                     <div class="alert alert-warning mt-3 mb-0">
-                                        <div class="fw-semibold mb-1">Catatan Admin</div>
+                                        <div class="fw-semibold mb-1">Catatan Admin : </div>
                                         {{ $kos->alasan }}
                                     </div>
                                 @endif
                             </div>
                         </div>
 
-                        <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
-                                <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
+                                <h5 class="fw-semibold mb-3">
+                                    <i class="bi bi-card-text me-2"></i> Deskripsi Kos
+                                </h5>
+                                <div class="text-muted text-break" style="white-space: pre-line;">
+                                    {{ $kos->deskripsi ?: '-' }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row g-4 mt-4">
+                <div class="row g-4 mt-4 map-row-up">
                     <div class="col-lg-7">
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
@@ -126,7 +132,9 @@
                                         $displayLng = $kos->edit_request_data['longitude'] ?? $displayLng;
                                     }
                                 @endphp
-                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                               <h5 class="fw-semibold mb-3">
+    <i class="bi bi-geo-alt-fill me-2"></i> Peta Lokasi
+</h5>
                                 <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;">
                                 </div>
                                 <a href="https://www.google.com/maps?q={{ $displayLat ?: -6.4005784 }},{{ $displayLng ?: 108.2100865 }}"
@@ -140,7 +148,9 @@
                     <div class="col-lg-5">
                         <div class="card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body p-4">
-                                <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
+                                <h5 class="fw-semibold mb-3">
+                                   <i class="bi bi-grid-3x3-gap me-2"></i> Fasilitas Kos
+                                </h5>
                                 @php
                                     $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
                                 @endphp
@@ -393,6 +403,15 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        /* KHUSUS DESKTOP */
+        @media (min-width: 992px) {
+            .map-row-up {
+                margin-top: -25px !important;
+                /* sebelumnya 0, sekarang naik */
+            }
+        }
+    </style>
 @endpush
 
 @push('scripts')
