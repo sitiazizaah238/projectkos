@@ -182,7 +182,7 @@
 
                                 {{-- TIPE HARGA --}}
                                 <div class="mb-4">
-                                    <label class="fw-semibold mb-2">Tipe Harga</label>
+                                    <label class="fw-semibold mb-2">Tipe Pembayaran</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="tipe_harga" value="bulanan"
                                             {{ request('tipe_harga') == 'bulanan' ? 'checked' : '' }}>

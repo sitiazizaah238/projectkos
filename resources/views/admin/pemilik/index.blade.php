@@ -45,7 +45,7 @@
             {{-- CONTENT --}}
             <div class="p-3">
                 {{-- TITLE --}}
-                <div class="mb-3">
+                <div class="mb-3 ms-2 ms-md-3">
                     <h3 class="fw-bold" style="font-size: 29px;"> Manajemen Akun</h3>
                     <small class="text-muted">
                         Manajemen Akun / <span class="text-dark">Daftar Akun</span>
@@ -64,7 +64,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="card shadow-sm">
+               <div class="card shadow-sm ms-2 ms-md-2">
                     <div
                         class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
 
@@ -94,6 +94,7 @@
                                 <tr>
                                     <th width="50">No</th>
                                     <th>Nama Pemilik Kos</th>
+                                    <th>Jumlah Kos</th>
                                     <th>Email</th>
                                     <th>No HP</th>
                                     <th width="120">Status</th>
@@ -103,8 +104,11 @@
                             <tbody>
                                 @forelse($pemilik as $key => $p)
                                     <tr>
-                                      <td>{{ $pemilik->firstItem() + $key }}</td>
+                                        <td>{{ $pemilik->firstItem() + $key }}</td>
                                         <td>{{ $p->name }}</td>
+                                        <td>
+                                            {{ $p->kos->count() }}
+                                        </td>
                                         <td>{{ $p->email }}</td>
                                         <td>{{ $p->no_hp }}</td>
                                         <td>
