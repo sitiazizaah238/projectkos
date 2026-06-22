@@ -104,7 +104,7 @@
                                 @endif
                             </div>
                         </div>
-                        
+
                         <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
                                 <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
@@ -127,8 +127,10 @@
                                     }
                                 @endphp
                                 <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
-                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
-                                <a href="https://www.google.com/maps?q={{ $displayLat ?: -6.4005784 }},{{ $displayLng ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;">
+                                </div>
+                                <a href="https://www.google.com/maps?q={{ $displayLat ?: -6.4005784 }},{{ $displayLng ?: 108.2100865 }}"
+                                    target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
                                     <i class="bi bi-geo-alt"></i> Buka di Google Maps
                                 </a>
                             </div>
@@ -145,7 +147,11 @@
                                 @if (count($fasilitas) > 0)
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach ($fasilitas as $f)
-                                            <span class="badge bg-light text-dark border">{{ $f }}</span>
+                                            <span
+                                                class="badge bg-light text-dark border d-inline-flex align-items-center gap-1">
+                                                <i class="bi bi-check-circle"></i>
+                                                {{ $f }}
+                                            </span>
                                         @endforeach
                                     </div>
                                 @else
@@ -395,7 +401,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             var lat = {{ $displayLat ?: -6.4005784 }};
             var lng = {{ $displayLng ?: 108.2100865 }};
-            
+
             var map = L.map('map').setView([lat, lng], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

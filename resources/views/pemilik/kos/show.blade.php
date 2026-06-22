@@ -145,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                   <div class="col-12 col-md-5 mt-3 mt-md-0">
 
                         {{-- INFORMASI --}}
                         <div class="card shadow-sm border-0 rounded-4 mb-4">
@@ -188,10 +188,10 @@
                     </div>
                 </div>
 
-                <div class="row g-4 mt-4">
+               <div class="row g-4 mt-2">
                     <div class="col-md-7">
                         {{-- MAP --}}
-                        <div class="card shadow-sm border-0 rounded-4">
+                      <div class="card shadow-sm border-0 rounded-4">
                             <div class="card-body p-4">
                                 <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
                                 <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;">
