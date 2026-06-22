@@ -36,20 +36,18 @@
 
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
 
-    @include('components.notif-pemilik')
+                @include('components.notif-pemilik')
 
-    <button type="button"
-        class="btn text-white d-flex align-items-center gap-2"
-        data-bs-toggle="modal"
-        data-bs-target="#profileModal">
+                <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
+                    data-bs-target="#profileModal">
 
-        <span class="fw-semibold text-white small">
-            {{ Auth::user()->name }}
-        </span>
+                    <span class="fw-semibold text-white small">
+                        {{ Auth::user()->name }}
+                    </span>
 
-        @if (Auth::user()->photo)
-            <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
-                style="
+                    @if (Auth::user()->photo)
+                        <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
+                            style="
                     width:35px;
                     height:35px;
                     min-width:35px;
@@ -57,13 +55,13 @@
                     border-radius:50%;
                     object-fit:cover;
                 ">
-        @else
-            <i class="bi bi-person-circle fs-3"></i>
-        @endif
+                    @else
+                        <i class="bi bi-person-circle fs-3"></i>
+                    @endif
 
-    </button>
+                </button>
 
-</div>
+            </div>
 
             <div class="p-4">
 
@@ -143,10 +141,12 @@
 
                                 <div class="col-md-12 mt-3">
                                     <label>Titik Lokasi (Maps)</label>
-                                    <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                    <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;">
+                                    </div>
                                     <input type="hidden" name="latitude" id="latitude" value="{{ $kos->latitude }}">
                                     <input type="hidden" name="longitude" id="longitude" value="{{ $kos->longitude }}">
-                                    <small class="text-muted">Klik pada peta untuk mengubah titik lokasi kos yang tepat.</small>
+                                    <small class="text-muted">Klik pada peta untuk mengubah titik lokasi kos yang
+                                        tepat.</small>
                                 </div>
 
                                 {{-- TIPE --}}
@@ -190,9 +190,14 @@
 
                             </div>
 
-                            <div class="mt-4">
-                                <button class="btn btn-primary">Update</button>
-                                <a href="{{ route('pemilik.kos.index') }}" class="btn btn-secondary">Kembali</a>
+                            <div class="mt-4 d-flex gap-2">
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-1"></i> Update
+                                </button>
+
+                                <a href="{{ route('pemilik.kos.index') }}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Kembali
+                                </a>
                             </div>
 
                         </form>
@@ -203,84 +208,85 @@
         </div>
     </div>
 
-@push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-@endpush
+    @push('styles')
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    @endpush
 
-@push('scripts')
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var defaultLat = {{ $kos->latitude ?: -6.4005784 }};
-            var defaultLng = {{ $kos->longitude ?: 108.2100865 }};
-            var map = L.map('map').setView([defaultLat, defaultLng], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+    @push('scripts')
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var defaultLat = {{ $kos->latitude ?: -6.4005784 }};
+                var defaultLng = {{ $kos->longitude ?: 108.2100865 }};
+                var map = L.map('map').setView([defaultLat, defaultLng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
 
-            var marker = L.marker([defaultLat, defaultLng], {
-                draggable: true
-            }).addTo(map);
+                var marker = L.marker([defaultLat, defaultLng], {
+                    draggable: true
+                }).addTo(map);
 
-            document.getElementById('latitude').value = defaultLat;
-            document.getElementById('longitude').value = defaultLng;
+                document.getElementById('latitude').value = defaultLat;
+                document.getElementById('longitude').value = defaultLng;
 
-            marker.on('dragend', function(e) {
-                var position = marker.getLatLng();
-                if (position.lat < -6.45 || position.lat > -6.30 || position.lng < 108.15 || position.lng > 108.35) {
-                    alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
-                    marker.setLatLng([defaultLat, defaultLng]);
-                    map.setView([defaultLat, defaultLng], 15);
-                    document.getElementById('latitude').value = defaultLat;
-                    document.getElementById('longitude').value = defaultLng;
-                    return;
-                }
-                document.getElementById('latitude').value = position.lat;
-                document.getElementById('longitude').value = position.lng;
+                marker.on('dragend', function(e) {
+                    var position = marker.getLatLng();
+                    if (position.lat < -6.45 || position.lat > -6.30 || position.lng < 108.15 || position.lng >
+                        108.35) {
+                        alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
+                        marker.setLatLng([defaultLat, defaultLng]);
+                        map.setView([defaultLat, defaultLng], 15);
+                        document.getElementById('latitude').value = defaultLat;
+                        document.getElementById('longitude').value = defaultLng;
+                        return;
+                    }
+                    document.getElementById('latitude').value = position.lat;
+                    document.getElementById('longitude').value = position.lng;
+                });
+
+                map.on('click', function(e) {
+                    var lat = e.latlng.lat;
+                    var lng = e.latlng.lng;
+
+                    if (lat < -6.45 || lat > -6.30 || lng < 108.15 || lng > 108.35) {
+                        alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
+                        return;
+                    }
+
+                    marker.setLatLng(e.latlng);
+
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = lng;
+                });
             });
 
-            map.on('click', function(e) {
-                var lat = e.latlng.lat;
-                var lng = e.latlng.lng;
+            let selectedFiles = [];
+            let deletedPhotos = [];
 
-                if (lat < -6.45 || lat > -6.30 || lng < 108.15 || lng > 108.35) {
-                    alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
-                    return;
+            const input = document.getElementById('fotoInput');
+            const preview = document.getElementById('previewContainer');
+
+            input.addEventListener('change', function(e) {
+
+                const newFiles = Array.from(e.target.files);
+                selectedFiles = [...selectedFiles, ...newFiles];
+
+                if (selectedFiles.length > 3) {
+                    alert('Maksimal 3 Foto!');
+                    selectedFiles = selectedFiles.slice(0, 3);
                 }
 
-                marker.setLatLng(e.latlng);
-
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
+                renderPreview();
+                updateFileInput();
             });
-        });
 
-        let selectedFiles = [];
-        let deletedPhotos = [];
-
-        const input = document.getElementById('fotoInput');
-        const preview = document.getElementById('previewContainer');
-
-        input.addEventListener('change', function(e) {
-
-            const newFiles = Array.from(e.target.files);
-            selectedFiles = [...selectedFiles, ...newFiles];
-
-            if (selectedFiles.length > 3) {
-                alert('Maksimal 3 Foto!');
-                selectedFiles = selectedFiles.slice(0, 3);
-            }
-
-            renderPreview();
-            updateFileInput();
-        });
-
-        function renderPreview() {
-            preview.innerHTML = "";
-            selectedFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.innerHTML += `
+            function renderPreview() {
+                preview.innerHTML = "";
+                selectedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML += `
                 <div class="col-4 mb-3">
                     <div class="position-relative">
                         <img src="${e.target.result}"
@@ -291,50 +297,50 @@
                                 onclick="removeImage(${index})">✕</button>
                     </div>
                 </div>`;
-                }
-                reader.readAsDataURL(file);
-            });
-        }
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
 
-        function removeImage(index) {
-            selectedFiles.splice(index, 1);
-            renderPreview();
-            updateFileInput();
-        }
+            function removeImage(index) {
+                selectedFiles.splice(index, 1);
+                renderPreview();
+                updateFileInput();
+            }
 
-        function updateFileInput() {
-            const dt = new DataTransfer();
-            selectedFiles.forEach(file => dt.items.add(file));
-            input.files = dt.files;
-        }
+            function updateFileInput() {
+                const dt = new DataTransfer();
+                selectedFiles.forEach(file => dt.items.add(file));
+                input.files = dt.files;
+            }
 
-        function removeOldPhoto(path, index) {
-            deletedPhotos.push(path);
-            document.getElementById('deletedPhotos').value = deletedPhotos.join(',');
-            document.getElementById('old-photo-' + index).remove();
-        }
-    </script>
-@endpush
-{{-- PROFILE MODAL --}}
-<div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content p-3 text-center" style="border-radius:20px;">
-            <div class="mb-3">
-                <div class="fw-bold">{{ Auth::user()->name }}</div>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
+            function removeOldPhoto(path, index) {
+                deletedPhotos.push(path);
+                document.getElementById('deletedPhotos').value = deletedPhotos.join(',');
+                document.getElementById('old-photo-' + index).remove();
+            }
+        </script>
+    @endpush
+    {{-- PROFILE MODAL --}}
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
             </div>
-
-            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Logout
-                </button>
-            </form>
         </div>
     </div>
-</div>
 @endsection

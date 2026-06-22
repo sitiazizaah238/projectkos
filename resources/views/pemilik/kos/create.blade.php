@@ -119,10 +119,12 @@
 
                                 <div class="col-md-12 mt-3">
                                     <label>Titik Lokasi (Maps)</label>
-                                    <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+                                    <div id="map" style="height: 300px; width: 100%; border-radius: 8px; z-index: 1;">
+                                    </div>
                                     <input type="hidden" name="latitude" id="latitude">
                                     <input type="hidden" name="longitude" id="longitude">
-                                    <small class="text-muted">Klik pada peta untuk menentukan titik lokasi kos yang tepat.</small>
+                                    <small class="text-muted">Klik pada peta untuk menentukan titik lokasi kos yang
+                                        tepat.</small>
                                 </div>
 
                                 <div class="col-md-6 mt-3">
@@ -163,9 +165,14 @@
 
                             </div>
 
-                            <div class="mt-4">
-                                <button class="btn btn-primary">Simpan</button>
-                                <a href="{{ route('pemilik.kos.index') }}" class="btn btn-secondary">Kembali</a>
+                            <div class="mt-4 d-flex gap-2">
+                                <button class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i> Simpan
+                                </button>
+
+                                <a href="{{ route('pemilik.kos.index') }}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Kembali
+                                </a>
                             </div>
 
                         </form>
@@ -176,85 +183,86 @@
             </div>
         </div>
     </div>
-@push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-@endpush
-@push('scripts')
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var map = L.map('map').setView([-6.4005784, 108.2100865], 13); // Default Lohbener
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+    @push('styles')
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    @endpush
+    @push('scripts')
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var map = L.map('map').setView([-6.4005784, 108.2100865], 13); // Default Lohbener
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
 
-            var marker = L.marker([-6.4005784, 108.2100865], {
-                draggable: true
-            }).addTo(map);
+                var marker = L.marker([-6.4005784, 108.2100865], {
+                    draggable: true
+                }).addTo(map);
 
-            document.getElementById('latitude').value = -6.4005784;
-            document.getElementById('longitude').value = 108.2100865;
+                document.getElementById('latitude').value = -6.4005784;
+                document.getElementById('longitude').value = 108.2100865;
 
-            marker.on('dragend', function(e) {
-                var position = marker.getLatLng();
-                if (position.lat < -6.45 || position.lat > -6.30 || position.lng < 108.15 || position.lng > 108.35) {
-                    alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
-                    marker.setLatLng([-6.4005784, 108.2100865]);
-                    map.setView([-6.4005784, 108.2100865], 13);
-                    document.getElementById('latitude').value = -6.4005784;
-                    document.getElementById('longitude').value = 108.2100865;
-                    return;
-                }
-                document.getElementById('latitude').value = position.lat;
-                document.getElementById('longitude').value = position.lng;
-            });
-
-            map.on('click', function(e) {
-                var lat = e.latlng.lat;
-                var lng = e.latlng.lng;
-
-                if (lat < -6.45 || lat > -6.30 || lng < 108.15 || lng > 108.35) {
-                    alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
-                    return;
-                }
-
-                marker.setLatLng(e.latlng);
-
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
-            });
-        });
-
-        let selectedFiles = [];
-        const input = document.getElementById('fotoInput');
-        const preview = document.getElementById('previewContainer');
-
-        input.addEventListener('change', function(e) {
-
-            const newFiles = Array.from(e.target.files);
-            selectedFiles = [...selectedFiles, ...newFiles];
-
-            if (selectedFiles.length > 3) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Maksimal 3 Foto!'
+                marker.on('dragend', function(e) {
+                    var position = marker.getLatLng();
+                    if (position.lat < -6.45 || position.lat > -6.30 || position.lng < 108.15 || position.lng >
+                        108.35) {
+                        alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
+                        marker.setLatLng([-6.4005784, 108.2100865]);
+                        map.setView([-6.4005784, 108.2100865], 13);
+                        document.getElementById('latitude').value = -6.4005784;
+                        document.getElementById('longitude').value = 108.2100865;
+                        return;
+                    }
+                    document.getElementById('latitude').value = position.lat;
+                    document.getElementById('longitude').value = position.lng;
                 });
-                selectedFiles = selectedFiles.slice(0, 3);
-            }
 
-            renderPreview();
-            updateFileInput();
-        });
+                map.on('click', function(e) {
+                    var lat = e.latlng.lat;
+                    var lng = e.latlng.lng;
 
-        function renderPreview() {
-            preview.innerHTML = "";
+                    if (lat < -6.45 || lat > -6.30 || lng < 108.15 || lng > 108.35) {
+                        alert('Lokasi kos harus berada di wilayah Kecamatan Lohbener!');
+                        return;
+                    }
 
-            selectedFiles.forEach((file, index) => {
+                    marker.setLatLng(e.latlng);
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = lng;
+                });
+            });
 
-                    preview.innerHTML += `
+            let selectedFiles = [];
+            const input = document.getElementById('fotoInput');
+            const preview = document.getElementById('previewContainer');
+
+            input.addEventListener('change', function(e) {
+
+                const newFiles = Array.from(e.target.files);
+                selectedFiles = [...selectedFiles, ...newFiles];
+
+                if (selectedFiles.length > 3) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Maksimal 3 Foto!'
+                    });
+                    selectedFiles = selectedFiles.slice(0, 3);
+                }
+
+                renderPreview();
+                updateFileInput();
+            });
+
+            function renderPreview() {
+                preview.innerHTML = "";
+
+                selectedFiles.forEach((file, index) => {
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+
+                        preview.innerHTML += `
                 <div class="col-4 mb-3">
                     <div class="position-relative">
                         <img src="${e.target.result}"
@@ -268,47 +276,46 @@
                     </div>
                 </div>
             `;
-                }
-                reader.readAsDataURL(file);
-            });
-        }
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
 
-        function removeImage(index) {
-            selectedFiles.splice(index, 1);
-            renderPreview();
-            updateFileInput();
-        }
+            function removeImage(index) {
+                selectedFiles.splice(index, 1);
+                renderPreview();
+                updateFileInput();
+            }
 
-        function updateFileInput() {
-            const dataTransfer = new DataTransfer();
-            selectedFiles.forEach(file => {
-                dataTransfer.items.add(file);
-            });
-            input.files = dataTransfer.files;
-        }
-    </script>
-@endpush
+            function updateFileInput() {
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                input.files = dataTransfer.files;
+            }
+        </script>
+    @endpush
     {{-- PROFILE MODAL --}}
-<div class="modal fade" id="profileModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content p-3 text-center" style="border-radius:20px;">
-            <div class="mb-3">
-                <div class="fw-bold">{{ Auth::user()->name }}</div>
-                <small class="text-muted">{{ Auth::user()->email }}</small>
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
             </div>
-
-            <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                Profil
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Logout
-                </button>
-            </form>
         </div>
     </div>
-</div>
 @endsection
-

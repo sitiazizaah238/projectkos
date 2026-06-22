@@ -86,6 +86,18 @@
                     @else
                         <div class="card shadow-lg border-0" style="border-radius:20px;">
                             <div class="card-body p-4">
+                                <style>
+                                    .form-check-input {
+                                        accent-color: #0d6efd;
+                                        border: 1px solid #0d6efd;
+                                        background-color: #fff;
+                                    }
+
+                                    .form-check-input:checked {
+                                        background-color: #0d6efd;
+                                        border-color: #0d6efd;
+                                    }
+                                </style>
                                 {{-- ERROR VALIDASI --}}
                                 @if ($errors->any())
                                     <div class="alert alert-danger">
@@ -194,7 +206,7 @@
 
 
                                             <div class="mb-3">
-                                                <label class="form-label">Tipe Harga</label>
+                                                <label class="form-label">Tipe Pembayaran</label>
                                                 <select name="tipe_harga" class="form-select">
                                                     <option value="bulanan">Perbulan</option>
                                                     <option value="tahunan">Pertahun</option>
@@ -323,4 +335,3 @@
             </div>
         </div>
     @endsection
-

@@ -28,11 +28,10 @@
                 @include('components.notif-admin')
 
                 {{-- PROFILE --}}
-                <button type="button" class="btn text-white d-flex align-items-center gap-2"
-                    data-bs-toggle="modal"
+                <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
 
-                  <span class="text-white">{{ Auth::user()->name }}</span>
+                    <span class="text-white">{{ Auth::user()->name }}</span>
 
                     @if (Auth::user()->photo)
                         <img src="{{ asset('storage/profile/' . Auth::user()->photo) }}"
@@ -131,10 +130,24 @@
                     </div>
 
                     <div class="col-12 col-lg-4">
-                        <div class="card p-3 shadow-sm">
-                            <h6 class="fw-bold">Persentase Akun</h6>
-                            <div style="height:260px;">
+                        <div class="card p-3 shadow-sm d-flex flex-column justify-content-between">
+                            <div class="fw-bold pb-2 mb-3" style="border-bottom: 3px solid #6b7280; width: 100%;">
+                                Persentase Akun
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center"
+                                style="height:200px; margin-top:-10px;">
                                 <canvas id="donutChart"></canvas>
+                            </div>
+                            <div class="mt-1 border-top pt-1" style="line-height:1.2;">
+                                <div class="d-flex justify-content-between mb-1" style="margin-bottom:2px;">
+                                    <span class="text-muted">Akun Pemilik</span>
+                                    <strong>{{ $totalPemilik }}</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between" style="margin-top:2px;">
+                                    <span class="text-muted">Total Kos</span>
+                                    <strong>{{ $totalKos }}</strong>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -190,7 +203,9 @@
                 options: {
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: {
+                            display: false
+                        }
                     }
                 }
             });
@@ -206,8 +221,14 @@
                 },
                 options: {
                     maintainAspectRatio: false,
-                    cutout: '70%',
-                    radius: '85%'
+                    cutout: '65%',
+                    radius: '65%',
+
+                    layout: {
+                        padding: {
+                            top: 2
+                        }
+                    }
                 }
             });
         </script>
@@ -234,5 +255,4 @@
                 }
             }
         </style>
-
     @endsection
