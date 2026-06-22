@@ -145,107 +145,141 @@
                             </div>
                         </div>
                     </div>
-                        <div class="col-md-5">
+                    <div class="col-md-5">
 
-                            {{-- INFORMASI --}}
-                            <div class="card shadow-sm border-0 rounded-4 mb-4">
-                                <div class="card-body p-4">
+                        {{-- INFORMASI --}}
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body p-4">
 
-                                    <h5 class="fw-semibold mb-3">Informasi Utama</h5>
-                                    
-                                    <div class="mb-2"><span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}</div>
-                                    <div class="mb-2"><span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}</div>
-                                    <div class="mb-2"><span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}</div>
-                                    <div class="mb-2">
-                                        <span class="text-muted">Status Verifikasi:</span>
-                                        @if ($kos->status == 'disetujui')
-                                            <span class="badge bg-success">Disetujui</span>
-                                        @elseif($kos->status == 'ditolak')
-                                            <span class="badge bg-danger">Ditolak</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">Menunggu</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card shadow-sm border-0 rounded-4">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
-                                    <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                <h5 class="fw-semibold mb-3">Informasi Utama</h5>
 
-                    <div class="row g-4 mt-4">
-                        <div class="col-md-7">
-                            {{-- MAP --}}
-                            <div class="card shadow-sm border-0 rounded-4">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
-                                    <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;"></div>
-                                    <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
-                                        <i class="bi bi-geo-alt"></i> Buka di Google Maps
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-5">
-                            {{-- FASILITAS --}}
-                            <div class="card shadow-sm border-0 rounded-4 mb-4">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
-                                    @php
-                                        $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
-                                    @endphp
-                                    @if (count($fasilitas) > 0)
-                                        <div class="d-flex flex-wrap gap-2">
-                                            @foreach ($fasilitas as $f)
-                                                <span class="badge bg-light text-dark border">{{ $f }}</span>
-                                            @endforeach
-                                        </div>
+                                <div class="mb-2"><span class="text-muted">Nama Kos:</span> {{ $kos->nama_kos }}</div>
+                                <div class="mb-2"><span class="text-muted">Lokasi:</span> {{ $kos->lokasi }}</div>
+                                <div class="mb-2"><span class="text-muted">Tipe:</span> {{ $kos->tipe_kos }}</div>
+                                <div class="mb-2">
+                                    <span class="text-muted">Status Verifikasi:</span>
+                                    @if ($kos->status == 'disetujui')
+                                        <span class="badge bg-success">Disetujui</span>
+                                    @elseif($kos->status == 'ditolak')
+                                        <span class="badge bg-danger">Ditolak</span>
                                     @else
-                                        <div class="text-muted">Tidak ada fasilitas</div>
+                                        <span class="badge bg-warning text-dark">Menunggu</span>
                                     @endif
                                 </div>
+
                             </div>
+                        </div>
+                        {{-- TAMBAHAN BARU --}}
 
-                            {{-- TOMBOL --}}
-                            <a href="{{ route('pemilik.kos.index') }}" class="btn btn-primary w-100 py-2 fs-5 rounded-3">
-                                <i class="bi bi-arrow-left"></i> Kembali
-                            </a>
+                        @if ($kos->status == 'ditolak' && $kos->alasan)
+                            <div class="alert alert-danger mt-3 mb-4 shadow-sm rounded">
+                                <div class="fw-semibold mb-1">
+                                    Alasan Penolakan Admin :
+                                </div>
+                                {{ $kos->alasan }}
+                            </div>
+                        @endif
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Deskripsi Kos</h5>
+                                <div class="text-muted" style="white-space: pre-line;">{{ $kos->deskripsi ?: '-' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row g-4 mt-4">
+                    <div class="col-md-7">
+                        {{-- MAP --}}
+                        <div class="card shadow-sm border-0 rounded-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Peta Lokasi</h5>
+                                <div id="map" style="height: 220px; width: 100%; border-radius: 8px; z-index: 1;">
+                                </div>
+                                <a href="https://www.google.com/maps?q={{ $kos->latitude ?: -6.4005784 }},{{ $kos->longitude ?: 108.2100865 }}"
+                                    target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                    <i class="bi bi-geo-alt"></i> Buka di Google Maps
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                </div>
-            </div>
-        </div>
-          {{-- PROFILE MODAL --}}
-        <div class="modal fade" id="profileModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content p-3 text-center" style="border-radius:20px;">
-                    <div class="mb-3">
-                        <div class="fw-bold">{{ Auth::user()->name }}</div>
-                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                    <div class="col-md-5">
+                        {{-- FASILITAS --}}
+                        <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-semibold mb-3">Fasilitas Kos</h5>
+
+                                @php
+                                    $fasilitas = is_array($kos->fasilitas) ? $kos->fasilitas : [];
+
+                                    $iconMap = [
+                                        'parkir' => 'bi bi-p-circle',
+                                        'wifi' => 'bi bi-wifi',
+                                        'kamar mandi' => 'bi bi-droplet',
+                                        'ac' => 'bi bi-snow',
+                                        'kipas' => 'bi bi-wind',
+                                        'dapur' => 'bi bi-cup-straw',
+                                        'listrik' => 'bi bi-lightning',
+                                        'kasur' => 'bi bi-bed',
+                                    ];
+                                @endphp
+
+                                @if (count($fasilitas) > 0)
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($fasilitas as $f)
+                                            @php
+                                                $key = strtolower($f);
+                                                $icon = $iconMap[$key] ?? 'bi bi-check-circle';
+                                            @endphp
+
+                                            <span
+                                                class="badge bg-light text-dark border d-flex align-items-center gap-1 px-3 py-2">
+                                                <i class="{{ $icon }}"></i>
+                                                {{ $f }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="text-muted">Tidak ada fasilitas</div>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- TOMBOL --}}
+                        <a href="{{ route('pemilik.kos.index') }}" class="btn btn-primary w-100 py-2 fs-5 rounded-3">
+                            <i class="bi bi-arrow-left"></i> Kembali
+                        </a>
+
                     </div>
-
-                    <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
-                        Profil
-                    </a>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger w-100">
-                            Logout
-                        </button>
-                    </form>
                 </div>
+
             </div>
         </div>
-    @endsection
+    </div>
+    {{-- PROFILE MODAL --}}
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content p-3 text-center" style="border-radius:20px;">
+                <div class="mb-3">
+                    <div class="fw-bold">{{ Auth::user()->name }}</div>
+                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+
+                <a href="{{ route('pemilik.profile') }}" class="btn btn-primary w-100 mb-2">
+                    Profil
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -257,7 +291,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             var lat = {{ $kos->latitude ?: -6.4005784 }};
             var lng = {{ $kos->longitude ?: 108.2100865 }};
-            
+
             var map = L.map('map').setView([lat, lng], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
