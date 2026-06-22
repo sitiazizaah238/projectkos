@@ -180,7 +180,7 @@
                                     </div>
                                 </div>
 
-                                {{-- TIPE HARGA --}}
+                                {{-- TIPE pembayaran --}}
                                 <div class="mb-4">
                                     <label class="fw-semibold mb-2">Tipe Pembayaran</label>
                                     <div class="form-check">
