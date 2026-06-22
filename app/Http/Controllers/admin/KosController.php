@@ -63,6 +63,7 @@ class KosController extends Controller
         $kos->update([
             'status' => 'ditolak',
             'alasan' => $request->alasan,
+            'tanggal_verifikasi' => now(),
             'is_read' => false,
         ]);
 
