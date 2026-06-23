@@ -65,14 +65,14 @@
 
             <div class="p-4">
 
-                <h3 class="fw-bold" style="font-size:25px;">Edit Kos</h3>
+                <h3 class="fw-bold" style="font-size:25px;">Edit Data Kos</h3>
                 <small class="text-muted">Manajemen Kos / Data Kos</small>
 
                 <div class="card shadow-sm mt-4">
 
                     <div class="card-header bg-dark text-white">
                         <i class="bi bi-house-door-fill me-2"></i>
-                        Form Edit Kos
+                        Form Edit Data Kos
                     </div>
 
                     <div class="card-body">
@@ -99,7 +99,7 @@
 
                                 {{-- FOTO --}}
                                 <div class="col-md-6">
-                                    <label>Foto Kos</label>
+                                    <label>Foto Kos Terbaru</label>
                                     <input type="file" name="foto[]" id="fotoInput" class="form-control" multiple
                                         accept="image/*">
 

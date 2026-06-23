@@ -335,8 +335,8 @@
                         Swal.fire({
                             title: title,
                             input: 'textarea',
-                            inputLabel: 'Alasan',
-                            inputPlaceholder: 'Masukkan alasan...',
+                            inputLabel: 'Alasan Penolakan:',
+                            inputPlaceholder: 'Masukkan Keterangan...',
                             showCancelButton: true,
                             confirmButtonText: confirmText,
                             cancelButtonText: 'Batal',
