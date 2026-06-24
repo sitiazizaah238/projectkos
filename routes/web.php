@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Pemilik\ProfilePemilikController;
 use App\Http\Controllers\Pemilik\PemilikKosController;
 use App\Http\Controllers\Pemilik\PemilikKamarController;
@@ -45,6 +46,14 @@ Route::get('/dashboard', function () {
 
 // SEMUA HARUS LOGIN
 Route::middleware('auth')->group(function () {
+
+    // ================= CHAT (shared) =================
+    Route::get('/chat/{id}', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{id}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/{id}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/{id}/send-ajax', [ChatController::class, 'sendMessageAjax'])->name('chat.send.ajax');
+    Route::get('/chat-unread-count', [ChatController::class, 'unreadCount'])->name('chat.unread.count');
+    Route::get('/chat-list-json', [ChatController::class, 'chatListJson'])->name('chat.list.json');
 
     // profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -239,6 +248,9 @@ Route::middleware('auth')->group(function () {
             '/pemilik/laporan/excel',
             [App\Http\Controllers\Pemilik\LaporanKeuanganController::class, 'excel']
         )->name('pemilik.laporan.excel');
+
+        // ================= CHAT PEMILIK =================
+        Route::get('/pemilik/chat', [ChatController::class, 'indexPemilik'])->name('pemilik.chat.index');
     });
 
     // punya penyewa
@@ -261,6 +273,10 @@ Route::middleware('auth')->group(function () {
             '/penyewa/cari-kos',
             [PenyewaKosController::class, 'search']
         )->name('penyewa.cari.kos');
+
+        // ================= CHAT PENYEWA =================
+        Route::get('/penyewa/chat', [ChatController::class, 'indexPenyewa'])->name('penyewa.chat.index');
+        Route::post('/penyewa/chat/start', [ChatController::class, 'startChat'])->name('penyewa.chat.start');
         Route::post(
             '/penyewa/pengajuan',
             [App\Http\Controllers\Penyewa\PengajuanController::class, 'store']

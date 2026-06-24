@@ -107,6 +107,17 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ route('penyewa.chat.index') }}"
+                class="nav-link d-flex align-items-center
+                {{ request()->routeIs('penyewa.chat.*') || request()->routeIs('chat.show') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+                <i class="bi bi-chat-dots me-2"></i> Chat
+                @php $sidebarChatUnread = \App\Models\Chat::totalUnreadFor(Auth::id()); @endphp
+                <span id="chatBadgeSidebar" class="badge bg-danger ms-auto"
+                    style="{{ $sidebarChatUnread > 0 ? '' : 'display:none;' }}">{{ $sidebarChatUnread }}</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a href="{{ route('penyewa.rekomendasi') }}"
                 class="nav-link d-flex align-items-center
                {{ request()->routeIs('penyewa.rekomendasi') || request('from') == 'rekomendasi'

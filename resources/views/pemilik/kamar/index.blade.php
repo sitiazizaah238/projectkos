@@ -45,6 +45,7 @@
 
                 {{-- GROUP KANAN --}}
                 <div class="d-flex align-items-center gap-2"></div>
+                @include('components.chat-icon-pemilik')
                 @include('components.notif-pemilik')
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">

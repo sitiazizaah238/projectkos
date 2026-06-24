@@ -23,6 +23,7 @@
 
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                @include('components.chat-icon-penyewa')
                 @include('components.notif-penyewa')
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -226,8 +227,20 @@
                                     };
                                     $fasKos = is_array($k->fasilitas) ? $k->fasilitas : [];
                                     $kamarTersedia = $k->kamars->where('status', 'tersedia');
-                                    $kamarTermurah = $kamarTersedia->sortBy('harga')->first();
-                                    $kamarTermahal = $kamarTersedia->sortBy('harga')->last();
+
+                                    // Filter kamar sesuai range harga yang dipilih user
+                                    $kamarFiltered = $kamarTersedia;
+                                    if (!empty($filterMinHarga)) {
+                                        $kamarFiltered = $kamarFiltered->where('harga', '>=', $filterMinHarga);
+                                    }
+                                    if (!empty($filterMaxHarga)) {
+                                        $kamarFiltered = $kamarFiltered->where('harga', '<=', $filterMaxHarga);
+                                    }
+
+                                    // Jika ada filter harga, tampilkan hanya kamar yg sesuai filter
+                                    $kamarDisplay = $kamarFiltered->isNotEmpty() ? $kamarFiltered : $kamarTersedia;
+                                    $kamarTermurah = $kamarDisplay->sortBy('harga')->first();
+                                    $kamarTermahal = $kamarDisplay->sortBy('harga')->last();
                                     $tipeHargaList = $kamarTersedia->pluck('tipe_harga')->unique();
                                 @endphp
 

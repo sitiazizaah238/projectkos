@@ -30,6 +30,7 @@
 
             {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                @include('components.chat-icon-pemilik')
                 @include('components.notif-pemilik')
 
                 {{-- PROFILE --}}

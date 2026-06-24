@@ -104,6 +104,7 @@
         <div class="flex-grow-1">
             {{-- ================= TOPBAR (SAMA KAYA PEMILIK) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                @include('components.chat-icon-penyewa')
                 @include('components.notif-penyewa')
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">

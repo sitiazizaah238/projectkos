@@ -46,6 +46,7 @@
 
         {{-- NOTIF --}}
         <div>
+            @include('components.chat-icon-pemilik')
             @include('components.notif-pemilik')
         </div>
 

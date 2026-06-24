@@ -44,6 +44,7 @@
 
             {{-- TOPBAR --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                @include('components.chat-icon-pemilik')
                 @include('components.notif-pemilik')
                 <button type="button" class="btn text-white d-flex align-items-center gap-2" data-bs-toggle="modal"
                     data-bs-target="#profileModal">

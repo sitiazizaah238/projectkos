@@ -267,7 +267,11 @@
             if (hasSuccess) return;
 
             document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("submit", () => loader.style.display = "flex");
+                form.addEventListener("submit", () => {
+                    if (!form.hasAttribute("data-no-loader")) {
+                        loader.style.display = "flex";
+                    }
+                });
             });
 
             document.querySelectorAll("a").forEach(link => {

@@ -8,6 +8,7 @@
 
         <div class="flex-grow-1">
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                @include('components.chat-icon-penyewa')
                 @include('components.notif-penyewa')
                 <button type="button" class="btn text-white d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#profileModal">
@@ -207,14 +208,11 @@
                             @if (!empty($kos->user->no_hp))
                                 @php
                                     $waNumber = $kos->user->no_hp;
-                                    // bersihkan karakter selain angka
                                     $waNumber = preg_replace('/[^0-9]/', '', $waNumber);
                                     if (str_starts_with($waNumber, '0')) {
                                         $waNumber = '62' . substr($waNumber, 1);
                                     }
-
                                     $namaPemilik = $kos->user->name ?? 'Pemilik Kos';
-
                                     $waMessage =
                                         "Halo, bapak/ibu {$namaPemilik}. Saya tertarik untuk menyewa kamar kos nomor (isi nomor kamar) di kost *{$kos->nama_kos}*.\n\nBerikut data saya:\nNama: *" .
                                         Auth::user()->name .
@@ -229,6 +227,19 @@
                                     </a>
                                 </div>
                             @endif
+
+                            {{-- Tombol Chat In-App --}}
+                            <div class="mt-2">
+                                <form action="{{ route('penyewa.chat.start') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="kos_id" value="{{ $kos->id }}">
+                                    <button type="submit"
+                                        class="btn w-100 rounded-pill py-2 text-white fw-bold shadow-sm d-flex align-items-center justify-content-center"
+                                        style="background: linear-gradient(135deg, #0d6efd, #6610f2); transition: all 0.3s ease;">
+                                        <i class="bi bi-chat-dots fs-5 me-2"></i> Chat dengan Pemilik
+                                    </button>
+                                </form>
+                            </div>
 
                         </div>
 

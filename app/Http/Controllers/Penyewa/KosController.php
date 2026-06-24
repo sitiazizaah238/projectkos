@@ -24,15 +24,6 @@ class KosController extends Controller
     {
         $search = $request->search;
 
-        // Debugging
-        // if ($request->filled('fasilitas')) {
-        //     $rawKamars = \App\Models\Kamar::select('id', 'fasilitas')->limit(5)->get();
-        //     dd([
-        //         'request_fasilitas' => $request->fasilitas,
-        //         'raw_db_sample' => $rawKamars->toArray(),
-        //     ]);
-        // }
-
         $kos = Kos::with('kamars')
             ->where('status', 'disetujui')
             ->whereHas('user', function ($q) {
@@ -69,11 +60,10 @@ class KosController extends Controller
                     }
                 });
             })
-            // Filter Search (Nama & Lokasi)
+            // Filter Fasilitas Kamar (JSON_CONTAINS)
             ->when($request->filled('fasilitas'), function ($query) use ($request) {
                 $query->whereHas('kamars', function ($q) use ($request) {
                     foreach ($request->fasilitas as $fasilitas) {
-                        // JSON_CONTAINS lebih reliable daripada LIKE untuk kolom JSON
                         $q->whereRaw('JSON_CONTAINS(fasilitas, ?)', [json_encode($fasilitas)]);
                     }
                 });
@@ -85,6 +75,7 @@ class KosController extends Controller
             // Filter Harga
             ->when($request->filled('min_harga') || $request->filled('max_harga'), function ($query) use ($request) {
                 $query->whereHas('kamars', function ($q) use ($request) {
+                    $q->where('status', 'tersedia');
                     if ($request->filled('min_harga')) {
                         $q->where('harga', '>=', $request->min_harga);
                     }
@@ -99,17 +90,6 @@ class KosController extends Controller
                     $q->where('tipe_harga', $request->tipe_harga);
                 });
             })
-            // Filter Fasilitas (Pencarian Raw JSON String)
-            ->when($request->filled('fasilitas'), function ($query) use ($request) {
-                $query->whereHas('kamars', function ($q) use ($request) {
-                    foreach ($request->fasilitas as $fasilitas) {
-                        // Karena JSON disimpan sebagai ["ac", "meja"],
-                        // kita cari menggunakan LIKE yang diapit tanda kutip ganda
-                        $q->where('fasilitas', 'LIKE', '%"' . $fasilitas . '"%');
-                    }
-                });
-            })
-            ->latest()
             ->latest()
             ->paginate(6)
             ->withQueryString();
@@ -119,7 +99,11 @@ class KosController extends Controller
             $this->recommendationScoring->learnFromSearchResult(Auth::user(), $kos->first());
         }
 
-        return view('penyewa.cari', compact('kos', 'search'));
+        // Pass filter params ke view untuk menampilkan harga yang sesuai filter
+        $filterMinHarga = $request->min_harga;
+        $filterMaxHarga = $request->max_harga;
+
+        return view('penyewa.cari', compact('kos', 'search', 'filterMinHarga', 'filterMaxHarga'));
     }
 
     // fungsi untuk menyimpan preferensi user berdasarkan kos yang dilihat

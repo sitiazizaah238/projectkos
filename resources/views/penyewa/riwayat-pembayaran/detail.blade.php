@@ -10,6 +10,7 @@
 
             {{-- ================= TOPBAR (SUDAH DISESUAIKAN INDEX STYLE) ================= --}}
             <div class="topbar d-flex justify-content-end align-items-center px-4 gap-1">
+                @include('components.chat-icon-penyewa')
                 @include('components.notif-penyewa')
 
                 {{-- 👤 PROFILE (TETAP, HANYA DIPERBAIKI MODALNYA) --}}

@@ -134,6 +134,17 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a href="{{ route('pemilik.chat.index') }}"
+                class="nav-link d-flex align-items-center
+                {{ request()->routeIs('pemilik.chat.*') || request()->routeIs('chat.show') ? 'active bg-primary text-white rounded' : 'text-dark' }}">
+                <i class="bi bi-chat-dots me-2"></i> Chat
+                @php $sidebarChatUnread = \App\Models\Chat::totalUnreadFor(Auth::id()); @endphp
+                <span id="chatBadgeSidebar" class="badge bg-danger ms-auto"
+                    style="{{ $sidebarChatUnread > 0 ? '' : 'display:none;' }}">{{ $sidebarChatUnread }}</span>
+            </a>
+        </li>
+
         {{-- Dropdown Manajemen Keuangan --}}
         <li class="nav-item">
             <a href="#menuKeuangan" data-bs-toggle="collapse" data-no-loader="true"
